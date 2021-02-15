@@ -21,3 +21,20 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# System files
+.DS_Store
+*.icloud
+
+# Ouput directories
+target
+out
+
+# Workspace configs
+.idea
+.vscode
+.vs
+.settings
+.project
+.classpath
+*.iml
