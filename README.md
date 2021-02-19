@@ -20,13 +20,17 @@ For IntelliJ you'll need to open the `pom.xml` file in this project and it'll pr
 
 - The codebase use 4 spaces as indentation.
 
-**Getting clang-format**
+#### Getting clang-format
 
-For **Windows** the clang-format can be found at https://releases.llvm.org/, head over to the latest `download` link, scroll down to **Pre-Built Binaries** if you want to use the installer and download the one Windows one.
+For **Windows** the clang-format can be found at https://releases.llvm.org/, head over to the latest `download` link, scroll down to **Pre-Built Binaries** and download the Windows one. 
+
+**NOTE (Windows Install)**: When installing make sure you select `Add LLVM to the system PATH for ...`. This make sure that you can type `clang-format` in your terminal.
 
 For the **macOS** you can use `brew` to install and **Linux** it is best to use your package manager.
 
-To use `clang-format` with **IntelliJ** you can use this extension [ClangFormat](https://plugins.jetbrains.com/plugin/13359-clangformat). This will add the option in `Code → Reformat Code with clang-format`, you'll be using this option instead of the regular `Reformat Code`.
+To use `clang-format` with **IntelliJ** you can use this extension [ClangFormat](https://plugins.jetbrains.com/plugin/13359-clangformat). This will add the option in `Code → Reformat Code with clang-format`, you'll be using this option instead of the regular `Reformat Code`. 
+
+**NOTE (Windows)**: If the extension doesn't format your code you can go to `File → Settings... → Tools → clang-format`. In the `clang-format binary` you can try adding `clang-format.exe` instead. If it doesn't work you can specify the `PATH` that points to where `LLVM/bin` is in your system.
 
 ### Code Structure
 
@@ -62,7 +66,7 @@ You can compile the code with this command
 mvn compile
 ```
 
-This will generate the the `class` files in `target/classes` directory.
+This will generate the the `class` files in `target/classes` directory. You can use these class files to run the main method.
 
 **Start the server**
 
