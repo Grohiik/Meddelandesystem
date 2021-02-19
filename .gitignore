@@ -38,3 +38,5 @@ out
 .project
 .classpath
 *.iml
+*.vpp.lck
+*.vpp.bak*
