@@ -9,3 +9,4 @@ UseTab: Never
 AlignTrailingComments: true
 AlignAfterOpenBracket: Align
 UseCRLF: false
+AllowShortIfStatementsOnASingleLine: WithoutElse

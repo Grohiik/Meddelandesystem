@@ -24,7 +24,7 @@ For IntelliJ you'll need to open the `pom.xml` file in this project and it'll pr
 
 For **Windows** the clang-format can be found at https://releases.llvm.org/, head over to the latest `download` link, scroll down to **Pre-Built Binaries** and download the Windows one. 
 
-**NOTE (Windows Install)**: When installing make sure you select `Add LLVM to the system PATH for ...`. This make sure that you can type `clang-format` in your terminal.
+**NOTE (Windows Install)**: When installing make sure you select `Add LLVM to the system PATH for ...`. This makes sure that you can type `clang-format` in your terminal.
 
 For the **macOS** you can use `brew` to install and **Linux** it is best to use your package manager.
 
