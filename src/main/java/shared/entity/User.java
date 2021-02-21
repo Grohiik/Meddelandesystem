@@ -1,3 +1,7 @@
+/**
+ * @version 1.0
+ * @author Eric Lundin al3214
+ */
 package shared.entity;
 
 import javax.swing.*;
@@ -36,7 +40,7 @@ public class User {
 
     /**
      *
-     * @return returns a hascode of the username String
+     * @return returns a hashcode of the username String
      */
     public int hashCode() {
         return username.hashCode();
