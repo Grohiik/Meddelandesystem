@@ -18,6 +18,7 @@
       - [Control](#control-1)
   - [Ideas](#ideas)
     - [GUI First Iterations](#gui-first-iterations)
+    - [GUI Second Iterations](#gui-second-iterations)
     - [Group chat](#group-chat)
 
 ## Requirements
@@ -150,6 +151,10 @@ class ClientController {
 ### GUI First Iterations
 
 ![](res/GuiFirstiteration.png)
+
+### GUI Second Iterations
+
+![](res/Guiseconditeration.png)
 
 ### Group chat
 
