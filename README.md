@@ -45,7 +45,6 @@ Meddelandesystem
 │  │     │  ├─ entity
 │  │     │  └─ StartClient.java
 │  │     ├─ server
-│  │     │  ├─ boundary
 │  │     │  ├─ control
 │  │     │  ├─ entity
 │  │     │  └─ StartServer.java
