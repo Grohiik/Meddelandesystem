@@ -1,5 +1,25 @@
 # Meddelandesystem Notes
 
+## Table of Contents
+
+- [Meddelandesystem Notes](#meddelandesystem-notes)
+  - [Table of Contents](#table-of-contents)
+  - [Requirements](#requirements)
+    - [Server](#server)
+    - [Client](#client)
+  - [Design of the system](#design-of-the-system)
+    - [Shared](#shared)
+      - [Entity](#entity)
+    - [Server](#server-1)
+      - [Control](#control)
+      - [Entity](#entity-1)
+    - [Client](#client-1)
+      - [Boundary](#boundary)
+      - [Control](#control-1)
+  - [Ideas](#ideas)
+    - [GUI First Iterations](#gui-first-iterations)
+    - [Group chat](#group-chat)
+
 ## Requirements
 
 ### Server
@@ -124,3 +144,12 @@ class ClientController {
     }
 }
 ```
+
+## Ideas
+
+### GUI First Iterations
+
+![](res/GuiFirstiteration.png)
+
+### Group chat
+
