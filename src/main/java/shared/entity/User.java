@@ -1,4 +1,4 @@
-package client.entity;
+package shared.entity;
 
 import javax.swing.*;
 
