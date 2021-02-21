@@ -1,5 +1,8 @@
 package client;
 
+import client.boundary.MainFrame;
+import client.control.ClientController;
+
 /**
  * StartClient
  *
@@ -8,5 +11,6 @@ package client;
 public class StartClient {
     public static void main(String[] args) {
         System.out.println("Hello, Client!");
+        MainFrame mainFrame = new MainFrame(new ClientController());
     }
 }
