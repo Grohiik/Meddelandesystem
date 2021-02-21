@@ -30,15 +30,27 @@
 #### Entity
 
 ```java
-class User {}
+class User {
+    String username;
+    ImageIcon image;
+}
 ```
 
 ```java
-class Message {}
+class Message {
+    User sender;
+    User[] receiverList;
+    String text;
+    ImageIcon image; //can be null in a sent message
+    String sentTime; //server's job to write
+    String receivedTime; //see above
+}
 ```
 
 ```java
-class Clients {}
+class Clients {
+    HashMap<User, Client> clients;
+}
 ```
 
 ### Server
@@ -46,13 +58,43 @@ class Clients {}
 #### Control
 
 ```java
-class ServerController {}
+class ServerController {
+    Buffer<Message> receivedMessages;
+
+    sendMessage(Message);
+    logTraffic();
+
+    class ServerSocketListener {
+        //listens for a tcp connection and creates a new thread for that connection.
+        //putts that object in an ArrayList too keep track of too.
+    }
+
+    class MessageListener { //one per connection
+        //listens for a message object and puts it in a buffer
+        //adds a received timestamp first.
+    }
+
+    class MessageSender { //one
+        //tries too get messages from a buffer.
+        //checks if the user it is meant for is online
+        //if it is it sends the message using MessageListener's socket (THIS IS LIKELY TO BREAK TRY TOO FIX IT)
+        //if it isn't it adds it too UnsentMessages too be sent later.
+    }
+}
+```
+
+```java
+class Logger {
+    
+}
 ```
 
 #### Entity
 
 ```java
 class UnsentMessages {}
+    storeMessages(Message);
+    // called upon later so they get sent when receiver comes online
 ```
 
 ### Client
@@ -60,11 +102,25 @@ class UnsentMessages {}
 #### Boundary
 
 ```java
-class ClientUI {}
+class ClientUI {
+    // All the interactions between the user
+    // Calls the ClientController
+}
 ```
 
 #### Control
 
 ```java
-class ClientController {}
+class ClientController {
+    Buffer<Message> incomingMessageBuffer;
+    Buffer<Message> outgoingMessageBuffer;
+
+    storeContacts(contactList);
+    sendMessage(Message);
+
+    class Listener {
+        //run that listens too messages and puts them in a buffer
+        //and fires a propertyChange too let the gui know there is a new message
+    }
+}
 ```
