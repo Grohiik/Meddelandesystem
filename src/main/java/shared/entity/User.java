@@ -5,8 +5,7 @@ import javax.swing.*;
 /**
  * The user class is used to identify users and direct messages to the right client/clients
  */
-public class User
-{
+public class User {
     private String username;
     ImageIcon image;
 
@@ -19,23 +18,19 @@ public class User
         this.username = username;
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
-    public ImageIcon getImage()
-    {
+    public ImageIcon getImage() {
         return image;
     }
 
-    public void setImage(ImageIcon image)
-    {
+    public void setImage(ImageIcon image) {
         this.image = image;
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -43,7 +38,7 @@ public class User
      *
      * @return returns a hascode of the username String
      */
-    public int hashCode(){
+    public int hashCode() {
         return username.hashCode();
     }
 
@@ -52,9 +47,9 @@ public class User
      * @param obj
      * @return
      */
-    public boolean equals(Object obj){
-        if(obj != null && obj instanceof User){
-            return username.equals(((User)obj).getUsername());
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof User) {
+            return username.equals(((User) obj).getUsername());
         }
         return false;
     }
