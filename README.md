@@ -32,17 +32,25 @@ To use `clang-format` with **IntelliJ** you can use this extension [ClangFormat]
 
 **NOTE (Windows)**: If the extension doesn't format your code you can go to `File → Settings... → Tools → clang-format`. In the `clang-format binary` you can try adding `clang-format.exe` instead. If it doesn't work you can specify the `PATH` that points to where `LLVM/bin` is in your system.
 
-### Code Structure
+### Project Structure
 
 ```
 Meddelandesystem
 ├─ src
 │  ├─ main
 │  │  └─ java
-│  │     ├─ shared
-│  │     │  └─ User.java
 │  │     ├─ client
-│  │     └─ server
+│  │     │  ├─ boundary
+│  │     │  ├─ control
+│  │     │  ├─ entity
+│  │     │  └─ StartClient.java
+│  │     ├─ server
+│  │     │  ├─ control
+│  │     │  ├─ entity
+│  │     │  └─ StartServer.java
+│  │     └─ shared
+│  │        └─ entity
+│  │           └─ User.java
 │  └─ test
 │     └─ java
 ├─ .clang-format
@@ -51,7 +59,6 @@ Meddelandesystem
 ├─ pom.xml
 └─ README.md
 ```
-
 ### How to run
 
 **Using IntelliJ**
@@ -98,4 +105,4 @@ This will created an html page in the `docs/apidocs`.
 
 Go to → Tools → Generate JavaDoc...
 
-A Window will pop up, select `Whole project` and set `Output directory` to `docs/apidocs` and press `OK`. Javadoc will generate html docs for you.
+A Window will pop up, select `Whole project` and set `Output directory` to `docs/apidocs` and press `OK`. Javadoc will generate html docs for **you**.
