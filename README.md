@@ -28,11 +28,18 @@ For **Windows** the clang-format can be found at https://releases.llvm.org/, hea
 
 For the **macOS** you can use `brew` to install and **Linux** it is best to use your package manager.
 
-To use `clang-format` with **IntelliJ** you can use this extension [ClangFormat](https://plugins.jetbrains.com/plugin/13359-clangformat). This will add the option in `Code → Reformat Code with clang-format`, you'll be using this option instead of the regular `Reformat Code`.
+To use `clang-format` with **IntelliJ**, there two ways. One is to use this extension [ClangFormat](https://plugins.jetbrains.com/plugin/13359-clangformat). This will add the option in `Code → Reformat Code with clang-format`, you'll be using this option instead of the regular `Reformat Code`.
+
+The second one is the set up External Tools. This guide can be follow down below in [IntelliJ External Tools](#intellij-external-tools).
+
 
 **NOTE (Windows)**: If the extension doesn't format your code you can go to `File → Settings... → Tools → clang-format`. In the `clang-format binary` you can try adding `clang-format.exe` instead. If it doesn't work you can specify the `PATH` that points to where `LLVM/bin` is in your system. If this doesn't fix your problem then you can follow the guide below on how to set up External Tools.
 
-**NOTE IntelliJ**: If the extension doesn't work you can setup an External Tool that runs the clang-format for formatting the code. To create a tool you can
+**NOTE IntelliJ**: If the extension doesn't work you can [setup an External Tool](#intellij-external-tools) that runs the clang-format for formatting the code. 
+
+##### IntelliJ External Tools
+
+To create a tool you can
 
 1. Go to `File → Settings... → Tools → External Tools`.
 2. Add a new tool by pressing the plus icon.
@@ -40,6 +47,8 @@ To use `clang-format` with **IntelliJ** you can use this extension [ClangFormat]
 4. In `Program:` field you take the whole path to where clang-format executable on your system. If your environment variable is already set you can just input `clang-format`.
 5. In `Arguments:` you need to input these value `-i $FilePath$`.
 6. In `Working directory:` you need `$FileDir$`
+
+Now when you want to format your code you can go to `Tools → External Tools → clang-format` and it'll run the `clang-format` command for you and reformat the file you're currently looking at.
 
 ### Project Structure
 
