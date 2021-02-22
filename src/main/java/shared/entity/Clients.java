@@ -3,12 +3,14 @@ package shared.entity;
 import java.util.HashMap;
 
 /**
- * Class that handles all Clients, might be moved to another direcroty
+ * Class that handles all Clients, might be moved to another directory
+ * @author Marcus Linné
+ * @version 1.0
+ * @since 21/2-2021
  */
-public class Clients
-{
-    private HashMap<User, Client> clients; //TODO complete this, might need more of the code layout to fully complete
-    //missing some additions
+public class Clients {
+    private HashMap<User, Client>clients; // TODO complete this, might need more of the code layout to fully complete
+    // missing some additions
 
     /**
      * says error due to sync but should be sync
@@ -28,5 +30,5 @@ public class Clients
         return get(user);
     }
 
-    //TODO more sync methods
+    // TODO more sync methods
 }
