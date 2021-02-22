@@ -1,5 +1,7 @@
 package client;
 
+import client.boundary.ClientUI;
+
 /**
  * StartClient
  *
@@ -8,5 +10,6 @@ package client;
 public class StartClient {
     public static void main(String[] args) {
         System.out.println("Hello, Client!");
+        new ClientUI();
     }
 }
