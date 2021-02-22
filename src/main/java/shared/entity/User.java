@@ -46,7 +46,7 @@ public class User implements Serializable {
     }
 
     /**
-     *
+     * This function is usefull for comparing stuff
      * @param obj
      * @return
      */
