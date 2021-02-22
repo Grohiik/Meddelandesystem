@@ -5,11 +5,13 @@
 package shared.entity;
 
 import javax.swing.*;
+import java.io.Serializable;
 
 /**
  * The user class is used to identify users and direct messages to the right client/clients
  */
-public class User {
+public class User implements Serializable
+{
     private String username;
     ImageIcon image;
 
