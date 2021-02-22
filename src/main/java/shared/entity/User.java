@@ -1,17 +1,14 @@
-/**
- * @version 1.0
- * @author Eric Lundin al3214
- */
 package shared.entity;
 
-import javax.swing.*;
 import java.io.Serializable;
+import javax.swing.*;
 
 /**
  * The user class is used to identify users and direct messages to the right client/clients
+ * @author Eric Lundin al3214
+ * @version 1.0
  */
-public class User implements Serializable
-{
+public class User implements Serializable {
     private String username;
     ImageIcon image;
 
