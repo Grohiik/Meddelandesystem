@@ -2,6 +2,7 @@ package client.control;
 
 import client.boundary.ClientUI;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ImageIcon;
 
 /**
@@ -46,8 +47,6 @@ public class ClientController {
      * @param msg Text message
      */
     public void sendMessage(String msg) {
-        // System.out.print("Message: ");
-        // System.out.println(msg);
         toBeSend.add(msg);
     }
 
@@ -65,7 +64,7 @@ public class ClientController {
      */
     public void sendTyping() {}
 
-    public ArrayList<String> getTextMessages() {
+    public List<String> getTextMessages() {
         return toBeSend;
     }
 }

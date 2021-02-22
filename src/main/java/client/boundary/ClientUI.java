@@ -144,6 +144,7 @@ public class ClientUI {
      */
     private void onSend() {
         controller.sendMessage(messageTextField.getText());
+        messageTextField.setText("");
     }
 
     /**
