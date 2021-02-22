@@ -6,7 +6,7 @@ To get started with development please head over to [Development](#development) 
 
 ## Development
 
-Please read through this before writing anything to the codebase. The project uses maven as build system and it is IDE agnostic. This means that you can use your favorite IDE or Editor. 
+Please read through this before writing anything to the codebase. The project uses maven as build system and it is IDE agnostic. This means that you can use your favorite IDE or Editor.
 
 For formatting code and to run the code you'll need to follow the guide below.
 
@@ -22,7 +22,7 @@ For IntelliJ you'll need to open the `pom.xml` file in this project and it'll pr
 
 - The codebase use 4 spaces as indentation.
 
-- camelCase 
+- camelCase
 
 - Constant value should be in SNAKE_CASE with all CAPS.
 
@@ -45,7 +45,7 @@ void hello()
 ```
 
 ```cpp
-void hello() 
+void hello()
 {} // OK
 ```
 
@@ -63,10 +63,9 @@ To use `clang-format` with **IntelliJ**, there two ways. One is to use this exte
 
 The second one is the set up External Tools. This guide can be follow down below in [IntelliJ External Tools](#external-tools).
 
-
 **NOTE (Windows)**: If the extension doesn't format your code you can go to `File → Settings... → Tools → clang-format`. In the `clang-format binary` you can try adding `clang-format.exe` instead. If it doesn't work you can specify the `PATH` that points to where `LLVM/bin` is in your system. If this doesn't fix your problem then you can follow the guide below on how to set up External Tools.
 
-**NOTE IntelliJ**: If the extension doesn't work you can [setup an External Tool](#intellij-external-tools) that runs the clang-format for formatting the code. 
+**NOTE IntelliJ**: If the extension doesn't work you can [setup an External Tool](#intellij-external-tools) that runs the clang-format for formatting the code.
 
 ##### External Tools
 
@@ -173,4 +172,4 @@ Two jar files will be generated one, for the client and one for the server.
 
 **Using IntelliJ**
 
-Open this project in IntelliJ, there should be a tab on the right side that has an icon with letter "M" and name under that says "maven". Open it up and you'll see the project name, expand it and you'll see `Lifecycle` and `Plugins`. Expand the `Lifecycle` and use the command **package**. This will generate the jar files in the target directory.
+Open this project in IntelliJ, there should be a tab on the right side that has an icon with letter "M" and name under that says "Maven". Open it up and you'll see the project name, expand it and you'll see `Lifecycle` and `Plugins`. Expand the `Lifecycle` and use the command **package**. This will generate the jar files in the target directory.
