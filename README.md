@@ -36,7 +36,7 @@ For **Windows** the clang-format can be found at https://releases.llvm.org/, hea
 
 For the **macOS** you can use `brew` to install and **Linux** it is best to use your package manager.
 
-**NOTE**: When formatting make sure you don't put extra new line before opening brace. `clang-format` will always keep at least one newline. Example down below is only the illustration on what not to do when formatting with `clang-format`. This is not how the style should look like.
+**NOTE**: When formatting make sure you don't put extra newline before opening brace. `clang-format` will always keep at least one newline. Example down below is only the illustration on what not to do when formatting with `clang-format`. This is not how the style should look like.
 
 ```cpp
 void hello()
