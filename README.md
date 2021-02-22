@@ -8,7 +8,7 @@ To get started with development please head over to [Development](#development) 
 
 Please read through this before writing anything to the codebase. The project uses maven as build system and it is IDE agnostic. This means that you can use your favorite IDE or Editor.
 
-For formatting code and to run the code you'll need to follow the guide below.
+To format the code and to run the code you'll need to follow the guide below.
 
 **Using IntelliJ**
 
