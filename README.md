@@ -44,7 +44,7 @@ To create a tool you can
 1. Go to `File → Settings... → Tools → External Tools`.
 2. Add a new tool by pressing the plus icon.
 3. Give it a name such as `clang-format`.
-4. In `Program:` field you take the whole path to where clang-format executable on your system. If your environment variable is already set you can just input `clang-format`.
+4. In `Program:` field you can take the whole path to where clang-format executable is on your system. If your environment variable is already set you can just input `clang-format`.
 5. In `Arguments:` you need to input these value `-i $FilePath$`.
 6. In `Working directory:` you need `$FileDir$`
 
