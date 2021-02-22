@@ -1,15 +1,16 @@
 package client;
 
-import client.boundary.ClientUI;
+import client.control.ClientController;
 
 /**
  * StartClient
  *
+ * @author Pratchaya Khansomboon
  * @version 1.0
  */
 public class StartClient {
     public static void main(String[] args) {
-        System.out.println("Hello, Client!");
-        new ClientUI();
+        var controller = new ClientController();
+        controller.startGUI();
     }
 }
