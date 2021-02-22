@@ -6,7 +6,6 @@ import java.util.HashMap;
  * Class that handles all Clients, might be moved to another directory
  * @author Marcus Linné
  * @version 1.0
- * @since 21/2-2021
  */
 public class Clients {
     private HashMap<User, Client>clients; // TODO complete this, might need more of the code layout to fully complete
