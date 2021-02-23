@@ -11,22 +11,28 @@ import java.util.Scanner;
 import shared.entity.Message;
 
 public class Logger implements PropertyChangeListener {
-    private String loggerFileName;
-    private ArrayList<Message> messageList = new ArrayList<>();
-    OutputStream out;
-    ObjectOutputStream outputStream;
+    private final String loggerFileName;
+    private ArrayList<Message> messageList;
     LoggerUI loggerUI;
 
     public Logger(ServerController serverController, String loggerFilename) {
         this.loggerFileName = loggerFilename;
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(loggerFilename);
-            outputStream = new ObjectOutputStream(fileOutputStream);
-            serverController.addLoggerListener(this);
-        } catch (IOException e) {
+            FileInputStream fileInputStream = new FileInputStream(loggerFilename);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            messageList = (ArrayList<Message>) objectInputStream.readObject();
+        } catch (FileNotFoundException e) {
+            File file = new File(loggerFileName);
+            try {
+                file.createNewFile();
+                messageList = new ArrayList<>();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            System.err.println("You have a problem with your logger file");
         }
+        serverController.addLoggerListener(this);
         loggerUI = new LoggerUI();
         loggerUI.start();
     }
@@ -35,7 +41,9 @@ public class Logger implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         messageList.add((Message) evt.getNewValue());
         try {
-            outputStream.writeObject(evt.getNewValue());
+            FileOutputStream fileOutputStream = new FileOutputStream(loggerFileName);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(messageList);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -44,15 +52,18 @@ public class Logger implements PropertyChangeListener {
     private class LoggerUI extends Thread {
         @Override
         public void run() {
+            Date startDate;
+            Date endDate;
+            Date currentDate;
             Scanner scanner = new Scanner(System.in);
             while (!interrupted()) {
                 try {
                     System.out.println("Enter start date");
-                    Date startDate = DateFormat.getDateInstance().parse(scanner.nextLine());
+                    startDate = DateFormat.getDateInstance().parse(scanner.nextLine());
                     System.out.println("Enter end date");
-                    Date endDate = DateFormat.getDateInstance().parse(scanner.nextLine());
+                    endDate = DateFormat.getDateInstance().parse(scanner.nextLine());
                     for (Message currentMessage : messageList) {
-                        Date currentDate = currentMessage.getReceiveDate();
+                        currentDate = currentMessage.getReceiveDate();
                         if (currentDate.after(startDate) && currentDate.before(endDate)) {
                             System.out.println(currentDate);
                         }

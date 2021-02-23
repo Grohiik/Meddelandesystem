@@ -9,8 +9,7 @@ public class Message implements Serializable {
 
     public Message() {}
 
-    public Date getReceiveDate()
-    {
+    public Date getReceiveDate() {
         return receivedTime;
     }
 }
