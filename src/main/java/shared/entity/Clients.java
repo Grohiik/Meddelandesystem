@@ -16,7 +16,7 @@ public class Clients {
      * @param user which user it is
      * @param client which client it is
      */
-    public synchronized put(User user, Client client) {
+    public synchronized void put(User user, Client client) {
         clients.put(user, client);
     }
 
