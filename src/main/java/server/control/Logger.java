@@ -11,6 +11,7 @@ public class Logger implements PropertyChangeListener {
     private ArrayList<Message> messageList = new ArrayList<>();
     OutputStream out;
     ObjectOutputStream outputStream;
+    LoggerUI loggerUI;
 
     public Logger(ServerController serverController, String loggerFilename) {
         this.loggerFileName = loggerFilename;
@@ -22,6 +23,8 @@ public class Logger implements PropertyChangeListener {
             e.printStackTrace();
             System.err.println("You have a problem with your logger file");
         }
+        loggerUI = new LoggerUI();
+        loggerUI.start();
     }
 
     @Override
@@ -34,5 +37,8 @@ public class Logger implements PropertyChangeListener {
         }
     }
 
-    private class LoggerUI extends Thread {}
+    private class LoggerUI extends Thread {
+        @Override
+        public void run() {}
+    }
 }
