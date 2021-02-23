@@ -5,6 +5,7 @@ import javax.swing.*;
 
 /**
  * The user class is used to identify users and direct messages to the right client/clients
+ *
  * @author Eric Lundin al3214
  * @version 1.0
  */

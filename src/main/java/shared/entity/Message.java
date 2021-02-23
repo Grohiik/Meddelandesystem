@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 
 /**
  * Message
+ *
  * @author Christian Heisterkamp
  * @version 1.0
  */
