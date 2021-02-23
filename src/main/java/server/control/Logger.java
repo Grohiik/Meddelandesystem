@@ -10,11 +10,20 @@ import java.util.Date;
 import java.util.Scanner;
 import shared.entity.Message;
 
+/**
+ * Logger that logs all messages being sent too the server.
+ */
 public class Logger implements PropertyChangeListener {
     private final String loggerFileName;
     private ArrayList<Message> messageList;
     LoggerUI loggerUI;
 
+    /**
+     * Takes a ServerController and subscribes too its PropertyChangeSupport,
+     * and a file to store the traffic in. creates a new file if it doesn't exist.
+     * @param serverController The ServerController to subscribe to.
+     * @param loggerFilename The filename of the file to store the traffic in
+     */
     public Logger(ServerController serverController, String loggerFilename) {
         this.loggerFileName = loggerFilename;
         try {
@@ -37,6 +46,11 @@ public class Logger implements PropertyChangeListener {
         loggerUI.start();
     }
 
+    /**
+     * propertyChange that gets called when the server receives a new message.
+     * Adds the message to the messageList and rewrites object file.
+     * @param evt event with the "new Value" being the message too add
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         messageList.add((Message) evt.getNewValue());
@@ -49,6 +63,11 @@ public class Logger implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Runs on a separate thread and in an infinite loop.
+     * Gets a start date and an end date,
+     * prints every message that was send inside of those dates
+     */
     private class LoggerUI extends Thread {
         @Override
         public void run() {
