@@ -16,7 +16,7 @@ public class ClientControllerTest {
     @Test
     public void testSendTextMessage() {
         var messages = new String[] {"Hello", "World!"};
-        for (String message : messages) controller.sendMessage(message);
+        for (String message : messages) controller.sendTextMessage(message);
 
         assertArrayEquals(messages, controller.getTextMessages().toArray());
     }

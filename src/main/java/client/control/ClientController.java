@@ -1,9 +1,14 @@
 package client.control;
 
 import client.boundary.ClientUI;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.ImageIcon;
 
 /**
  * ClientController
@@ -16,6 +21,30 @@ public class ClientController {
     private ArrayList<String> toBeSend = new ArrayList<>();
     private boolean isConnected = false;
 
+    private Socket socket;
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
+
+    private InetAddress serverAddress;
+    private int serverPort;
+
+    private Listener listener;
+
+    private ArrayList<String> messages = new ArrayList<>();
+
+    public ClientController() {
+        this("localhost", 3000);
+    }
+
+    public ClientController(String address, int port) {
+        try {
+            this.setServerAddress(address);
+            this.setServerPort(port);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Open up the GUI
      */
@@ -23,11 +52,77 @@ public class ClientController {
         ui = new ClientUI(this);
     }
 
+    public void updateGUI() {
+        String a[] = new String[messages.size()];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = messages.get(i);
+        }
+        ui.setMessages(a);
+    }
+
+    /**
+     *
+     *
+     * @param port Server port
+     */
+    public void setServerPort(int port) {
+        this.serverPort = port;
+    }
+
+    /**
+     * Set the server address to connect to.
+     *
+     * @param address The server raw address
+     * @throws UnknownHostException
+     */
+    public void setServerAddress(String address) throws UnknownHostException {
+        setServerAddress(InetAddress.getByName(address));
+    }
+
+    /**
+     * Set the server address
+     *
+     * @param address The server address
+     */
+    public void setServerAddress(InetAddress address) {
+        this.serverAddress = address;
+    }
+
     /**
      * Connect to the server
      */
-    public void connectToServer() {
-        isConnected = true;
+    public void connect() {
+        if (isConnected) return;
+
+        System.out.println("Connecting...");
+        try {
+            socket = new Socket(serverAddress.getHostName(), serverPort);
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
+
+            listener = new Listener();
+            listener.start();
+
+            isConnected = true;
+        } catch (IOException ioe) {
+            socket = null;
+            isConnected = false;
+        }
+    }
+
+    public void disconnect() {
+        if (!isConnected) return;
+
+        System.out.println("Disconnecting...");
+
+        try {
+            listener.interrupt();
+            socket.close();
+            socket = null;
+            listener = null;
+            isConnected = false;
+        } catch (IOException e) {
+        }
     }
 
     /**
@@ -46,18 +141,19 @@ public class ClientController {
      *
      * @param msg Text message
      */
-    public void sendMessage(String msg) {
+    public void sendTextMessage(String msg) {
+        if (isConnected) try {
+                // FIXME: Create Message object
+                oos.writeUTF(msg);
+                oos.flush();
+            } catch (IOException e) {
+                System.out.println("ERROR SENDING MESSAGE");
+            }
+
         toBeSend.add(msg);
     }
 
-    /**
-     * Send the image message
-     * @param image
-     */
-    public void sendMessage(ImageIcon image) {
-        System.out.print("Message: ");
-        System.out.println("[IMAGE]");
-    }
+    public void sendFileMessage(String filename) {}
 
     /**
      * Send typing heartbeat
@@ -66,5 +162,31 @@ public class ClientController {
 
     public List<String> getTextMessages() {
         return toBeSend;
+    }
+
+    // FIXEME: Entity class for Message
+    private void sendMessage() {}
+
+    private class Listener extends Thread {
+        @Override
+        public void run() {
+            System.out.println("Listening...");
+            while (!socket.isClosed() && !Thread.interrupted()) {
+                String msg;
+
+                try {
+                    // FIXME: Read Message object
+                    msg = ois.readUTF();
+                    messages.add(msg);
+                    updateGUI();
+                    // System.out.println(msg);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    disconnect();
+                    break;
+                }
+            }
+        }
     }
 }

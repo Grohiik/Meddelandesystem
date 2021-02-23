@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -28,17 +29,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @version 1.0
  */
 public class ClientUI {
-    private final DateTimeFormatter DATE_FORMAT =
-        DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private final JFileChooser FILE_CHOOSER = new JFileChooser();
+    private ClientController controller;
 
     private JButton fileButton, sendButton;
     private JTextField messageTextField;
 
     private JFrame frame;
-
-    private ClientController controller;
-
+    private JPanel mainPanel;
+    private ChatPanel chatPanel;
     /**
      * Create the main gui
      *
@@ -47,9 +46,11 @@ public class ClientUI {
     public ClientUI(ClientController controller) {
         this.controller = controller;
 
-        frame = new JFrame("Chat Frame");
+        frame = new JFrame("Message Cat");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(800, 480);
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
 
         changeLook();
         setupFileChooser();
@@ -57,53 +58,47 @@ public class ClientUI {
         // Creating the MenuBar and adding components
         JMenuBar mb = new JMenuBar();
         JMenu m1 = new JMenu("File");
-        JMenu m2 = new JMenu("Help");
+        JMenu m2 = new JMenu("Tools");
         mb.add(m1);
         mb.add(m2);
-        JMenuItem m11 = new JMenuItem("Open");
-        JMenuItem m22 = new JMenuItem("Save as");
+        JMenuItem m11 = new JMenuItem("Hello");
+        JMenuItem connectMI = new JMenuItem("Connect to server");
+        JMenuItem disconnectMI = new JMenuItem("Disconnect from server");
+        disconnectMI.addActionListener(e -> onDisconnect());
+        connectMI.addActionListener(e -> onConnect());
         m1.add(m11);
-        m1.add(m22);
+        m2.add(connectMI);
+        m2.add(disconnectMI);
 
-        // Creating the panel at bottom and adding components
-        JPanel panel = new JPanel(); // the panel is not visible in output
-        JPanel btnPanel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        messageTextField = new JTextField(); // accepts upto 10 characters
-        messageTextField.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        messageTextField.addActionListener(e -> onSend());
-        messageTextField.addCaretListener(e -> onTyping());
-
-        fileButton = new JButton("File");
-        fileButton.addActionListener(e -> onFileButton());
-        sendButton = new JButton("Send");
-        sendButton.addActionListener(e -> onSend());
-        panel.add(messageTextField, BorderLayout.CENTER); // Components Added using Flow Layout
-        btnPanel.add(fileButton);
-        btnPanel.add(sendButton);
-        panel.add(btnPanel, BorderLayout.LINE_END);
-
-        JTextPane txtPane = new JTextPane();
-        JScrollPane jsp = new JScrollPane(txtPane);
-        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        // Adding Components to the frame.
-        frame.getContentPane().add(BorderLayout.SOUTH, panel);
-        frame.getContentPane().add(BorderLayout.NORTH, mb);
-        frame.getContentPane().add(BorderLayout.CENTER, jsp);
+        chatPanel = new ChatPanel(this);
+        mainPanel.add(chatPanel.getPanel(), BorderLayout.CENTER);
+        mainPanel.add(BorderLayout.NORTH, mb);
+        frame.setContentPane(mainPanel);
         frame.setVisible(true);
     }
 
-    /**
-     * File button pressed event
-     */
-    private void onFileButton() {
-        int isApproved = showFileDialog("Choose an image");
+    public void setMessages(String[] messages) {
+        chatPanel.setMessages(messages);
+    }
 
-        if (isApproved == JFileChooser.APPROVE_OPTION) {
-            File f = getSelectedFile();
-            System.out.println(f.getAbsolutePath());
-        }
+    /**
+     * Send text message
+     *
+     * @param msg Message to send
+     */
+    boolean sendText(String msg) {
+        controller.sendTextMessage(msg);
+        return controller.getIsConnected();
+    }
+
+    /**
+     * Send file message
+     *
+     * @param filename File path on the system
+     */
+    boolean sendFile(String filename) {
+        controller.sendFileMessage(filename);
+        return controller.getIsConnected();
     }
 
     /**
@@ -139,20 +134,12 @@ public class ClientUI {
         return FILE_CHOOSER.getSelectedFile();
     }
 
-    /**
-     * Send event from button
-     */
-    private void onSend() {
-        controller.sendMessage(messageTextField.getText());
-        messageTextField.setText("");
+    private void onConnect() {
+        controller.connect();
     }
 
-    /**
-     * Typing event from the input field
-     */
-    private void onTyping() {
-        System.out.print(DATE_FORMAT.format(LocalDateTime.now()));
-        System.out.println(": Typing...");
+    private void onDisconnect() {
+        controller.disconnect();
     }
 
     private void setupFileChooser() {
