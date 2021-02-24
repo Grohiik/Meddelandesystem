@@ -1,4 +1,4 @@
-package server.control;
+package server.entity;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
+import server.control.ServerController;
 import shared.entity.Message;
 
 /**
