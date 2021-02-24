@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class ClientController {
 
     private Listener listener;
 
+    // FIXME: Remove this
+    private String username;
+    private ArrayList<String> users = new ArrayList<>();
     private ArrayList<String> messages = new ArrayList<>();
 
     public ClientController() {
@@ -50,14 +54,12 @@ public class ClientController {
      */
     public void startGUI() {
         ui = new ClientUI(this);
+        username = ui.getName();
     }
 
     public void updateGUI() {
-        String a[] = new String[messages.size()];
-        for (int i = 0; i < a.length; i++) {
-            a[i] = messages.get(i);
-        }
-        ui.setMessages(a);
+        ui.addMessage(LocalTime.now().toString(), users.get(users.size() - 1),
+                      messages.get(messages.size() - 1));
     }
 
     /**
@@ -143,7 +145,7 @@ public class ClientController {
      */
     public void sendTextMessage(String msg) {
         if (isConnected) try {
-                // FIXME: Create Message object
+                oos.writeUTF(username);
                 oos.writeUTF(msg);
                 oos.flush();
             } catch (IOException e) {
@@ -172,15 +174,13 @@ public class ClientController {
         public void run() {
             System.out.println("Listening...");
             while (!socket.isClosed() && !Thread.interrupted()) {
-                String msg;
-
                 try {
                     // FIXME: Read Message object
-                    msg = ois.readUTF();
+                    var user = ois.readUTF();
+                    var msg = ois.readUTF();
+                    users.add(user);
                     messages.add(msg);
                     updateGUI();
-                    // System.out.println(msg);
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     disconnect();
