@@ -30,7 +30,7 @@ public class Clients {
      * @return the user it is
      */
     public synchronized Client get(User user) {
-        return get(user);
+        return clients.get(user);
     }
 
     // TODO more sync methods
