@@ -11,6 +11,7 @@ import java.net.Socket;
  * @version 1.0
  */
 public class Client {
+    private boolean isOnline = false;
     private ObjectOutputStream oos;
 
     /**
@@ -35,5 +36,13 @@ public class Client {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public void setIsOnline(boolean tof) {
+        isOnline = tof;
+    }
+
+    public boolean getIsOnline() {
+        return isOnline;
     }
 }
