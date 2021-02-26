@@ -1,15 +1,9 @@
 package client.control;
 
 import client.boundary.ClientUI;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.ImageIcon;
+import shared.entity.Message;
+import shared.entity.User;
 
 /**
  * ClientController
@@ -17,53 +11,41 @@ import java.util.List;
  * @author Pratchaya Khansomboon
  * @version 1.0
  */
-public class ClientController {
-    private ClientUI ui;
-    private ArrayList<String> toBeSend = new ArrayList<>();
-    private boolean isConnected = false;
+final public class ClientController {
+    private MessageWorker messageWorker;
 
-    private Socket socket;
-    private ObjectInputStream ois;
-    private ObjectOutputStream oos;
+    private ClientUI clientUI;
 
-    private InetAddress serverAddress;
+    // Remote server configurations
+    private String serverAddress;
     private int serverPort;
 
-    private Listener listener;
-
-    // FIXME: Remove this
-    private String username;
-    private ArrayList<String> users = new ArrayList<>();
-    private ArrayList<String> messages = new ArrayList<>();
+    private User user;
 
     public ClientController() {
         this("localhost", 3000);
     }
 
     public ClientController(String address, int port) {
-        try {
-            this.setServerAddress(address);
-            this.setServerPort(port);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        this.serverAddress = address;
+        this.serverPort = port;
     }
 
-    /**
-     * Open up the GUI
-     */
     public void startGUI() {
-        ui = new ClientUI(this);
-        username = ui.getName();
+        clientUI = new ClientUI(this);
+
+        // FIXME: READ FROM DISK FIRST BEFORE LOGIN
+        clientUI.showLogin((username, filename) -> login(username, filename));
     }
 
-    public void updateGUI() {
-        ui.addMessage(LocalTime.now().toString(), users.get(users.size() - 1),
-                      messages.get(messages.size() - 1));
+    public void login(String username, String filename) {
+        createUser(username, filename);
+        clientUI.showMain();
+        connect();
     }
 
     /**
-     *
+     * Set the port that the server is listening on.
      *
      * @param port Server port
      */
@@ -75,18 +57,8 @@ public class ClientController {
      * Set the server address to connect to.
      *
      * @param address The server raw address
-     * @throws UnknownHostException
      */
-    public void setServerAddress(String address) throws UnknownHostException {
-        setServerAddress(InetAddress.getByName(address));
-    }
-
-    /**
-     * Set the server address
-     *
-     * @param address The server address
-     */
-    public void setServerAddress(InetAddress address) {
+    public void setServerAddress(String address) {
         this.serverAddress = address;
     }
 
@@ -94,37 +66,26 @@ public class ClientController {
      * Connect to the server
      */
     public void connect() {
-        if (isConnected) return;
+        if (messageWorker == null) {
+            messageWorker = new MessageWorker(serverAddress, serverPort);
 
-        System.out.println("Connecting...");
-        try {
-            socket = new Socket(serverAddress.getHostName(), serverPort);
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            ois = new ObjectInputStream(socket.getInputStream());
+            // Listen for incoming messages
+            messageWorker.setOnMessage(msg -> onMessage(msg));
 
-            listener = new Listener();
-            listener.start();
-
-            isConnected = true;
-        } catch (IOException ioe) {
-            socket = null;
-            isConnected = false;
+            // Listen for connection status
+            messageWorker.setOnFailedConnect(() -> onFailedConnect());
+            messageWorker.setOnConnect(() -> onConnect());
+            messageWorker.setOnDisconnect(() -> onDisconnect());
         }
+
+        messageWorker.connect();
     }
 
+    /**
+     * Disconnect from the server
+     */
     public void disconnect() {
-        if (!isConnected) return;
-
-        System.out.println("Disconnecting...");
-
-        try {
-            listener.interrupt();
-            socket.close();
-            socket = null;
-            listener = null;
-            isConnected = false;
-        } catch (IOException e) {
-        }
+        if (messageWorker != null) messageWorker.disconnect();
     }
 
     /**
@@ -133,60 +94,69 @@ public class ClientController {
      * @return True for connected, False for not connected
      */
     public boolean getIsConnected() {
-        return isConnected;
-    }
-
-    public void addContact(int selectedIndex) {}
-
-    /**
-     * Send the text message to the server
-     *
-     * @param msg Text message
-     */
-    public void sendTextMessage(String msg) {
-        if (isConnected) try {
-                oos.writeUTF(username);
-                oos.writeUTF(msg);
-                oos.flush();
-            } catch (IOException e) {
-                System.out.println("ERROR SENDING MESSAGE");
-            }
-
-        toBeSend.add(msg);
-    }
-
-    public void sendFileMessage(String filename) {}
-
-    /**
-     * Send typing heartbeat
-     */
-    public void sendTyping() {}
-
-    public List<String> getTextMessages() {
-        return toBeSend;
-    }
-
-    // FIXEME: Entity class for Message
-    private void sendMessage() {}
-
-    private class Listener extends Thread {
-        @Override
-        public void run() {
-            System.out.println("Listening...");
-            while (!socket.isClosed() && !Thread.interrupted()) {
-                try {
-                    // FIXME: Read Message object
-                    var user = ois.readUTF();
-                    var msg = ois.readUTF();
-                    users.add(user);
-                    messages.add(msg);
-                    updateGUI();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    disconnect();
-                    break;
-                }
-            }
+        synchronized (this) {
+            return messageWorker.getIsConnected();
         }
+    }
+
+    /**
+     * Create a user.
+     *
+     * @param username The name of the user
+     * @param filename The filepath to where the image lives.
+     */
+    public void createUser(String username, String filename) {
+        user = new User(username, new ImageIcon(filename));
+    }
+
+    /**
+     * Add connected user in the list to contact list
+     *
+     * @param index Selected index in the user list
+     */
+    public void addContact(int index) {}
+
+    /**
+     * Send the text message
+     *
+     * @param msg Text message to be sent
+     */
+    public void sendTextMessage(String msg) {}
+
+    /**
+     * Load and send the image.
+     *
+     * @param filename File path to load
+     */
+    public void sendImageMessage(String filename) {}
+
+    /**
+     * Callback for incoming message.
+     *
+     * @param msg Message object from the server
+     */
+    private void onMessage(Message msg) {
+        System.out.println("Hello");
+    }
+
+    /**
+     * Callback for when connection is established.
+     */
+    private void onConnect() {
+        System.out.println("WE ARE CONNECTED!");
+    }
+
+    /**
+     * Callback for when connection is disconnected.
+     */
+    private void onDisconnect() {
+        System.out.println("WE ARE DISCONNECTED!");
+    }
+
+    /**
+     * Callback for when failed to connect
+     */
+    private void onFailedConnect() {
+        System.out.println("FAILED TO CONNECT!");
     }
 }

@@ -1,4 +1,4 @@
-package client.boundary.components;
+package client.boundary.component;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

@@ -1,21 +1,14 @@
 package client.boundary;
 
-import client.boundary.components.MessagePanel;
-import client.boundary.panels.*;
+import client.boundary.listener.IOnLogin;
+import client.boundary.page.LoginPage;
+import client.boundary.page.MainPage;
 import client.control.ClientController;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
-import java.time.format.DateTimeFormatter;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -28,12 +21,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class ClientUI {
     private final JFileChooser FILE_CHOOSER = new JFileChooser();
-    private ClientController controller;
 
     private JFrame frame;
-    private JPanel mainPanel;
-    private ChatPanel chatPanel;
-    private FriendPanel friendPanel;
+
+    private MainPage mainPage;
+    private LoginPage loginPage;
 
     /**
      * Create the main gui
@@ -41,92 +33,39 @@ public class ClientUI {
      * @param controller Reference to the ClientController
      */
     public ClientUI(ClientController controller) {
-        this.controller = controller;
-
         frame = new JFrame("Message Cat");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(850, 520);
-        frame.setMinimumSize(new Dimension(850, 520));
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+
+        // frame.setLocation(0, -800); // FIXME: For dual screen only
 
         changeLook();
         setupFileChooser();
 
-        // Creating the MenuBar and adding components
-        JMenuBar mb = new JMenuBar();
-        // JMenu m1 = new JMenu("File");
-        JMenu m2 = new JMenu("Tools");
-        // mb.add(m1);
-        mb.add(m2);
+        mainPage = new MainPage(controller);
+        loginPage = new LoginPage(controller);
 
-        // JMenuItem m11 = new JMenuItem("Hello");
-        JMenuItem connectMI = new JMenuItem("Connect to server");
-        JMenuItem disconnectMI = new JMenuItem("Disconnect from server");
-        disconnectMI.addActionListener(e -> onDisconnect());
-        connectMI.addActionListener(e -> onConnect());
-
-        // m1.add(m11);
-        m2.add(connectMI);
-        m2.add(disconnectMI);
-
-        chatPanel = new ChatPanel();
-
-        chatPanel.addSendTextListener(msg -> {
-            controller.sendTextMessage(msg);
-            return controller.getIsConnected();
-        });
-        chatPanel.addSendFileListener(filename -> {
-            controller.sendFileMessage(filename);
-            return controller.getIsConnected();
-        });
-
-        friendPanel = new FriendPanel();
-
-        mainPanel.add(chatPanel.getPanel(), BorderLayout.CENTER);
-        mainPanel.add(friendPanel.getPanel(), BorderLayout.EAST);
-
-        mainPanel.add(BorderLayout.NORTH, mb);
-        frame.setContentPane(mainPanel);
         frame.setVisible(true);
+    }
+
+    public void showLogin(IOnLogin onLogin) {
+        loginPage.setOnConfirm(onLogin);
+
+        frame.setContentPane(loginPage.getPanel());
+        frame.pack();
+    }
+
+    public void showMain() {
+        frame.setSize(850, 520);
+        frame.setMinimumSize(new Dimension(850, 520));
+
+        frame.setContentPane(mainPage.getPanel());
+        frame.pack();
     }
 
     // FIXME: Remove this
     public String getName() {
         return JOptionPane.showInputDialog(frame, "Name: ", "Enter your name.",
                                            JOptionPane.QUESTION_MESSAGE);
-    }
-
-    public void clearMessages() {
-        SwingUtilities.invokeLater(() -> chatPanel.clearMessages());
-    }
-
-    public void addMessage(String time, String name, String text) {
-        SwingUtilities.invokeLater(() -> chatPanel.addMessage(new MessagePanel(time, name, text)));
-    }
-
-    public void addMessage(String time, String name, ImageIcon image) {
-        SwingUtilities.invokeLater(() -> chatPanel.addMessage(new MessagePanel(time, name, image)));
-    }
-
-    /**
-     * Send text message
-     *
-     * @param msg Message to send
-     */
-    public boolean sendText(String msg) {
-        controller.sendTextMessage(msg);
-        return controller.getIsConnected();
-    }
-
-    /**
-     * Send file message
-     *
-     * @param filename File path on the system
-     */
-    public boolean sendFile(String filename) {
-        controller.sendFileMessage(filename);
-        return controller.getIsConnected();
     }
 
     /**
@@ -160,14 +99,6 @@ public class ClientUI {
      */
     public File getSelectedFile() {
         return FILE_CHOOSER.getSelectedFile();
-    }
-
-    private void onConnect() {
-        controller.connect();
-    }
-
-    private void onDisconnect() {
-        controller.disconnect();
     }
 
     private void setupFileChooser() {

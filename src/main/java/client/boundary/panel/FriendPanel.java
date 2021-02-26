@@ -1,7 +1,6 @@
-package client.boundary.panels;
+package client.boundary.panel;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -20,7 +19,7 @@ import javax.swing.ScrollPaneConstants;
 public class FriendPanel {
     private JPanel panel;
 
-    private JList userList;
+    private JList<String> userList;
 
     private JPanel buttonPanel;
     private JButton showFriendButton;

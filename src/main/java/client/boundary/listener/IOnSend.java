@@ -1,17 +1,17 @@
-package client.boundary.listeners;
+package client.boundary.listener;
 
 /**
- * SendListener
+ * IOnSend listen for send
  *
  * @author Pratchaya Khansomboon
  * @version 1.0
  */
-public interface SendListener<T> {
+public interface IOnSend<T> {
     /**
-     * Send
+     * Send message.
      *
      * @param message Generic message, can be anything in your codebase
-     * @return Successfully send
+     * @return True Successfully send, False failed to send.
      */
     boolean send(T message);
 }

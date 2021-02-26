@@ -1,7 +1,6 @@
 package client;
 
 import client.control.ClientController;
-import java.net.UnknownHostException;
 
 /**
  * StartClient
@@ -10,7 +9,7 @@ import java.net.UnknownHostException;
  * @version 1.0
  */
 final public class StartClient {
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args) {
         var controller = new ClientController();
         controller.setServerAddress("167.99.42.19");
         controller.startGUI();
