@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -81,16 +82,17 @@ public class Logger implements PropertyChangeListener {
             Date endDate;
             Date currentDate;
             Scanner scanner = new Scanner(System.in);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             while (!interrupted()) {
                 try {
                     System.out.println("Enter start date");
-                    startDate = DateFormat.getDateInstance().parse(scanner.nextLine());
+                    startDate = format.parse(scanner.nextLine());
                     System.out.println("Enter end date");
-                    endDate = DateFormat.getDateInstance().parse(scanner.nextLine());
+                    endDate = format.parse(scanner.nextLine());
                     for (Message currentMessage : messageList) {
                         currentDate = currentMessage.getReceiveDate();
                         if (currentDate.after(startDate) && currentDate.before(endDate)) {
-                            System.out.println(currentDate);
+                            System.out.println(currentMessage);
                         }
                     }
                 } catch (ParseException e) {
