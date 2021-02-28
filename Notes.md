@@ -5,6 +5,7 @@
 - [Meddelandesystem Notes](#meddelandesystem-notes)
   - [Table of Contents](#table-of-contents)
   - [Requirements](#requirements)
+    - [Functionality](#functionality)
     - [Server](#server)
     - [Client](#client)
   - [Design of the system](#design-of-the-system)
@@ -22,6 +23,16 @@
     - [Group chat](#group-chat)
 
 ## Requirements
+
+### Functionality
+
+- [ ] Client application.
+- [ ] User needs a name and a profile image.
+- [ ] GUI for the client.
+- [x] Server and Client should be able to execute on separate computer.
+- [ ] Tre communication that should be happening between client and server
+  - [ ] When connected User object should be send from client to server.
+  - [ ] All information should be communicate with Message object.
 
 ### Server
 - [ ] Multiple clients.
