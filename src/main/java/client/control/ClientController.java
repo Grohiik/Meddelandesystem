@@ -1,6 +1,7 @@
 package client.control;
 
 import client.boundary.ClientUI;
+import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,8 @@ final public class ClientController {
 
     private User user;
     private ArrayList<User> contactList;
+    private ArrayList<User> connectedUser;
+    private ArrayList<User> recipientList;
 
     /**
      * Default constructor for the controller. This sets the server address to "localhost" and its
@@ -78,6 +81,31 @@ final public class ClientController {
             contactList = tmpContactList;
             connect();
         }
+
+        // FIXME: Remove this can get the data from server instead.
+        var imageA = new ImageIcon("/Users/k/Desktop/lmao.png")
+                         .getImage()
+                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var imageB = new ImageIcon("/Users/k/Desktop/cat.png")
+                         .getImage()
+                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        var imageC = new ImageIcon("/Users/k/Desktop/penguin.png")
+                         .getImage()
+                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        connectedUser = new ArrayList<>();
+
+        connectedUser.add(new User("Kalle", new ImageIcon(imageA)));
+        connectedUser.add(new User("Gustav", new ImageIcon(imageB)));
+        connectedUser.add(new User("Filip", new ImageIcon(imageC)));
+
+        int size = connectedUser.size();
+        String names[] = new String[size];
+        ImageIcon icons[] = new ImageIcon[size];
+        for (int i = 0; i < size; i++) {
+            names[i] = connectedUser.get(i).getUsername();
+            icons[i] = connectedUser.get(i).getImage();
+        }
+        clientUI.setUserList(names, icons);
     }
 
     /**
@@ -173,7 +201,7 @@ final public class ClientController {
     /**
      * Load and send the image.
      *
-     * @param filename File path to load
+     * @param filename file path to load
      */
     public void sendImageMessage(String filename) {
         ImageIcon imageIcon = new ImageIcon(filename);
@@ -182,6 +210,19 @@ final public class ClientController {
         message.setSender(user);
         messageWorker.sendMessage(message);
     }
+
+    public void addRecipient(int i) {
+        if (recipientList == null) recipientList = new ArrayList<>();
+        recipientList.add(connectedUser.get(i));
+
+        String names[] = new String[recipientList.size()];
+        for (int j = 0; j < names.length; j++) {
+            names[j] = recipientList.get(j).getUsername();
+        }
+        clientUI.setRecipient(names);
+    }
+
+    public void removeRecipient(int i) {}
 
     /**
      * Callback event for login the user and connect to the server.

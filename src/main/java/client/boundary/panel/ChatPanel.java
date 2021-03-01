@@ -5,13 +5,10 @@ import client.boundary.component.ListPanel;
 import client.boundary.component.MessagePanel;
 import client.boundary.listener.IOnSend;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Image;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -34,9 +31,7 @@ public class ChatPanel {
     private JTextField messageTextField;
 
     private JPanel recipientPanel;
-    private JLabel recipientName;
-    private JLabel recipientIcon;
-    private ImageIcon icon;
+    private JLabel recipientNames;
 
     private ListPanel<MessagePanel> listPanel;
 
@@ -48,14 +43,11 @@ public class ChatPanel {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
         recipientPanel = new JPanel();
-        recipientPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        // recipientPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        recipientPanel.setLayout(new BorderLayout());
 
-        recipientName = new JLabel();
-        icon = new ImageIcon();
-        recipientIcon = new JLabel(icon);
-
-        recipientPanel.add(recipientIcon);
-        recipientPanel.add(recipientName);
+        recipientNames = new JLabel();
+        recipientPanel.add(recipientNames, BorderLayout.CENTER);
 
         JPanel inputPanel = new JPanel();
         JPanel btnPanel = new JPanel();
@@ -85,9 +77,13 @@ public class ChatPanel {
         return panel;
     }
 
-    public void setRecipient(String name, ImageIcon icon) {
-        this.icon.setImage(icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH));
-        recipientName.setText(name);
+    public void setRecipient(String[] names) {
+        String formattedName = "";
+        for (String name : names) {
+            formattedName += name + ", ";
+        }
+        formattedName = formattedName.substring(0, formattedName.length() - 2);
+        recipientNames.setText(formattedName);
     }
 
     public void clearMessages() {

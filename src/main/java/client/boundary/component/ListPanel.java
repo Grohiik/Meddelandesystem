@@ -47,8 +47,6 @@ public class ListPanel<T extends JPanel> {
         panel.setLayout(new BorderLayout());
 
         list.setModel(model);
-        list.setSelectedIndex(-1);
-        list.isEnabled();
         list.setCellRenderer(new PanelRenderer());
 
         scrollPane = new JScrollPane(list);

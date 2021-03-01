@@ -6,7 +6,6 @@ import client.boundary.page.MainPage;
 import client.control.ClientController;
 import java.awt.Dimension;
 import java.io.File;
-import java.time.LocalDateTime;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -110,6 +109,10 @@ public class ClientUI {
      */
     public File getSelectedFile() {
         return FILE_CHOOSER.getSelectedFile();
+    }
+
+    public void setRecipient(String[] names) {
+        mainPage.setRecipient(names);
     }
 
     private void setupFileChooser() {

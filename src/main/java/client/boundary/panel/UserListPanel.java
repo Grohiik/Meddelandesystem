@@ -2,18 +2,12 @@ package client.boundary.panel;
 
 import client.boundary.component.ListPanel;
 import client.boundary.component.UserPanel;
+import client.boundary.listener.IOnEventParam;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Image;
-import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 
 /**
  * FriendPanel
@@ -30,6 +24,10 @@ public class UserListPanel {
     private JButton showFriendButton;
     private JButton showOnlineButton;
     private JButton addButton;
+
+    private JPanel recipientButtonPanel;
+    private JButton removeRecipientButton;
+    private JButton addRecipientButton;
 
     public UserListPanel() {
         panel = new JPanel();
@@ -49,6 +47,16 @@ public class UserListPanel {
         userList = new ListPanel<>();
         userList.setEnabled(true);
 
+        // FIXME: Add listener for add recipient
+        removeRecipientButton = new JButton("Remove");
+        addRecipientButton = new JButton("Add");
+
+        recipientButtonPanel = new JPanel();
+        recipientButtonPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
+        recipientButtonPanel.add(removeRecipientButton);
+        recipientButtonPanel.add(addRecipientButton);
+
+        panel.add(recipientButtonPanel, BorderLayout.PAGE_START);
         panel.add(userList.getPane(), BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -59,6 +67,18 @@ public class UserListPanel {
             var tmp = new UserPanel(images[i], usernames[i]);
             userList.add(tmp);
         }
+    }
+
+    public void setOnAddRecipient(IOnEventParam<Integer> listener) {
+        addRecipientButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
+    }
+
+    public void setOnRemoveRecipient(IOnEventParam<Integer> listener) {
+        removeRecipientButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
+    }
+
+    public int getSelected() {
+        return userList.getSelectedIndex();
     }
 
     public JPanel getPanel() {

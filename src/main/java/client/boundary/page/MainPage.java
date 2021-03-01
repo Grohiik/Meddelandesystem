@@ -63,6 +63,8 @@ public class MainPage {
         });
 
         userListPanel = new UserListPanel();
+        userListPanel.setOnAddRecipient(index -> controller.addRecipient(index));
+        userListPanel.setOnRemoveRecipient(index -> controller.removeRecipient(index));
 
         panel.add(chatPanel.getPanel(), BorderLayout.CENTER);
         panel.add(userListPanel.getPanel(), BorderLayout.EAST);
@@ -110,15 +112,15 @@ public class MainPage {
         return controller.getIsConnected();
     }
 
-    public void setRecipientInfo(String name, ImageIcon image) {
-        chatPanel.setRecipient(name, image);
-    }
-
     private void onConnect() {
         controller.connect();
     }
 
     private void onDisconnect() {
         controller.disconnect();
+    }
+
+    public void setRecipient(String[] names) {
+        chatPanel.setRecipient(names);
     }
 }
