@@ -75,7 +75,7 @@ public class MainPage {
     }
 
     public void clearMessages() {
-        SwingUtilities.invokeLater(() -> chatPanel.clearMessages());
+        SwingUtilities.invokeLater(chatPanel::clearMessages);
     }
 
     public void addMessage(String time, String name, String text) {
@@ -86,8 +86,8 @@ public class MainPage {
         SwingUtilities.invokeLater(() -> chatPanel.addMessage(new MessagePanel(time, name, image)));
     }
 
-    public void setUserList(String[] users) {
-        userListPanel.setUserList(users);
+    public void setUserList(String[] usernames, ImageIcon[] images) {
+        SwingUtilities.invokeLater(() -> userListPanel.setUserList(usernames, images));
     }
 
     /**

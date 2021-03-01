@@ -74,6 +74,7 @@ public class ChatPanel {
         inputPanel.add(btnPanel, BorderLayout.LINE_END);
 
         listPanel = new ListPanel<>();
+        listPanel.setEnabled(false);
 
         panel.add(recipientPanel, BorderLayout.PAGE_START);
         panel.add(listPanel.getPane(), BorderLayout.CENTER);

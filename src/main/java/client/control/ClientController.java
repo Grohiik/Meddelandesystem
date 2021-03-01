@@ -224,8 +224,6 @@ final public class ClientController {
 
         messageWorker.sendUser(user);
         clientUI.showMain();
-
-        clientUI.setUserList(new String[] {"Kalle", "Gustav", "David"});
     }
 
     /**

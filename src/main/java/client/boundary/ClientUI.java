@@ -75,8 +75,8 @@ public class ClientUI {
         mainPage.addMessage(time, name, image);
     }
 
-    public void setUserList(String[] users) {
-        mainPage.setUserList(users);
+    public void setUserList(String[] usernames, ImageIcon[] images) {
+        mainPage.setUserList(usernames, images);
     }
 
     /**

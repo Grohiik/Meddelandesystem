@@ -1,10 +1,15 @@
 package client.boundary.panel;
 
+import client.boundary.component.ListPanel;
+import client.boundary.component.UserPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,15 +24,12 @@ import javax.swing.ScrollPaneConstants;
 public class UserListPanel {
     private JPanel panel;
 
-    private JList<String> userList;
+    private ListPanel<UserPanel> userList;
 
     private JPanel buttonPanel;
     private JButton showFriendButton;
     private JButton showOnlineButton;
     private JButton addButton;
-
-    private ArrayList<String> usernameList;
-    private ArrayList<ImageIcon> userIconList;
 
     public UserListPanel() {
         panel = new JPanel();
@@ -44,17 +46,19 @@ public class UserListPanel {
         buttonPanel.add(showOnlineButton);
         buttonPanel.add(addButton);
 
-        userList = new JList<>();
+        userList = new ListPanel<>();
+        userList.setEnabled(true);
 
-        var jsp = new JScrollPane(userList);
-        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        panel.add(jsp, BorderLayout.CENTER);
+        panel.add(userList.getPane(), BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public void setUserList(String[] users) {
-        userList.setListData(users);
+    public void setUserList(String[] usernames, ImageIcon[] images) {
+        userList.clear();
+        for (int i = 0; i < images.length; i++) {
+            var tmp = new UserPanel(images[i], usernames[i]);
+            userList.add(tmp);
+        }
     }
 
     public JPanel getPanel() {
