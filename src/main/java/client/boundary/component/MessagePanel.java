@@ -2,11 +2,13 @@ package client.boundary.component;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 /**
  * MessagePanel
@@ -23,7 +25,7 @@ public class MessagePanel extends JPanel {
 
     public MessagePanel(String time, String name, ImageIcon image) {
         this(time, name);
-        add(new JLabel(image), BorderLayout.CENTER);
+        add(new JLabel(image), BorderLayout.LINE_START);
     }
 
     public MessagePanel(String time, String name, String text) {
@@ -32,6 +34,7 @@ public class MessagePanel extends JPanel {
         textArea.setText(text);
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
+        textArea.setOpaque(false);
 
         add(textArea, BorderLayout.CENTER);
     }
@@ -40,7 +43,8 @@ public class MessagePanel extends JPanel {
         setLayout(new BorderLayout());
         infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
-        infoPanel.setBackground(new Color(0xFFFFFF));
+        // infoPanel.setBackground(new Color(0xFFFFFF));
+        infoPanel.setOpaque(false);
         setBackground(Color.WHITE);
 
         timeLabel = new JLabel(time);

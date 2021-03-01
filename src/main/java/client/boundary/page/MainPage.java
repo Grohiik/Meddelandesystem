@@ -1,8 +1,9 @@
 package client.boundary.page;
 
+import client.boundary.ClientUI;
 import client.boundary.component.MessagePanel;
 import client.boundary.panel.ChatPanel;
-import client.boundary.panel.FriendPanel;
+import client.boundary.panel.UserListPanel;
 import client.control.ClientController;
 import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
@@ -21,12 +22,14 @@ import javax.swing.SwingUtilities;
 public class MainPage {
     private JPanel panel;
     private ChatPanel chatPanel;
-    private FriendPanel friendPanel;
+    private UserListPanel userListPanel;
 
     private ClientController controller;
+    private ClientUI clientUI;
 
-    public MainPage(ClientController controller) {
+    public MainPage(ClientController controller, ClientUI clientUI) {
         this.controller = controller;
+        this.clientUI = clientUI;
 
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -48,7 +51,7 @@ public class MainPage {
         m2.add(connectMI);
         m2.add(disconnectMI);
 
-        chatPanel = new ChatPanel();
+        chatPanel = new ChatPanel(clientUI);
 
         chatPanel.addSendTextListener(msg -> {
             controller.sendTextMessage(msg);
@@ -59,10 +62,10 @@ public class MainPage {
             return controller.getIsConnected();
         });
 
-        friendPanel = new FriendPanel();
+        userListPanel = new UserListPanel();
 
         panel.add(chatPanel.getPanel(), BorderLayout.CENTER);
-        panel.add(friendPanel.getPanel(), BorderLayout.EAST);
+        panel.add(userListPanel.getPanel(), BorderLayout.EAST);
 
         panel.add(BorderLayout.NORTH, mb);
     }
@@ -81,6 +84,10 @@ public class MainPage {
 
     public void addMessage(String time, String name, ImageIcon image) {
         SwingUtilities.invokeLater(() -> chatPanel.addMessage(new MessagePanel(time, name, image)));
+    }
+
+    public void setUserList(String[] users) {
+        userListPanel.setUserList(users);
     }
 
     /**

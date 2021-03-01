@@ -6,9 +6,10 @@ import client.boundary.page.MainPage;
 import client.control.ClientController;
 import java.awt.Dimension;
 import java.io.File;
+import java.time.LocalDateTime;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -41,8 +42,8 @@ public class ClientUI {
         changeLook();
         setupFileChooser();
 
-        mainPage = new MainPage(controller);
-        loginPage = new LoginPage(controller);
+        mainPage = new MainPage(controller, this);
+        loginPage = new LoginPage(controller, this);
 
         frame.setVisible(true);
     }
@@ -62,10 +63,20 @@ public class ClientUI {
         frame.pack();
     }
 
-    // FIXME: Remove this
-    public String getName() {
-        return JOptionPane.showInputDialog(frame, "Name: ", "Enter your name.",
-                                           JOptionPane.QUESTION_MESSAGE);
+    public void clearMessages() {
+        mainPage.clearMessages();
+    }
+
+    public void addMessage(String time, String name, String text) {
+        mainPage.addMessage(time, name, text);
+    }
+
+    public void addMessage(String time, String name, ImageIcon image) {
+        mainPage.addMessage(time, name, image);
+    }
+
+    public void setUserList(String[] users) {
+        mainPage.setUserList(users);
     }
 
     /**

@@ -29,6 +29,7 @@ hs_err_pid*
 # Ouput directories
 target
 out
+data
 
 # Generated javadocs
 docs/apidocs

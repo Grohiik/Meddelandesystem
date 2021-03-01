@@ -1,11 +1,11 @@
 package client.control.listeners;
 
 /**
- * IOnConnection callback for connection
+ * IOnConnection callback for connection events, such as disconnected and connected.
  *
  * @author Pratchaya Khansomboon
  * @version 1.0
  */
 public interface IOnConnection {
-    void fireStatus();
+    void signal();
 }

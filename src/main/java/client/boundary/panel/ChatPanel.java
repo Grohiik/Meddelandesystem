@@ -1,16 +1,19 @@
 package client.boundary.panel;
 
+import client.boundary.ClientUI;
 import client.boundary.component.ListPanel;
 import client.boundary.component.MessagePanel;
 import client.boundary.listener.IOnSend;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -37,7 +40,11 @@ public class ChatPanel {
 
     private ListPanel<MessagePanel> listPanel;
 
-    public ChatPanel() {
+    private ClientUI clientUI;
+
+    public ChatPanel(ClientUI clientUI) {
+        this.clientUI = clientUI;
+
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
         recipientPanel = new JPanel();
@@ -59,7 +66,6 @@ public class ChatPanel {
         messageTextField.addCaretListener(e -> onTyping());
 
         fileButton = new JButton("File");
-        fileButton.setEnabled(false); // FIXME: Enable this when there's a message object
         sendButton = new JButton("Send");
         inputPanel.add(messageTextField,
                        BorderLayout.CENTER); // Components Added using Flow Layout
@@ -104,13 +110,11 @@ public class ChatPanel {
      * File button pressed event
      */
     private void onFileButton(IOnSend<String> listener) {
-        // TODO: FILE CHOOSER
-        // int isApproved = ui.showFileDialog("Choose an image");
-
-        // if (isApproved == JFileChooser.APPROVE_OPTION) {
-        //     File f = ui.getSelectedFile();
-        //     System.out.println(f.getAbsolutePath());
-        // }
+        int isApproved = clientUI.showFileDialog("Choose an image");
+        if (isApproved == JFileChooser.APPROVE_OPTION) {
+            File imageFile = clientUI.getSelectedFile();
+            listener.send(imageFile.getAbsolutePath());
+        }
     }
 
     /**

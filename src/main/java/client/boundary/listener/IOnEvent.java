@@ -7,5 +7,5 @@ package client.boundary.listener;
  * @version 1.0
  */
 public interface IOnEvent {
-    void call();
+    void signal();
 }

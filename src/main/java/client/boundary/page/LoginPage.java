@@ -1,12 +1,9 @@
 package client.boundary.page;
 
-import client.boundary.listener.IOnEvent;
+import client.boundary.ClientUI;
 import client.boundary.listener.IOnLogin;
 import client.control.ClientController;
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -24,13 +21,18 @@ public class LoginPage {
     private JButton chooseImageButton;
     private JButton confirmButton;
 
+    private ClientUI clientUI;
+
     private IOnLogin onLogin;
 
-    public LoginPage(ClientController controller) {
+    public LoginPage(ClientController controller, ClientUI clientUI) {
+        this.clientUI = clientUI;
+
         panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 
         chooseImageButton = new JButton("Choose Image");
+        chooseImageButton.addActionListener(e -> clientUI.showFileDialog("Choose image profile"));
         chooseImageButton.addActionListener(e -> onChooseImage());
         nameTextField = new JTextField(16);
         nameTextField.addActionListener(e -> onConfirm());
@@ -52,7 +54,7 @@ public class LoginPage {
 
     private void onConfirm() {
         String username = nameTextField.getText();
-        String filename = "/Users/k/Downloads/unnamed.jpg";
+        String filename = clientUI.getSelectedFile().getAbsolutePath();
         if (username.isBlank() || filename.isBlank()) return;
 
         onLogin.login(username, filename);

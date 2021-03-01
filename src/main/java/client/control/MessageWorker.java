@@ -10,7 +10,8 @@ import shared.entity.Message;
 import shared.entity.User;
 
 /**
- * MessageWorker connect to the server and keep it alive and listen for incoming messages.
+ * MessageWorker connect to the server and keeps the connection alive and listen for incoming
+ * messages.
  *
  * @author Pratchaya Khansomboon
  * @version 1.0
@@ -22,15 +23,19 @@ public class MessageWorker implements Runnable {
         DISCONNECTED,
     }
 
+    // The state of the connection
     private ConnectionState connectionState = ConnectionState.DISCONNECTED;
 
+    // Socket connection
     private Socket socket;
     private ObjectInputStream oInputStream;
     private ObjectOutputStream oOutputStream;
 
+    // Server address and port
     private String address;
     private int port;
 
+    // Event callbacks
     private IOnMessage<Message> onMessage;
     private IOnConnection onConnect;
     private IOnConnection onDisconnect;
@@ -42,7 +47,7 @@ public class MessageWorker implements Runnable {
      * Construct a worker for listening and sending message to server.
      *
      * @param address The server ip address.
-     * @param port The server opened port.
+     * @param port    The server opened port.
      */
     public MessageWorker(String address, int port) {
         this.address = address;
@@ -64,16 +69,16 @@ public class MessageWorker implements Runnable {
 
             connectionState = ConnectionState.DISCONNECTED;
 
-            if (onDisconnect != null) onDisconnect.fireStatus();
+            if (onDisconnect != null) onDisconnect.signal();
         } catch (IOException e) {
             System.err.println("ERROR: Failed to disconnect from server.");
         }
     }
 
     /**
-     * Get if there's a connection to the server.
+     * Get if there's a connection to the server is alive.
      *
-     * @return True for connected, False for when disconnected.
+     * @return {@code true} for connected, {@code false} for when disconnected.
      */
     public synchronized boolean getIsConnected() {
         return connectionState == ConnectionState.CONNECTED;
@@ -165,7 +170,7 @@ public class MessageWorker implements Runnable {
     /**
      * Connect to the server, used internally when {@link#connect()} is called.
      *
-     * @return True for success and False for not successful.
+     * @return {@code true} for success, {@code false} for not successful.
      */
     private boolean connecting() {
         try {
@@ -178,7 +183,7 @@ public class MessageWorker implements Runnable {
             socket = null;
             connectionState = ConnectionState.DISCONNECTED;
 
-            if (onFailedConnect != null) onFailedConnect.fireStatus();
+            if (onFailedConnect != null) onFailedConnect.signal();
             return false;
         }
     }
@@ -189,7 +194,7 @@ public class MessageWorker implements Runnable {
      */
     private void listen() {
         connectionState = ConnectionState.CONNECTED;
-        if (onConnect != null) onConnect.fireStatus();
+        if (onConnect != null) onConnect.signal();
 
         while (!socket.isClosed() && !Thread.interrupted()) {
             try {

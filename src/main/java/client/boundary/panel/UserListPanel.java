@@ -16,7 +16,7 @@ import javax.swing.ScrollPaneConstants;
  * @author Pratchaya Khansomboon
  * @version 1.0
  */
-public class FriendPanel {
+public class UserListPanel {
     private JPanel panel;
 
     private JList<String> userList;
@@ -29,7 +29,7 @@ public class FriendPanel {
     private ArrayList<String> usernameList;
     private ArrayList<ImageIcon> userIconList;
 
-    public FriendPanel() {
+    public UserListPanel() {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
@@ -51,6 +51,10 @@ public class FriendPanel {
 
         panel.add(jsp, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public void setUserList(String[] users) {
+        userList.setListData(users);
     }
 
     public JPanel getPanel() {

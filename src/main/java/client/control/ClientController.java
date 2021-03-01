@@ -1,14 +1,25 @@
 package client.control;
 
 import client.boundary.ClientUI;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import shared.entity.Message;
 import shared.entity.User;
 
 /**
- * ClientController
+ * ClientController controls and show the whole graphical interface and its logic.
+ * It connects to  the server using {@link MessageWorker}. The incoming message and other events are
+ * received by callbacks.
  *
  * @author Pratchaya Khansomboon
+ * @author Eric Lundin
  * @version 1.0
  */
 final public class ClientController {
@@ -21,27 +32,52 @@ final public class ClientController {
     private int serverPort;
 
     private User user;
+    private ArrayList<User> contactList;
 
+    /**
+     * Default constructor for the controller. This sets the server address to "localhost" and its
+     * port to 3000.
+     */
     public ClientController() {
         this("localhost", 3000);
     }
 
+    /**
+     * Create controller with specified server address and port.
+     *
+     * @param address The server address to use.
+     * @param port    The server port.
+     */
     public ClientController(String address, int port) {
         this.serverAddress = address;
         this.serverPort = port;
     }
 
+    /**
+     * Starts the graphical user interface.
+     */
     public void startGUI() {
         clientUI = new ClientUI(this);
 
-        // FIXME: READ FROM DISK FIRST BEFORE LOGIN
-        clientUI.showLogin((username, filename) -> login(username, filename));
-    }
+        // FIXME: Rewrite this for better test.
 
-    public void login(String username, String filename) {
-        createUser(username, filename);
-        clientUI.showMain();
-        connect();
+        User tmpUser = null;
+        ArrayList<User> tmpContactList = null;
+
+        try {
+            tmpUser = readUser();
+            tmpContactList = readContactList();
+        } catch (IOException e) {
+        }
+
+        if (tmpUser == null) {
+            contactList = new ArrayList<>();
+            clientUI.showLogin(this::login);
+        } else {
+            user = tmpUser;
+            contactList = tmpContactList;
+            connect();
+        }
     }
 
     /**
@@ -70,12 +106,12 @@ final public class ClientController {
             messageWorker = new MessageWorker(serverAddress, serverPort);
 
             // Listen for incoming messages
-            messageWorker.setOnMessage(msg -> onMessage(msg));
+            messageWorker.setOnMessage(this::onMessage);
 
             // Listen for connection status
-            messageWorker.setOnFailedConnect(() -> onFailedConnect());
-            messageWorker.setOnConnect(() -> onConnect());
-            messageWorker.setOnDisconnect(() -> onDisconnect());
+            messageWorker.setOnFailedConnect(this::onFailedConnect);
+            messageWorker.setOnConnect(this::onConnect);
+            messageWorker.setOnDisconnect(this::onDisconnect);
         }
 
         messageWorker.connect();
@@ -100,13 +136,18 @@ final public class ClientController {
     }
 
     /**
-     * Create a user.
+     * Create a user and stores it on the disk.
      *
      * @param username The name of the user
      * @param filename The filepath to where the image lives.
      */
-    public void createUser(String username, String filename) {
+    public void initUser(String username, String filename) {
         user = new User(username, new ImageIcon(filename));
+
+        try {
+            createUser(user);
+        } catch (IOException e) {
+        }
     }
 
     /**
@@ -121,14 +162,37 @@ final public class ClientController {
      *
      * @param msg Text message to be sent
      */
-    public void sendTextMessage(String msg) {}
+    public void sendTextMessage(String msg) {
+        var message = new Message();
+        message.setText(msg);
+        message.setSender(user);
+
+        messageWorker.sendMessage(message);
+    }
 
     /**
      * Load and send the image.
      *
      * @param filename File path to load
      */
-    public void sendImageMessage(String filename) {}
+    public void sendImageMessage(String filename) {
+        ImageIcon imageIcon = new ImageIcon(filename);
+        var message = new Message();
+        message.setImage(imageIcon);
+        message.setSender(user);
+        messageWorker.sendMessage(message);
+    }
+
+    /**
+     * Callback event for login the user and connect to the server.
+     *
+     * @param username The name for the user.
+     * @param filename The file path to the image.
+     */
+    private void login(String username, String filename) {
+        initUser(username, filename);
+        connect();
+    }
 
     /**
      * Callback for incoming message.
@@ -136,7 +200,20 @@ final public class ClientController {
      * @param msg Message object from the server
      */
     private void onMessage(Message msg) {
-        System.out.println("Hello");
+        System.out.print("Message:");
+        System.out.println(msg.getText());
+
+        var userMsg = msg.getSender();
+        if (userMsg == null) userMsg = new User("null", new ImageIcon());
+
+        var textMsg = msg.getText();
+        var imageMsg = msg.getImage();
+
+        if (textMsg == null) {
+            clientUI.addMessage(msg.getSentTime().toString(), userMsg.getUsername(), imageMsg);
+        } else {
+            clientUI.addMessage(msg.getSentTime().toString(), userMsg.getUsername(), msg.getText());
+        }
     }
 
     /**
@@ -144,6 +221,11 @@ final public class ClientController {
      */
     private void onConnect() {
         System.out.println("WE ARE CONNECTED!");
+
+        messageWorker.sendUser(user);
+        clientUI.showMain();
+
+        clientUI.setUserList(new String[] {"Kalle", "Gustav", "David"});
     }
 
     /**
@@ -158,5 +240,82 @@ final public class ClientController {
      */
     private void onFailedConnect() {
         System.out.println("FAILED TO CONNECT!");
+    }
+
+    /**
+     * Read the stored user data from disk.
+     *
+     * @throws IOException Error in reading the file.
+     */
+    private User readUser() throws IOException {
+        try (ObjectInputStream ois = new ObjectInputStream(
+                 new BufferedInputStream(new FileInputStream("data/User.dat")))) {
+            try {
+                return (User) ois.readObject();
+            } catch (ClassNotFoundException e) {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Create User object file in the data directory.
+     *
+     * @param user User object to be stored in the file.
+     */
+    private void createUser(User user) throws IOException {
+        // Create "data" directory in the project root.
+        File data = new File("data");
+        if (!data.exists()) data.mkdir();
+
+        try (ObjectOutputStream oos =
+                 new ObjectOutputStream(new FileOutputStream("data/User.dat"))) {
+            oos.writeObject((User) user);
+            oos.flush();
+        }
+    }
+
+    /**
+     * Create contact list from list of added users.
+     *
+     * @param users Contact list of users in ArrayList
+     * @throws IOException
+     */
+    private void createContactList(ArrayList<User> users) throws IOException {
+        // Create "data" directory in the project root.
+        File data = new File("data");
+        if (!data.exists()) data.mkdir();
+
+        try (ObjectOutputStream oos =
+                 new ObjectOutputStream(new FileOutputStream("data/ContactList.dat"))) {
+            int size = users.size();
+            oos.writeInt(size);
+            for (int i = 0; i < size; i++) {
+                oos.writeObject(users.get(i));
+            }
+            oos.flush();
+        }
+    }
+
+    /**
+     * Read stored contact list from disk.
+     *
+     * @return Contact list of users in ArrayList.
+     * @throws IOException Error reading file.
+     */
+    private ArrayList<User> readContactList() throws IOException {
+        ArrayList<User> users = new ArrayList<>();
+
+        try (ObjectInputStream ois = new ObjectInputStream(
+                 new BufferedInputStream(new FileInputStream("data/User.dat")))) {
+            try {
+                int size = ois.readInt();
+                for (int i = 0; i < size; i++) {
+                    users.add((User) ois.readObject());
+                }
+            } catch (ClassNotFoundException e) {
+            }
+        }
+        return users;
     }
 }

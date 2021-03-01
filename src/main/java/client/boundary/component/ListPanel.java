@@ -1,7 +1,9 @@
 package client.boundary.component;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
@@ -19,10 +21,19 @@ import javax.swing.ScrollPaneConstants;
 public class ListPanel<T extends JPanel> {
     private class PanelRenderer implements ListCellRenderer<Object> {
         @Override
-        public Component getListCellRendererComponent(JList<? extends Object> list, Object value,
-                                                      int index, boolean isSelected,
-                                                      boolean cellHasFocus) {
-            return (JPanel) value;
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                      boolean isSelected, boolean cellHasFocus) {
+            var panel = (JPanel) value;
+
+            // if (isSelected) {
+            //     panel.setBackground(list.getSelectionBackground());
+            //     panel.setForeground(list.getSelectionForeground());
+            // } else {
+            //     panel.setBackground(list.getBackground());
+            //     panel.setForeground(list.getForeground());
+            // }
+
+            return panel;
         }
     }
 
@@ -39,7 +50,7 @@ public class ListPanel<T extends JPanel> {
 
         list.setModel(model);
         list.setSelectedIndex(-1);
-        list.setEnabled(false);
+        // list.setEnabled(false);
         list.setCellRenderer(new PanelRenderer());
 
         scrollPane = new JScrollPane(list);
