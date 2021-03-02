@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * UserList that lists all connected Userss
+ * UserList that lists all connected Users
  *
  * @author Marcus Linné, Linnéa Mörk
  * @version 1.0
@@ -20,7 +20,7 @@ public class UserListMessage implements IMessage, Serializable {
 
     @Override
     public void setReceiveTime(Date receiveTime) {
-        this.sentTime = receiveTime;
+        this.receiveTime = receiveTime;
     }
 
     @Override
