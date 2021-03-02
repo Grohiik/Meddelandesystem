@@ -11,7 +11,8 @@ import javax.swing.ImageIcon;
  * @author Christian Heisterkamp
  * @version 1.0
  */
-public class Message implements Serializable {
+public class Message implements IMessage, Serializable
+{
     private User sender;
     private User[] receiverList;
     private String text;
@@ -19,13 +20,25 @@ public class Message implements Serializable {
     private Date sentTime;
     private Date receiveTime;
 
-    public Message() {}
+    public Message()
+    {}
 
-    public Message(User sender, User[] receiverList, String text, ImageIcon image) {
+    public Message(User sender, User[] receiverList, String text, ImageIcon image)
+    {
         this.sender = sender;
         this.receiverList = receiverList;
         this.text = text;
         this.image = image;
+    }
+
+    public Date getSentTime()
+    {
+        return sentTime;
+    }
+
+    public void setSentTime(Date sentTime)
+    {
+        this.sentTime = sentTime;
     }
 
     @Override
@@ -83,20 +96,15 @@ public class Message implements Serializable {
     public void setImage(ImageIcon image) {
         this.image = image;
     }
-
-    public Date getSentTime() {
-        return sentTime;
-    }
-
-    public void setSentTime(Date sentTime) {
-        this.sentTime = sentTime;
-    }
-
-    public Date getReceiveTime() {
+    public Date getReceiveTime()
+    {
         return receiveTime;
     }
 
-    public void setReceiveTime(Date receiveTime) {
+    public void setReceiveTime(Date receiveTime)
+    {
         this.receiveTime = receiveTime;
     }
-}
+
+    }
+
