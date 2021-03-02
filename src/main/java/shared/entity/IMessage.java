@@ -3,10 +3,16 @@ package shared.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public interface IMessage extends Serializable
-{
+/**
+ * IMessage
+ *
+ * @author Christian Heisterkamp,
+ * @version 1.0
+ */
+public interface IMessage extends Serializable {
     void setReceiveTime(Date receiveTime);
     Date getReceiveTime();
-    User getSender();
-    void setSender(User sender);
+
+    void setSentTime(Date date);
+    Date getSentTime();
 }
