@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * ClientList that lists all connected Clients
+ * UserList that lists all connected Userss
  *
  * @author Marcus Linné, Linnéa Mörk
  * @version 1.0
  */
-public class ClientListMessage implements IMessage, Serializable {
-    User[] users;
-    Date sentTime;
-    Date receiveTime;
+public class UserListMessage implements IMessage, Serializable {
+    private User[] users;
+    private Date sentTime;
+    private Date receiveTime;
 
-    public ClientListMessage(User[] users) {
+    public UserListMessage(User[] users) {
         this.users = users;
     }
 
@@ -36,5 +36,9 @@ public class ClientListMessage implements IMessage, Serializable {
     @Override
     public Date getSentTime() {
         return sentTime;
+    }
+
+    public User[] getUsers() {
+        return users;
     }
 }
