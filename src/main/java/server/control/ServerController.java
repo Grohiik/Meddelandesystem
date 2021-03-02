@@ -21,12 +21,15 @@ import shared.entity.User;
  * @version 1.0
  */
 public class ServerController {
-    private Buffer<Message> receivedMessages;
     private LinkedList<MessageListener>
         connectedClientList; // Is created when clients tries to connect
     private Clients clients;
     private int port;
 
+    public ServerController() {
+        setPort(port);
+        startServer();
+    }
     public void setPort(int port) {
         this.port = port;
     }
@@ -34,6 +37,7 @@ public class ServerController {
     public void startServer() {
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
+        System.out.println("Server has been started");
     }
 
     /**
@@ -50,9 +54,10 @@ public class ServerController {
 
     // TODO ServerSocketListener, with new thread and tcp, uses LinkedList to keep track of objects
     /**
-     * Sub class that listens to incoming connections to the server.
-     * All connections receive a personal server thread.
-     * Transfers accepted incoming connections to MessageListener.
+     * TODO keep or not keep listenerlist
+     * Sub class that listens to incoming connections to the server. DONE
+     * All connections receive a personal server thread. DONE
+     * Transfers accepted incoming connections to MessageListener. DONE
      */
     private class ServerSocketListener extends Thread {
         int port;
@@ -81,21 +86,86 @@ public class ServerController {
                 e.printStackTrace();
             }
         }
-        // listens for a tcp connection and creates a new thread for that connection.
-        // puts that object in an ArrayList to keep track of too.
+        // listens for a tcp connection and creates a new thread for that connection. DONE
+        // puts that object in an LinkedList to keep track of too. DONE
     }
 
-    // TODO messageListener add messages to buffer
-    private class MessageListener {
-        // one per connection
-        // listens for a message object and puts it in a buffer
-        // adds a received timestamp first
+    /**
+     * TODO messageListener add messages to buffer DONE
+     * Sub class that listens for messages and makes clients show as online if what the Listener
+     * receive is valid
+     */
+    private class MessageListener extends Thread {
+        private Socket socket;
+        private ObjectInputStream objectInputStream;
+        private User user;
+
+        public MessageListener(Socket socket) {
+            this.socket = socket;
+            start();
+        }
+
+        @Override
+        public void run() {
+            boolean isValidUser = false;
+            MessageSender messageSender;
+
+            try {
+                objectInputStream =
+                    new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+
+                /**
+                 * TODO get user stuff
+                 * TODO use the client not create the client FIX
+                 * user comes from client
+                 */
+                try {
+                    user = (User) objectInputStream.readObject();
+                    Client client = new Client();
+                    client.setIsOnline(true);
+                    clients.put(user, client);
+
+                    isValidUser = true;
+
+                    messageSender = new MessageSender(user, socket);
+                    messageSender.start();
+                } catch (ClassNotFoundException e) {
+                    System.err.println("ERROR, WRONG USER FORMAT");
+                    return;
+                }
+
+                while (!interrupted()) {
+                    try {
+                        Message message = (Message) objectInputStream.readObject();
+                        message.setSentTime(new Date());
+                        messageSender.receivedMessages.put(message);
+                    } catch (ClassNotFoundException e) {
+                        System.err.println("ERROR, WRONG MESSAGE FORMAT");
+                    }
+                }
+
+            } catch (IOException e) {
+                try {
+                    socket.close();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+
+            connectedClientList.remove(this);
+            if (isValidUser) {
+                clients.get(user).setIsOnline(false);
+            }
+        }
+        // one per connection DONE
+        // listens for a message object and puts it in a buffer DONE
+        // adds a received timestamp first DONE
     }
 
-    // TODO messageSender, tries to get msg from buffer and check if on or not using message
-    // listener
-    // USE RECEIVE TIME
+    // messageSender, tries to get msg from buffer and check if on or not using message DONE
+    // listener USE RECEIVE TIME
     private class MessageSender extends Thread {
+        private Buffer<Message> receivedMessages = new Buffer<>();
         private ObjectOutputStream objectOutputStream;
         private Socket socket;
         private User user;
@@ -129,9 +199,9 @@ public class ServerController {
                 e.printStackTrace();
             }
         }
-        // tries too get messages from a buffer.
-        // checks if the user it is meant for is online
+        // tries too get messages from a buffer. DONE
+        // checks if the user it is meant for is online DONE
         // if it is it sends the message using MessageListener's socket (THIS IS LIKELY TO BREAK TRY
-        // TOO FIX IT) if it isn't it adds it too UnsentMessages too be sent later.
+        // TOO FIX IT) if it isn't it adds it too UnsentMessages too be sent later. DONE
     }
 }
