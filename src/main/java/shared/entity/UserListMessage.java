@@ -18,6 +18,10 @@ public class UserListMessage implements IMessage, Serializable {
         this.users = users;
     }
 
+    public User[] getUsers() {
+        return users;
+    }
+
     @Override
     public void setReceiveTime(Date receiveTime) {
         this.receiveTime = receiveTime;
@@ -38,7 +42,8 @@ public class UserListMessage implements IMessage, Serializable {
         return sentTime;
     }
 
-    public User[] getUsers() {
+    @Override
+    public User[] getReceiverList() {
         return users;
     }
 }
