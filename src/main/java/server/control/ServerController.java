@@ -10,14 +10,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import server.entity.Buffer;
 import server.entity.UnsentMessages;
-import shared.entity.Client;
-import shared.entity.Clients;
-import shared.entity.Message;
-import shared.entity.User;
+import shared.entity.*;
 
 /**
  * ServerController that controls the server side
- * @author Marcus Linné, Christian Heisterkamp
+ *
+ * @author Marcus Linné, Christian Heisterkamp, Linnéa Mörk
  * @version 1.0
  */
 public class ServerController {
@@ -27,22 +25,24 @@ public class ServerController {
     private int port;
 
     public ServerController() {
-        setPort(port);
-        startServer();
-    }
-    public void setPort(int port) {
-        this.port = port;
+        startServer(port);
     }
 
-    public void startServer() {
+    /**
+     * Used to start the server by giving the ServerSocketListener,
+     * a port and by starting it.
+     * @param port Port used by the ServerSocket.
+     */
+    public void startServer(int port) {
+        this.port = port;
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
         System.out.println("Server has been started");
     }
 
     /**
-     * Used to turn off the server by closing the serverSocket
-     * @param serverSocket
+     * Used to turn off the server by closing the serverSocket.
+     * @param serverSocket ServerSocket to be closed.
      */
     public void stopServer(ServerSocket serverSocket) {
         try {
@@ -52,9 +52,9 @@ public class ServerController {
         }
     }
 
-    // TODO ServerSocketListener, with new thread and tcp, uses LinkedList to keep track of objects
     /**
-     * TODO keep or not keep listenerlist
+     * TODO keep or not keep ListenerList
+     * ServerSocketListener, with new thread and tcp, uses LinkedList to keep track of objects
      * Sub class that listens to incoming connections to the server. DONE
      * All connections receive a personal server thread. DONE
      * Transfers accepted incoming connections to MessageListener. DONE
@@ -86,14 +86,24 @@ public class ServerController {
                 e.printStackTrace();
             }
         }
-        // listens for a tcp connection and creates a new thread for that connection. DONE
-        // puts that object in an LinkedList to keep track of too. DONE
+
+        private void sendClientList() {
+            ArrayList<User> users = new ArrayList<>();
+            for (MessageListener listener : connectedClientList) {
+                users.add(listener.user);
+            }
+
+            UserListMessage userListMessage = new UserListMessage((User[]) users.toArray());
+
+            messageSender.messagesToSend.put(userListMessage);
+        }
     }
 
     /**
-     * TODO messageListener add messages to buffer DONE
+     * MessageListener puts messages into a buffer DONE
      * Sub class that listens for messages and makes clients show as online if what the Listener
-     * receive is valid
+     * receive is valid. Sets receive time as well on the message.
+     * Each connected client has a MessageListener.
      */
     private class MessageListener extends Thread {
         private Socket socket;
@@ -114,11 +124,8 @@ public class ServerController {
                 objectInputStream =
                     new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
-                /**
-                 * TODO get user stuff
-                 * TODO use the client not create the client FIX
-                 * user comes from client
-                 */
+                // TODO use the client not create the client FIX
+                // User comes from client
                 try {
                     user = (User) objectInputStream.readObject();
                     Client client = new Client();
@@ -127,8 +134,9 @@ public class ServerController {
 
                     isValidUser = true;
 
-                    messageSender = new MessageSender(user, socket);
-                    messageSender.start();
+                    ClientTransmission clientTransmission = new ClientTransmission(user, socket);
+                    messageSender.addClientTransmission(user, clientTransmission);
+                    clientTransmission.start();
                 } catch (ClassNotFoundException e) {
                     System.err.println("ERROR, WRONG USER FORMAT");
                     return;
@@ -136,9 +144,10 @@ public class ServerController {
 
                 while (!interrupted()) {
                     try {
-                        Message message = (Message) objectInputStream.readObject();
+                        IMessage message = (IMessage) objectInputStream.readObject();
                         message.setSentTime(new Date());
-                        messageSender.receivedMessages.put(message);
+                        messageSender.messagesToSend.put(message);
+
                     } catch (ClassNotFoundException e) {
                         System.err.println("ERROR, WRONG MESSAGE FORMAT");
                     }
@@ -157,20 +166,19 @@ public class ServerController {
                 clients.get(user).setIsOnline(false);
             }
         }
-        // one per connection DONE
-        // listens for a message object and puts it in a buffer DONE
-        // adds a received timestamp first DONE
     }
 
-    // messageSender, tries to get msg from buffer and check if on or not using message DONE
-    // listener USE RECEIVE TIME
-    private class MessageSender extends Thread {
-        private Buffer<Message> receivedMessages = new Buffer<>();
-        private ObjectOutputStream objectOutputStream;
+    // TODO checks if the user it is meant for is online?
+    /**
+     * ClientTransmission is used to get a msg from buffer and send it to the recipient.
+     * If recipient is online, otherwise it calls for UnsentMessages.
+     */
+    private class ClientTransmission extends Thread {
+        private Buffer<IMessage> receivedMessages = new Buffer<>();
         private Socket socket;
         private User user;
 
-        public MessageSender(User user, Socket socket) {
+        public ClientTransmission(User user, Socket socket) {
             this.user = user;
             this.socket = socket;
             start();
@@ -179,19 +187,19 @@ public class ServerController {
         @Override
         public void run() {
             try {
-                objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                ObjectOutputStream objectOutputStream =
+                    new ObjectOutputStream(socket.getOutputStream());
+                Client client = clients.get(user);
 
-                if (!receivedMessages.isEmpty()) {
-                    while (!interrupted()) {
-                        Client client = new Client();
-                        Message message = receivedMessages.get();
+                while (!interrupted()) {
+                    IMessage message = receivedMessages.get();
+
+                    if (client.getIsOnline()) {
                         message.setReceiveTime(new Date());
-
-                        if (client.getIsOnline() == true) {
-                            objectOutputStream.writeObject(message);
-                        } else {
-                            UnsentMessages unsentMessages = new UnsentMessages();
-                            unsentMessages.put(user, message);
+                        objectOutputStream.writeObject(message);
+                    } else {
+                        if (message instanceof Message) {
+                            unsentMessages.put(user, (Message) message);
                         }
                     }
                 }
@@ -199,9 +207,5 @@ public class ServerController {
                 e.printStackTrace();
             }
         }
-        // tries too get messages from a buffer. DONE
-        // checks if the user it is meant for is online DONE
-        // if it is it sends the message using MessageListener's socket (THIS IS LIKELY TO BREAK TRY
-        // TOO FIX IT) if it isn't it adds it too UnsentMessages too be sent later. DONE
     }
 }

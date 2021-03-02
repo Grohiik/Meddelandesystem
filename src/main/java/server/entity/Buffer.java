@@ -17,8 +17,7 @@ public class Buffer<T> {
         return buffer.removeFirst();
     }
 
-    public int size()
-    {
+    public int size() {
         return buffer.size();
     }
 }
