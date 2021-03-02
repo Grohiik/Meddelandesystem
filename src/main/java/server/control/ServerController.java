@@ -6,7 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import server.entity.Buffer;
 import server.entity.UnsentMessages;
@@ -19,8 +21,10 @@ import shared.entity.*;
  * @version 1.0
  */
 public class ServerController {
+    private MessageSender messageSender = new MessageSender();
+    private UnsentMessages unsentMessages = new UnsentMessages();
     private LinkedList<MessageListener>
-        connectedClientList; // Is created when clients tries to connect
+            connectedClientList; // Is created when clients tries to connect
     private Clients clients;
     private int port;
 
@@ -37,6 +41,7 @@ public class ServerController {
         this.port = port;
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
+        messageSender.start();
         System.out.println("Server has been started");
     }
 
@@ -62,6 +67,10 @@ public class ServerController {
     private class ServerSocketListener extends Thread {
         int port;
 
+        /**
+         * Constructor for ServerSocketListener.
+         * @param port Port to listen to.
+         */
         public ServerSocketListener(int port) {
             this.port = port;
         }
@@ -79,8 +88,9 @@ public class ServerController {
 
                 while (!interrupted()) {
                     socket = serverSocket.accept();
-                    MessageListener messageListener = new MessageListener(socket);
+                    MessageListener messageListener = new MessageListener(socket, this);
                     connectedClientList.add(messageListener);
+                    sendClientList();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -99,6 +109,32 @@ public class ServerController {
         }
     }
 
+    private class MessageSender extends Thread {
+        private Buffer<IMessage> messagesToSend = new Buffer<>();
+        private HashMap<User, ClientTransmission> clientTransmissions = new HashMap<>();
+
+        public MessageSender() {}
+
+        public void addClientTransmission(User user, ClientTransmission clientTransmission) {
+            clientTransmissions.put(user, clientTransmission);
+        }
+
+        @Override
+        public void run() {
+            while (!interrupted()) {
+                try {
+                    IMessage message = messagesToSend.get();
+                    User[] receivers = message.getReceiverList();
+                    for (User receiver : receivers) {
+                        clientTransmissions.get(receiver).receivedMessages.put(message);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     /**
      * MessageListener puts messages into a buffer DONE
      * Sub class that listens for messages and makes clients show as online if what the Listener
@@ -106,29 +142,30 @@ public class ServerController {
      * Each connected client has a MessageListener.
      */
     private class MessageListener extends Thread {
+        private ServerSocketListener serverSocketListener;
         private Socket socket;
         private ObjectInputStream objectInputStream;
         private User user;
 
-        public MessageListener(Socket socket) {
+        public MessageListener(Socket socket, ServerSocketListener serverSocketListener) {
             this.socket = socket;
+            this.serverSocketListener = serverSocketListener;
             start();
         }
 
         @Override
         public void run() {
             boolean isValidUser = false;
-            MessageSender messageSender;
 
             try {
                 objectInputStream =
-                    new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+                        new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
                 // TODO use the client not create the client FIX
                 // User comes from client
                 try {
                     user = (User) objectInputStream.readObject();
-                    Client client = new Client();
+                    Client client = clients.get(user);
                     client.setIsOnline(true);
                     clients.put(user, client);
 
@@ -162,6 +199,8 @@ public class ServerController {
             }
 
             connectedClientList.remove(this);
+            serverSocketListener.sendClientList();
+
             if (isValidUser) {
                 clients.get(user).setIsOnline(false);
             }
@@ -188,7 +227,7 @@ public class ServerController {
         public void run() {
             try {
                 ObjectOutputStream objectOutputStream =
-                    new ObjectOutputStream(socket.getOutputStream());
+                        new ObjectOutputStream(socket.getOutputStream());
                 Client client = clients.get(user);
 
                 while (!interrupted()) {
