@@ -63,8 +63,12 @@ public class MainPage {
         });
 
         userListPanel = new UserListPanel();
-        userListPanel.setOnAddRecipient(index -> controller.addRecipient(index));
-        userListPanel.setOnRemoveRecipient(index -> controller.removeRecipient(index));
+        userListPanel.setOnAddRecipient(controller::addRecipient);
+        userListPanel.setOnRemoveRecipient(controller::removeRecipient);
+        userListPanel.setOnShowMessage(controller::showMessage);
+        userListPanel.setOnAddFriend(controller::addContact);
+        userListPanel.setOnShowFriend(controller::showContactList);
+        userListPanel.setOnShowOnline(controller::showOnlineList);
 
         panel.add(chatPanel.getPanel(), BorderLayout.CENTER);
         panel.add(userListPanel.getPanel(), BorderLayout.EAST);

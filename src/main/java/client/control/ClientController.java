@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.ImageIcon;
 import shared.entity.Message;
 import shared.entity.User;
@@ -34,8 +35,10 @@ final public class ClientController {
 
     private User user;
     private ArrayList<User> contactList;
-    private ArrayList<User> connectedUser;
+    private ArrayList<User> connectedUserList;
     private ArrayList<User> recipientList;
+    private ArrayList<User> activeUserList;
+    private HashMap<User, ArrayList<Message>> userMessageMap;
 
     /**
      * Default constructor for the controller. This sets the server address to "localhost" and its
@@ -92,20 +95,24 @@ final public class ClientController {
         var imageC = new ImageIcon("/Users/k/Desktop/penguin.png")
                          .getImage()
                          .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-        connectedUser = new ArrayList<>();
+        connectedUserList = new ArrayList<>();
 
-        connectedUser.add(new User("Kalle", new ImageIcon(imageA)));
-        connectedUser.add(new User("Gustav", new ImageIcon(imageB)));
-        connectedUser.add(new User("Filip", new ImageIcon(imageC)));
+        connectedUserList.add(new User("Kalle", new ImageIcon(imageA)));
+        connectedUserList.add(new User("Gustav", new ImageIcon(imageB)));
+        connectedUserList.add(new User("Filip", new ImageIcon(imageC)));
 
-        int size = connectedUser.size();
+        int size = connectedUserList.size();
         String names[] = new String[size];
         ImageIcon icons[] = new ImageIcon[size];
         for (int i = 0; i < size; i++) {
-            names[i] = connectedUser.get(i).getUsername();
-            icons[i] = connectedUser.get(i).getImage();
+            names[i] = connectedUserList.get(i).getUsername();
+            icons[i] = connectedUserList.get(i).getImage();
         }
         clientUI.setUserList(names, icons);
+    }
+
+    public void updateGui() {
+        // FIXME: implement this biatch
     }
 
     /**
@@ -183,7 +190,55 @@ final public class ClientController {
      *
      * @param index Selected index in the user list
      */
-    public void addContact(int index) {}
+    public void addContact(int index) {
+        if (contactList == null) contactList = new ArrayList<>();
+
+        boolean isDuplicate = false;
+        int size = contactList.size();
+        for (int i = 0; i < size; i++) {
+            if (contactList.get(i) == connectedUserList.get(index)) {
+                isDuplicate = true;
+                break;
+            }
+        }
+
+        if (!isDuplicate) contactList.add(connectedUserList.get(index));
+    }
+
+    /**
+     * Show added contacts
+     */
+    public void showContactList() {
+        activeUserList = contactList;
+
+        int size = activeUserList.size();
+        var usernames = new String[size];
+        var images = new ImageIcon[size];
+        for (int i = 0; i < size; i++) {
+            var user = activeUserList.get(i);
+            usernames[i] = user.getUsername();
+            images[i] = user.getImage();
+        }
+        clientUI.setUserList(usernames, images);
+    }
+
+    /**
+     * Show connected user list
+     */
+    public void showOnlineList() {
+        activeUserList = connectedUserList;
+        int size = activeUserList.size();
+
+        var usernames = new String[size];
+        var images = new ImageIcon[size];
+
+        for (int i = 0; i < size; i++) {
+            var user = activeUserList.get(i);
+            usernames[i] = user.getUsername();
+            images[i] = user.getImage();
+        }
+        clientUI.setUserList(usernames, images);
+    }
 
     /**
      * Send the text message
@@ -194,7 +249,7 @@ final public class ClientController {
         var message = new Message();
         message.setText(msg);
         message.setSender(user);
-
+        message.setReceiverList(recipientList.toArray(new User[recipientList.size()]));
         messageWorker.sendMessage(message);
     }
 
@@ -208,21 +263,87 @@ final public class ClientController {
         var message = new Message();
         message.setImage(imageIcon);
         message.setSender(user);
+        message.setReceiverList(recipientList.toArray(new User[recipientList.size()]));
         messageWorker.sendMessage(message);
     }
 
-    public void addRecipient(int i) {
+    /**
+     * Add selected user into the recipient list.
+     *
+     * @param index The index in the connected user list.
+     */
+    public void addRecipient(int index) {
         if (recipientList == null) recipientList = new ArrayList<>();
-        recipientList.add(connectedUser.get(i));
+        if (index < 0) return; // Return if the list is not selected.
+
+        boolean isDuplicate = false;
+        int size = recipientList.size();
+
+        // Linearly search for the the correct object in the recipient list.
+        for (int i = 0; i < size; i++) {
+            if (recipientList.get(i) == connectedUserList.get(index)) {
+                isDuplicate = true;
+                break;
+            }
+        }
+
+        if (isDuplicate) return;
+        recipientList.add(connectedUserList.get(index));
 
         String names[] = new String[recipientList.size()];
-        for (int j = 0; j < names.length; j++) {
-            names[j] = recipientList.get(j).getUsername();
-        }
+        for (int i = 0; i < names.length; i++) names[i] = recipientList.get(i).getUsername();
         clientUI.setRecipient(names);
     }
 
-    public void removeRecipient(int i) {}
+    /**
+     * Remove recipient from the list.
+     *
+     * @param index The index in the connected user list.
+     */
+    public void removeRecipient(int index) {
+        if (recipientList == null) return;
+
+        int size = recipientList.size();
+        int listIndex = -1;
+        // Linearly search for the the correct object in the recipient list.
+        for (int i = 0; i < size; i++) {
+            if (recipientList.get(i) == connectedUserList.get(index)) {
+                listIndex = i;
+                break;
+            }
+        }
+
+        if (listIndex > -1) {
+            recipientList.remove(listIndex);
+
+            String names[] = new String[recipientList.size()];
+            for (int i = 0; i < names.length; i++) names[i] = recipientList.get(i).getUsername();
+            clientUI.setRecipient(names);
+        }
+    }
+
+    /**
+     * Show message from the selected user.
+     *
+     * @param index The index of the selected user in the user list.
+     */
+    public void showMessage(int index) {
+        var selectedUser = connectedUserList.get(index);
+        var messages = userMessageMap.get(selectedUser);
+
+        clientUI.clearMessages();
+        int size = messages.size();
+        for (int i = 0; i < size; i++) {
+            var message = messages.get(i);
+            var time = message.getSentTime().toString();
+            var username = message.getSender().getUsername();
+            if (message.getImage() == null) {
+                clientUI.addMessage(time, username, message.getText());
+            } else {
+                clientUI.addMessage(time, username, message.getImage());
+            }
+        }
+    }
 
     /**
      * Callback event for login the user and connect to the server.

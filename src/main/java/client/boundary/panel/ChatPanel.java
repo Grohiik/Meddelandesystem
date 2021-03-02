@@ -11,14 +11,15 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
  * ChatPanel
  *
  * @author Pratchaya Khansomboon
+ * @author Eric Lundin
  * @version 1.0
  */
 public class ChatPanel {
@@ -31,7 +32,7 @@ public class ChatPanel {
     private JTextField messageTextField;
 
     private JPanel recipientPanel;
-    private JLabel recipientNames;
+    private JTextArea recipientNamesTF;
 
     private ListPanel<MessagePanel> listPanel;
 
@@ -43,11 +44,13 @@ public class ChatPanel {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
         recipientPanel = new JPanel();
-        // recipientPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         recipientPanel.setLayout(new BorderLayout());
 
-        recipientNames = new JLabel();
-        recipientPanel.add(recipientNames, BorderLayout.CENTER);
+        recipientNamesTF = new JTextArea();
+        recipientNamesTF.setWrapStyleWord(true);
+        recipientNamesTF.setLineWrap(true);
+        recipientNamesTF.setEditable(false);
+        recipientPanel.add(recipientNamesTF, BorderLayout.CENTER);
 
         JPanel inputPanel = new JPanel();
         JPanel btnPanel = new JPanel();
@@ -78,12 +81,16 @@ public class ChatPanel {
     }
 
     public void setRecipient(String[] names) {
+        if (names.length == 0) {
+            recipientNamesTF.setText("");
+            return;
+        }
         String formattedName = "";
         for (String name : names) {
             formattedName += name + ", ";
         }
         formattedName = formattedName.substring(0, formattedName.length() - 2);
-        recipientNames.setText(formattedName);
+        recipientNamesTF.setText(formattedName);
     }
 
     public void clearMessages() {

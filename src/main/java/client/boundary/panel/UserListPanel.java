@@ -2,6 +2,7 @@ package client.boundary.panel;
 
 import client.boundary.component.ListPanel;
 import client.boundary.component.UserPanel;
+import client.boundary.listener.IOnEvent;
 import client.boundary.listener.IOnEventParam;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -23,11 +24,12 @@ public class UserListPanel {
     private JPanel buttonPanel;
     private JButton showFriendButton;
     private JButton showOnlineButton;
-    private JButton addButton;
+    private JButton addFriendButton;
 
     private JPanel recipientButtonPanel;
     private JButton removeRecipientButton;
     private JButton addRecipientButton;
+    private JButton showMessageButton;
 
     public UserListPanel() {
         panel = new JPanel();
@@ -36,25 +38,28 @@ public class UserListPanel {
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         showFriendButton = new JButton("Friends");
-        showFriendButton.addActionListener(e -> onShowFriend());
         showOnlineButton = new JButton("Online");
-        showOnlineButton.addActionListener(e -> onShowOnline());
-        addButton = new JButton("Add");
+        addFriendButton = new JButton("Add Friend");
         buttonPanel.add(showFriendButton);
         buttonPanel.add(showOnlineButton);
-        buttonPanel.add(addButton);
+        buttonPanel.add(addFriendButton);
 
         userList = new ListPanel<>();
         userList.setEnabled(true);
 
         // FIXME: Add listener for add recipient
         removeRecipientButton = new JButton("Remove");
+        removeRecipientButton.setToolTipText("Remove from recipient list");
         addRecipientButton = new JButton("Add");
+        addRecipientButton.setToolTipText("Add to recipient list");
+        showMessageButton = new JButton("Show");
+        showMessageButton.setToolTipText("Show message");
 
         recipientButtonPanel = new JPanel();
         recipientButtonPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         recipientButtonPanel.add(removeRecipientButton);
         recipientButtonPanel.add(addRecipientButton);
+        recipientButtonPanel.add(showMessageButton);
 
         panel.add(recipientButtonPanel, BorderLayout.PAGE_START);
         panel.add(userList.getPane(), BorderLayout.CENTER);
@@ -77,19 +82,27 @@ public class UserListPanel {
         removeRecipientButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
     }
 
+    public void setOnShowMessage(IOnEventParam<Integer> listener) {
+        showMessageButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
+    }
+
+    public void setOnAddFriend(IOnEventParam<Integer> listener) {
+        addFriendButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
+    }
+
+    public void setOnShowFriend(IOnEvent listener) {
+        showFriendButton.addActionListener(e -> listener.signal());
+    }
+
+    public void setOnShowOnline(IOnEvent listener) {
+        showOnlineButton.addActionListener(e -> listener.signal());
+    }
+
     public int getSelected() {
         return userList.getSelectedIndex();
     }
 
     public JPanel getPanel() {
         return panel;
-    }
-
-    private void onShowOnline() {
-        System.out.println("Show Online");
-    }
-
-    private void onShowFriend() {
-        System.out.println("Show Friends");
     }
 }
