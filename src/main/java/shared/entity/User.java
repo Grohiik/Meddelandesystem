@@ -42,6 +42,7 @@ public class User implements Serializable {
      *
      * @return returns a hashcode of the username String
      */
+    @override
     public int hashCode() {
         return username.hashCode();
     }
@@ -50,7 +51,9 @@ public class User implements Serializable {
      * This function is usefull for comparing stuff
      * @param obj
      * @return
+     *
      */
+    @override
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof User) {
             return username.equals(((User) obj).getUsername());
