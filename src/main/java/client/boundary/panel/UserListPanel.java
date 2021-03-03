@@ -14,6 +14,7 @@ import javax.swing.JPanel;
  * FriendPanel
  *
  * @author Pratchaya Khansomboon
+ * @author Eric Lundin
  * @version 1.0
  */
 public class UserListPanel {

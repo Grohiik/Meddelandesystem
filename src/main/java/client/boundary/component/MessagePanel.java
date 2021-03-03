@@ -41,7 +41,6 @@ public class MessagePanel extends JPanel {
         setLayout(new BorderLayout());
         infoPanel = new JPanel();
         infoPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
-        // infoPanel.setBackground(new Color(0xFFFFFF));
         infoPanel.setOpaque(false);
         setBackground(Color.WHITE);
 

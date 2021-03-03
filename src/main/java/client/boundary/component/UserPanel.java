@@ -13,6 +13,7 @@ import javax.swing.JPanel;
  * @version 1.0
  */
 public class UserPanel extends JPanel {
+    private static final long serialVersionUID = 6497655480580447853L;
     private ImageIcon image;
     private String username;
 

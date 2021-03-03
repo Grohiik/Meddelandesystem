@@ -1,12 +1,12 @@
 package client.control;
 
-import client.control.listeners.IOnConnection;
+import client.control.listeners.IOnEvent;
 import client.control.listeners.IOnMessage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import shared.entity.Message;
+import shared.entity.IMessage;
 import shared.entity.User;
 
 /**
@@ -36,10 +36,11 @@ public class MessageWorker implements Runnable {
     private int port;
 
     // Event callbacks
-    private IOnMessage<Message> onMessage;
-    private IOnConnection onConnect;
-    private IOnConnection onDisconnect;
-    private IOnConnection onFailedConnect;
+    private IOnMessage<IMessage> onMessage;
+    private IOnEvent onConnect;
+    private IOnEvent onDisconnect;
+    private IOnEvent onFailedConnect;
+    private IOnEvent onFailToSent;
 
     private Thread connectionThread;
 
@@ -102,12 +103,22 @@ public class MessageWorker implements Runnable {
      *
      * @param message Message object to be sent.
      */
-    public void sendMessage(Message message) {
+    public void sendMessage(IMessage message) {
         try {
             oOutputStream.writeObject(message);
         } catch (IOException e) {
+            if (onFailToSent != null) onFailToSent.signal();
             System.err.println("ERROR WRITING MESSAGE: " + e);
         }
+    }
+
+    /**
+     *
+     *
+     * @param onFailToSent
+     */
+    public void setOnFailToSent(IOnEvent onFailToSent) {
+        this.onFailToSent = onFailToSent;
     }
 
     /**
@@ -115,7 +126,7 @@ public class MessageWorker implements Runnable {
      *
      * @param onMessage On message callback.
      */
-    public void setOnMessage(IOnMessage<Message> onMessage) {
+    public void setOnMessage(IOnMessage<IMessage> onMessage) {
         this.onMessage = onMessage;
     }
 
@@ -124,7 +135,7 @@ public class MessageWorker implements Runnable {
      *
      * @param onConnect Callback for connection successful.
      */
-    public void setOnConnect(IOnConnection onConnect) {
+    public void setOnConnect(IOnEvent onConnect) {
         this.onConnect = onConnect;
     }
 
@@ -133,7 +144,7 @@ public class MessageWorker implements Runnable {
      *
      * @param onDisconnect Callback for disconnect.
      */
-    public void setOnDisconnect(IOnConnection onDisconnect) {
+    public void setOnDisconnect(IOnEvent onDisconnect) {
         this.onDisconnect = onDisconnect;
     }
 
@@ -142,7 +153,7 @@ public class MessageWorker implements Runnable {
      *
      * @param onFailedConnect Callback for failed to connect
      */
-    public void setOnFailedConnect(IOnConnection onFailedConnect) {
+    public void setOnFailedConnect(IOnEvent onFailedConnect) {
         this.onFailedConnect = onFailedConnect;
     }
 
@@ -198,7 +209,7 @@ public class MessageWorker implements Runnable {
 
         while (!socket.isClosed() && !Thread.interrupted()) {
             try {
-                var msg = (Message) oInputStream.readObject();
+                var msg = (IMessage) oInputStream.readObject();
                 onMessage.message(msg);
             } catch (ClassNotFoundException e) {
                 System.err.println("ERROR FORMAT");

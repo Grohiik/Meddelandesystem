@@ -1,6 +1,7 @@
 package client.control;
 
 import client.boundary.ClientUI;
+import client.boundary.listener.IOnEvent;
 import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -10,10 +11,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
+import shared.entity.IMessage;
 import shared.entity.Message;
 import shared.entity.User;
+import shared.entity.UserListMessage;
 
 /**
  * ClientController controls and show the whole graphical interface and its logic.
@@ -37,8 +41,13 @@ final public class ClientController {
     private ArrayList<User> contactList;
     private ArrayList<User> connectedUserList;
     private ArrayList<User> recipientList;
-    private ArrayList<User> activeUserList;
     private HashMap<User, ArrayList<Message>> userMessageMap;
+
+    private User selectedUser;
+    private ArrayList<Message> activeMessageList;
+    private ArrayList<User> activeUserList;
+
+    private IOnEvent onUpdateGUI;
 
     /**
      * Default constructor for the controller. This sets the server address to "localhost" and its
@@ -85,34 +94,7 @@ final public class ClientController {
             connect();
         }
 
-        // FIXME: Remove this can get the data from server instead.
-        var imageA = new ImageIcon("/Users/k/Desktop/lmao.png")
-                         .getImage()
-                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-        var imageB = new ImageIcon("/Users/k/Desktop/cat.png")
-                         .getImage()
-                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-        var imageC = new ImageIcon("/Users/k/Desktop/penguin.png")
-                         .getImage()
-                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-        connectedUserList = new ArrayList<>();
-
-        connectedUserList.add(new User("Kalle", new ImageIcon(imageA)));
-        connectedUserList.add(new User("Gustav", new ImageIcon(imageB)));
-        connectedUserList.add(new User("Filip", new ImageIcon(imageC)));
-
-        int size = connectedUserList.size();
-        String names[] = new String[size];
-        ImageIcon icons[] = new ImageIcon[size];
-        for (int i = 0; i < size; i++) {
-            names[i] = connectedUserList.get(i).getUsername();
-            icons[i] = connectedUserList.get(i).getImage();
-        }
-        clientUI.setUserList(names, icons);
-    }
-
-    public void updateGui() {
-        // FIXME: implement this biatch
+        onUpdateGUI = this::updateGUI;
     }
 
     /**
@@ -147,6 +129,7 @@ final public class ClientController {
             messageWorker.setOnFailedConnect(this::onFailedConnect);
             messageWorker.setOnConnect(this::onConnect);
             messageWorker.setOnDisconnect(this::onDisconnect);
+            messageWorker.setOnFailToSent(this::onFailToSent);
         }
 
         messageWorker.connect();
@@ -162,7 +145,7 @@ final public class ClientController {
     /**
      * Get if the user is connected to the server
      *
-     * @return True for connected, False for not connected
+     * @return {@code true} for connected, {@code false} for not connected
      */
     public boolean getIsConnected() {
         synchronized (this) {
@@ -177,7 +160,9 @@ final public class ClientController {
      * @param filename The filepath to where the image lives.
      */
     public void initUser(String username, String filename) {
-        user = new User(username, new ImageIcon(filename));
+        final var image =
+            new ImageIcon(filename).getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        user = new User(username, new ImageIcon(image));
 
         try {
             createUser(user);
@@ -209,39 +194,22 @@ final public class ClientController {
      * Show added contacts
      */
     public void showContactList() {
+        if (contactList == null) contactList = new ArrayList<>();
         activeUserList = contactList;
-
-        int size = activeUserList.size();
-        var usernames = new String[size];
-        var images = new ImageIcon[size];
-        for (int i = 0; i < size; i++) {
-            var user = activeUserList.get(i);
-            usernames[i] = user.getUsername();
-            images[i] = user.getImage();
-        }
-        clientUI.setUserList(usernames, images);
+        if (onUpdateGUI != null) onUpdateGUI.signal();
     }
 
     /**
      * Show connected user list
      */
     public void showOnlineList() {
+        if (connectedUserList == null) connectedUserList = new ArrayList<>();
         activeUserList = connectedUserList;
-        int size = activeUserList.size();
-
-        var usernames = new String[size];
-        var images = new ImageIcon[size];
-
-        for (int i = 0; i < size; i++) {
-            var user = activeUserList.get(i);
-            usernames[i] = user.getUsername();
-            images[i] = user.getImage();
-        }
-        clientUI.setUserList(usernames, images);
+        if (onUpdateGUI != null) onUpdateGUI.signal();
     }
 
     /**
-     * Send the text message
+     * Send the text message.
      *
      * @param msg Text message to be sent
      */
@@ -249,8 +217,7 @@ final public class ClientController {
         var message = new Message();
         message.setText(msg);
         message.setSender(user);
-        message.setReceiverList(recipientList.toArray(new User[recipientList.size()]));
-        messageWorker.sendMessage(message);
+        sendMessage(message);
     }
 
     /**
@@ -263,8 +230,7 @@ final public class ClientController {
         var message = new Message();
         message.setImage(imageIcon);
         message.setSender(user);
-        message.setReceiverList(recipientList.toArray(new User[recipientList.size()]));
-        messageWorker.sendMessage(message);
+        sendMessage(message);
     }
 
     /**
@@ -346,6 +312,75 @@ final public class ClientController {
     }
 
     /**
+     * Update the whole GUI
+     */
+    private void updateGUI() {
+        if (userMessageMap == null) userMessageMap = new HashMap<>();
+        var messages = userMessageMap.get(selectedUser);
+
+        if (messages != null) {
+            if (messages == activeMessageList) {
+                var msg = messages.get(messages.size() - 1);
+                var textMsg = msg.getText();
+                if (textMsg == null)
+                    clientUI.addMessage(msg.getSentTime().toString(), selectedUser.getUsername(),
+                                        msg.getImage());
+                else
+                    clientUI.addMessage(msg.getSentTime().toString(), selectedUser.getUsername(),
+                                        textMsg);
+            } else {
+                clientUI.clearMessages();
+                for (Message message : activeMessageList) {
+                    var textMsg = message.getText();
+                    if (textMsg == null)
+                        clientUI.addMessage(message.getSentTime().toString(),
+                                            message.getSender().getUsername(), message.getImage());
+                    else
+                        clientUI.addMessage(message.getSentTime().toString(),
+                                            message.getSender().getUsername(), textMsg);
+                }
+            }
+        }
+
+        if (activeUserList == connectedUserList && activeUserList.size() > 1) {
+            int size = activeUserList.size() - 1;
+            var usernames = new String[size];
+            var images = new ImageIcon[size];
+            for (int i = 0; i < size; i++) {
+                var user = activeUserList.get(i);
+                System.out.println("user: " + user.hashCode() + "::"
+                                   + "this: " + this.user.hashCode());
+                int index = user.hashCode() != this.user.hashCode() ? i : i + 1;
+                usernames[i] = activeUserList.get(index).getUsername();
+                images[i] = activeUserList.get(index).getImage();
+            }
+            clientUI.setUserList(usernames, images);
+        }
+    }
+
+    /**
+     * Send the message using MessageWorker.
+     *
+     * @param message Message object to be sent.
+     */
+    private void sendMessage(Message message) {
+        if (recipientList != null && !recipientList.isEmpty()) {
+            message.setReceiverList(recipientList.toArray(new User[recipientList.size()]));
+            messageWorker.sendMessage(message);
+        } else {
+            onFailToSent();
+        }
+    }
+
+    /**
+     * Callback event for when message is failed to be sent.
+     */
+    private void onFailToSent() {
+        clientUI.addMessage(new Date().toString(), "Local Bot",
+                            "Message failed to be sent (only you can see this message)");
+    }
+
+    /**
      * Callback event for login the user and connect to the server.
      *
      * @param username The name for the user.
@@ -361,21 +396,29 @@ final public class ClientController {
      *
      * @param msg Message object from the server
      */
-    private void onMessage(Message msg) {
-        System.out.print("Message:");
-        System.out.println(msg.getText());
+    private void onMessage(IMessage msg) {
+        if (msg instanceof Message) {
+            var message = (Message) msg;
+            var sender = message.getSender();
 
-        var userMsg = msg.getSender();
-        if (userMsg == null) userMsg = new User("null", new ImageIcon());
+            var senderMessages = userMessageMap.get(sender);
+            if (senderMessages == null) {
+                var userMessages = new ArrayList<Message>();
+                userMessages.add(message);
+                userMessageMap.put(sender, userMessages);
+            } else {
+                senderMessages.add(message);
+            }
+        } else if (msg instanceof UserListMessage) {
+            var userList = (UserListMessage) msg;
+            if (connectedUserList == null) connectedUserList = new ArrayList<>();
+            var arrUser = userList.getUsers();
+            for (var user : arrUser) connectedUserList.add(user);
 
-        var textMsg = msg.getText();
-        var imageMsg = msg.getImage();
-
-        if (textMsg == null) {
-            clientUI.addMessage(msg.getSentTime().toString(), userMsg.getUsername(), imageMsg);
-        } else {
-            clientUI.addMessage(msg.getSentTime().toString(), userMsg.getUsername(), msg.getText());
+            if (activeUserList == null) activeUserList = connectedUserList;
         }
+
+        if (onUpdateGUI != null) onUpdateGUI.signal();
     }
 
     /**
@@ -386,6 +429,7 @@ final public class ClientController {
 
         messageWorker.sendUser(user);
         clientUI.showMain();
+        clientUI.setUserTitle(user.getUsername() + " (you)");
     }
 
     /**
@@ -421,7 +465,7 @@ final public class ClientController {
     /**
      * Create User object file in the data directory.
      *
-     * @param user User object to be stored in the file.
+     * @param user The User object to be stored in the file.
      */
     private void createUser(User user) throws IOException {
         // Create "data" directory in the project root.
@@ -441,7 +485,7 @@ final public class ClientController {
      * @param users Contact list of users in ArrayList
      * @throws IOException
      */
-    private void createContactList(ArrayList<User> users) throws IOException {
+    private void saveContactList(ArrayList<User> users) throws IOException {
         // Create "data" directory in the project root.
         File data = new File("data");
         if (!data.exists()) data.mkdir();

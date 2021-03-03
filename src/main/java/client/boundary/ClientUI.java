@@ -89,6 +89,10 @@ public class ClientUI {
         return showFileDialog("File");
     }
 
+    public void setUserTitle(String name) {
+        frame.setTitle(name + " - Message Cat");
+    }
+
     /**
      * Show file chooser dialog
      *
