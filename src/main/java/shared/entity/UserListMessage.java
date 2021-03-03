@@ -6,7 +6,8 @@ import java.util.Date;
 /**
  * UserList that lists all connected Users
  *
- * @author Marcus Linné, Linnéa Mörk
+ * @author Marcus Linné
+ * @author Linnéa Mörk
  * @version 1.0
  */
 public class UserListMessage implements IMessage, Serializable {
