@@ -17,14 +17,16 @@ import shared.entity.*;
 /**
  * ServerController that controls the server side
  *
- * @author Marcus Linné, Christian Heisterkamp, Linnéa Mörk
+ * @author Marcus Linné
+ * @author Christian Heisterkamp
+ * @author Linnéa Mörk
  * @version 1.0
  */
 public class ServerController {
     private MessageSender messageSender = new MessageSender();
     private UnsentMessages unsentMessages = new UnsentMessages();
     private LinkedList<MessageListener>
-            connectedClientList; // Is created when clients tries to connect
+        connectedClientList; // Is created when clients tries to connect
     private Clients clients;
     private int port;
 
@@ -90,14 +92,17 @@ public class ServerController {
                     socket = serverSocket.accept();
                     MessageListener messageListener = new MessageListener(socket, this);
                     connectedClientList.add(messageListener);
-                    sendClientList();
+                    sendUserList();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        private void sendClientList() {
+        /**
+         * Method used to transmit all users that are online
+         */
+        private void sendUserList() {
             ArrayList<User> users = new ArrayList<>();
             for (MessageListener listener : connectedClientList) {
                 users.add(listener.user);
@@ -109,11 +114,14 @@ public class ServerController {
         }
     }
 
+    /**
+     * Messages are added to a buffer and then this class uses it's HashMap to figure out where to
+     * send it. This is used to know who's the sender.
+     * TODO add comments
+     */
     private class MessageSender extends Thread {
         private Buffer<IMessage> messagesToSend = new Buffer<>();
         private HashMap<User, ClientTransmission> clientTransmissions = new HashMap<>();
-
-        public MessageSender() {}
 
         public void addClientTransmission(User user, ClientTransmission clientTransmission) {
             clientTransmissions.put(user, clientTransmission);
@@ -140,6 +148,8 @@ public class ServerController {
      * Sub class that listens for messages and makes clients show as online if what the Listener
      * receive is valid. Sets receive time as well on the message.
      * Each connected client has a MessageListener.
+     * When User connects it will check if there are any,
+     * non delivered messages to the user and receive those.
      */
     private class MessageListener extends Thread {
         private ServerSocketListener serverSocketListener;
@@ -159,10 +169,8 @@ public class ServerController {
 
             try {
                 objectInputStream =
-                        new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+                    new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
-                // TODO use the client not create the client FIX
-                // User comes from client
                 try {
                     user = (User) objectInputStream.readObject();
                     Client client = clients.get(user);
@@ -184,7 +192,6 @@ public class ServerController {
                         IMessage message = (IMessage) objectInputStream.readObject();
                         message.setSentTime(new Date());
                         messageSender.messagesToSend.put(message);
-
                     } catch (ClassNotFoundException e) {
                         System.err.println("ERROR, WRONG MESSAGE FORMAT");
                     }
@@ -199,7 +206,7 @@ public class ServerController {
             }
 
             connectedClientList.remove(this);
-            serverSocketListener.sendClientList();
+            serverSocketListener.sendUserList();
 
             if (isValidUser) {
                 clients.get(user).setIsOnline(false);
@@ -207,10 +214,10 @@ public class ServerController {
         }
     }
 
-    // TODO checks if the user it is meant for is online?
     /**
      * ClientTransmission is used to get a msg from buffer and send it to the recipient.
      * If recipient is online, otherwise it calls for UnsentMessages.
+     * There it is added to be sent when recipient comes online.
      */
     private class ClientTransmission extends Thread {
         private Buffer<IMessage> receivedMessages = new Buffer<>();
@@ -227,7 +234,7 @@ public class ServerController {
         public void run() {
             try {
                 ObjectOutputStream objectOutputStream =
-                        new ObjectOutputStream(socket.getOutputStream());
+                    new ObjectOutputStream(socket.getOutputStream());
                 Client client = clients.get(user);
 
                 while (!interrupted()) {
