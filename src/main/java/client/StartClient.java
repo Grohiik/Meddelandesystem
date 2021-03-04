@@ -1,6 +1,9 @@
 package client;
 
+import client.boundary.ClientUI;
 import client.control.ClientController;
+import client.control.GUIController;
+import java.util.HashMap;
 
 /**
  * StartClient class configures how the client should be started. This include setting which server
@@ -11,10 +14,41 @@ import client.control.ClientController;
  */
 final public class StartClient {
     public static void main(String[] args) {
-        var controller = new ClientController();
-        // FIXME: Use environment variables.
-        if (args.length > 1 && args[0].equals("-ip")) controller.setServerAddress(args[1]);
-        controller.setServerAddress("167.99.42.19");
-        controller.startGUI();
+        final var mapArgs = parseArguments(args);
+        var isLoadCache = true;
+
+        var port = 3000;
+        var server = "localhost";
+
+        if (mapArgs != null) {
+            final var ip = mapArgs.get("-ip");
+            final var portRaw = mapArgs.get("-p");
+            final var isLoad = mapArgs.get("-c");
+            if (ip != null) server = ip;
+            if (portRaw != null) port = Integer.parseInt(portRaw);
+            if (isLoad != null && (isLoad.equals("false") || isLoad.equals("f")))
+                isLoadCache = false;
+        }
+
+        if (isLoadCache) {
+            final var controller = new ClientController(server, port);
+            final var ui = new ClientUI();
+            final var gui = new GUIController();
+            gui.start(controller, ui);
+
+            gui.loadCached();
+        }
+    }
+
+    private static HashMap<String, String> parseArguments(String[] args) {
+        if (args.length % 2 != 0) return null;
+
+        var map = new HashMap<String, String>();
+        for (int i = 0; i < args.length; i += 2) {
+            final var key = args[i];
+            final var val = args[i + 1];
+            map.put(key, val);
+        }
+        return map;
     }
 }

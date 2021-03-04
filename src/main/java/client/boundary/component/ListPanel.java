@@ -13,7 +13,7 @@ import javax.swing.ScrollPaneConstants;
 /**
  * ListPanel
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
  * @version 1.0
  */
 public class ListPanel<T extends JPanel> {

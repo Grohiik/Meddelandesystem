@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 /**
  * FriendPanel
  *
- * @author Pratchaya Khansomboon
- * @author Eric Lundin
+ * @author  Pratchaya Khansomboon
+ * @author  Eric Lundin
  * @version 1.0
  */
 public class UserListPanel {
@@ -48,7 +48,6 @@ public class UserListPanel {
         userList = new ListPanel<>();
         userList.setEnabled(true);
 
-        // FIXME: Add listener for add recipient
         removeRecipientButton = new JButton("Remove");
         removeRecipientButton.setToolTipText("Remove from recipient list");
         addRecipientButton = new JButton("Add");

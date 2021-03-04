@@ -3,7 +3,7 @@ package client.boundary.listener;
 /**
  * IOnLogin
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
  * @version 1.0
  */
 public interface IOnLogin {

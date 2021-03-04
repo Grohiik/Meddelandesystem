@@ -1,9 +1,10 @@
 package client.boundary;
 
+import client.boundary.listener.IOnEvent;
+import client.boundary.listener.IOnEventParam;
 import client.boundary.listener.IOnLogin;
 import client.boundary.page.LoginPage;
 import client.boundary.page.MainPage;
-import client.control.ClientController;
 import java.awt.Dimension;
 import java.io.File;
 import javax.swing.ImageIcon;
@@ -16,7 +17,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  * ClientUI the main graphical interface for the user
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
+ * @author  Eric Lundin
  * @version 1.0
  */
 public class ClientUI {
@@ -32,7 +34,7 @@ public class ClientUI {
      *
      * @param controller Reference to the ClientController
      */
-    public ClientUI(ClientController controller) {
+    public ClientUI() {
         frame = new JFrame("Message Cat");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -41,8 +43,8 @@ public class ClientUI {
         changeLook();
         setupFileChooser();
 
-        mainPage = new MainPage(controller, this);
-        loginPage = new LoginPage(controller, this);
+        mainPage = new MainPage(this);
+        loginPage = new LoginPage(this);
 
         frame.setVisible(true);
     }
@@ -66,16 +68,68 @@ public class ClientUI {
         mainPage.clearMessages();
     }
 
+    public void setOnAddRecipientAction(IOnEventParam<Integer> onAddRecipient) {
+        mainPage.setOnAddRecipient(onAddRecipient);
+    }
+
+    public void setOnRemoveRecipientAction(IOnEventParam<Integer> onRemoveRecipient) {
+        mainPage.setOnRemoveRecipient(onRemoveRecipient);
+    }
+
+    public void setOnSendTextAction(IOnEventParam<String> onSend) {
+        mainPage.setOnSendText(onSend);
+    }
+
+    public void setOnSendFileAction(IOnEventParam<String> onSend) {
+        mainPage.setOnSendFile(onSend);
+    }
+
+    public void setOnTypingAction(IOnEvent onTyping) {
+        mainPage.setOnTyping(onTyping);
+    }
+
+    public void setOnShowMessageAction(IOnEventParam<Integer> onShowMessages) {
+        mainPage.setOnShowMessages(onShowMessages);
+    }
+
+    public void setOnShowFriendAction(IOnEvent onShowFriend) {
+        mainPage.setOnShowFriend(onShowFriend);
+    }
+
+    public void setOnShowOnlineAction(IOnEvent onShowOnline) {
+        mainPage.setOnShowOnline(onShowOnline);
+    }
+
+    public void setOnConnectAction(IOnEvent onConnect) {
+        mainPage.setOnConnect(onConnect);
+    }
+
+    public void setOnDisconnectAction(IOnEvent onDisconnect) {
+        mainPage.setOnDisconnect(onDisconnect);
+    }
+
+    public void showRecipients(String[] names) {
+        mainPage.setRecipient(names);
+    }
+
+    public void setTitle(String title) {
+        frame.setTitle(title);
+    }
+
+    public void setUserTitle(String name) {
+        frame.setTitle(name + " - Message Cat");
+    }
+
+    public void setUserList(String[] usernames, ImageIcon[] images) {
+        mainPage.setUserList(usernames, images);
+    }
+
     public void addMessage(String time, String name, String text) {
         mainPage.addMessage(time, name, text);
     }
 
     public void addMessage(String time, String name, ImageIcon image) {
         mainPage.addMessage(time, name, image);
-    }
-
-    public void setUserList(String[] usernames, ImageIcon[] images) {
-        mainPage.setUserList(usernames, images);
     }
 
     /**
@@ -87,10 +141,6 @@ public class ClientUI {
      */
     public int showFileDialog() {
         return showFileDialog("File");
-    }
-
-    public void setUserTitle(String name) {
-        frame.setTitle(name + " - Message Cat");
     }
 
     /**
@@ -113,10 +163,6 @@ public class ClientUI {
      */
     public File getSelectedFile() {
         return FILE_CHOOSER.getSelectedFile();
-    }
-
-    public void setRecipient(String[] names) {
-        mainPage.setRecipient(names);
     }
 
     private void setupFileChooser() {

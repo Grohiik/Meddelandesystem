@@ -11,7 +11,7 @@ import javax.swing.JTextArea;
 /**
  * MessagePanel
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
  * @version 1.0
  */
 public class MessagePanel extends JPanel {

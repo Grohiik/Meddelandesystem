@@ -4,17 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * IMessage
- *
+ * IMessage is a interface for Messages
+ * TODO IMPROVE COMMENTS
  * @author Christian Heisterkamp
  * @version 1.0
  */
 public interface IMessage extends Serializable {
-    void setReceiveTime(Date receiveTime);
     Date getReceiveTime();
 
-    void setSentTime(Date date);
-    Date getSentTime();
+    void setReceiveTime(Date receiveTime);
 
     User[] getReceiverList();
 }

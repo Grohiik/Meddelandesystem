@@ -9,19 +9,42 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * FileIO writes object to disk.
+ * FileIO writes generic object to disk.
+ *
+ * @author  Pratchaya Khansomboon
+ * @author  Eric Lundin
+ * @version 1.0
  */
 public class FileIO {
     private String directory = "data";
 
+    /**
+     * Set the directory data name.
+     *
+     * @param name The data directory name or path.
+     */
     public void setDirectory(String name) {
         directory = name;
     }
 
+    /**
+     * Get the directory name.
+     *
+     * @return The name or path of the data directory.
+     */
     public String getDirectory() {
         return directory;
     }
 
+    /**
+     * Save the object to disk.
+     *
+     * @param <T>      Type to use for saving the object
+     * @param filename The intended filename for the written fie
+     * @param object   The object to be saved
+     *
+     * @return {@code true} success, {@code false} failed to save.
+     */
     public <T> boolean save(String filename, T object) {
         File data = new File(directory);
         if (!data.exists()) data.mkdir();
@@ -36,11 +59,20 @@ public class FileIO {
         }
     }
 
-    public <T> T read(String filename) {
+    /**
+     * Read the stored binary file.
+     *
+     * @param <T>      The type of the object to cast to.
+     * @param filename The name of the data file.
+     * @param type     The type to cast to when returning the object.
+     *
+     * @return The read object with correct type.
+     */
+    public <T> T read(String filename, Class<T> type) {
         try (ObjectInputStream ois = new ObjectInputStream(
                  new BufferedInputStream(new FileInputStream(directory + "/" + filename)))) {
             try {
-                return (T) ois.readObject();
+                return type.cast(ois.readObject());
             } catch (ClassNotFoundException e) {
             }
         } catch (IOException e) {

@@ -1,7 +1,7 @@
 package client.control;
 
 import client.control.listeners.IOnEvent;
-import client.control.listeners.IOnMessage;
+import client.control.listeners.IOnEventParam;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,7 +13,7 @@ import shared.entity.User;
  * MessageWorker connect to the server and keeps the connection alive and listen for incoming
  * messages.
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
  * @version 1.0
  */
 public class MessageWorker implements Runnable {
@@ -36,11 +36,12 @@ public class MessageWorker implements Runnable {
     private int port;
 
     // Event callbacks
-    private IOnMessage<IMessage> onMessage;
+    private IOnEventParam<IMessage> onMessage;
     private IOnEvent onConnect;
     private IOnEvent onDisconnect;
     private IOnEvent onFailedConnect;
     private IOnEvent onFailToSent;
+    private IOnEvent onSentSuccess;
 
     private Thread connectionThread;
 
@@ -106,6 +107,7 @@ public class MessageWorker implements Runnable {
     public void sendMessage(IMessage message) {
         try {
             oOutputStream.writeObject(message);
+            if (onSentSuccess != null) onSentSuccess.signal();
         } catch (IOException e) {
             if (onFailToSent != null) onFailToSent.signal();
             System.err.println("ERROR WRITING MESSAGE: " + e);
@@ -113,9 +115,18 @@ public class MessageWorker implements Runnable {
     }
 
     /**
+     * Set callback for when message has been sent successfully.
      *
+     * @param onSentSuccess Event callback sent message.
+     */
+    public void setOnSentSuccess(IOnEvent onSentSuccess) {
+        this.onSentSuccess = onSentSuccess;
+    }
+
+    /**
+     * Set callback for when message sent failed.
      *
-     * @param onFailToSent
+     * @param onFailToSent Event callback for when message has been failed to be sent.
      */
     public void setOnFailToSent(IOnEvent onFailToSent) {
         this.onFailToSent = onFailToSent;
@@ -126,7 +137,7 @@ public class MessageWorker implements Runnable {
      *
      * @param onMessage On message callback.
      */
-    public void setOnMessage(IOnMessage<IMessage> onMessage) {
+    public void setOnMessage(IOnEventParam<IMessage> onMessage) {
         this.onMessage = onMessage;
     }
 
@@ -207,10 +218,10 @@ public class MessageWorker implements Runnable {
         connectionState = ConnectionState.CONNECTED;
         if (onConnect != null) onConnect.signal();
 
-        while (!socket.isClosed() && !Thread.interrupted()) {
+        while (socket != null && !socket.isClosed() && !Thread.interrupted()) {
             try {
                 var msg = (IMessage) oInputStream.readObject();
-                onMessage.message(msg);
+                onMessage.signal(msg);
             } catch (ClassNotFoundException e) {
                 System.err.println("ERROR FORMAT");
             } catch (IOException e) {
