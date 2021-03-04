@@ -1,6 +1,7 @@
 package shared.entity;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -46,5 +47,15 @@ public class UserListMessage implements IMessage, Serializable {
     @Override
     public User[] getReceiverList() {
         return users;
+    }
+
+    @Override
+    public String toString()
+    {
+        String out = "";
+        for (User user : users) {
+            out += user + " ";
+        }
+        return out;
     }
 }

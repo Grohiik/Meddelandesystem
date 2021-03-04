@@ -10,22 +10,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 import server.control.ServerController;
+import shared.entity.IMessage;
 import shared.entity.Message;
 
 /**
  * Logger that logs all messages being sent to the server.
  *
- * @author Linnéa Mörk, Christian Heisterkamp
+ * @author Linnéa Mörk
+ * @author Christian Heisterkamp
  * @version 1.0
  */
 public class Logger implements PropertyChangeListener {
     private final String loggerFileName;
-    private ArrayList<Message> messageList;
+    private ArrayList<IMessage> messageList;
     LoggerUI loggerUI;
+
+    //TODO create a parser so it shows who joined and left and when that was
 
     /**
      * Takes a ServerController and subscribes to its PropertyChangeSupport,
      * and a file to store the traffic in. Creates a new file if it doesn't exist.
+     * TODO improve file creation if possible
      *
      * @param serverController The ServerController to subscribe to.
      * @param loggerFilename The filename of the file to store the traffic in.
@@ -35,12 +40,14 @@ public class Logger implements PropertyChangeListener {
         try {
             FileInputStream fileInputStream = new FileInputStream(loggerFilename);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            messageList = (ArrayList<Message>) objectInputStream.readObject();
+            messageList = (ArrayList<IMessage>) objectInputStream.readObject();
         } catch (FileNotFoundException e) {
-            File file = new File(loggerFileName);
             try {
-                file.createNewFile();
+                FileOutputStream fileOutputStream = new FileOutputStream(loggerFilename);
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 messageList = new ArrayList<>();
+                messageList.add(new Message());
+                objectOutputStream.writeObject(messageList);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -60,7 +67,7 @@ public class Logger implements PropertyChangeListener {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        messageList.add((Message) evt.getNewValue());
+        messageList.add((IMessage) evt.getNewValue());
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(loggerFileName);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
@@ -89,8 +96,11 @@ public class Logger implements PropertyChangeListener {
                     startDate = format.parse(scanner.nextLine());
                     System.out.println("Enter end date");
                     endDate = format.parse(scanner.nextLine());
-                    for (Message currentMessage : messageList) {
+                    for (IMessage currentMessage : messageList) {
                         currentDate = currentMessage.getReceiveTime();
+                        if (currentDate == null) {
+                            continue;
+                        }
                         if (currentDate.after(startDate) && currentDate.before(endDate)) {
                             System.out.println(currentMessage);
                         }

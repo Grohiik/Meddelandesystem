@@ -25,7 +25,7 @@ public class Clients {
     }
 
     /**
-     * getter
+     * Gets the user on the connected client
      *
      * @param user Which user account
      * @return the user it is
@@ -35,6 +35,17 @@ public class Clients {
             return null;
         }
         return clients.get(user);
+    }
+
+    @Override
+    public String toString() {
+        String out = "";
+        Set<User> users = clients.keySet();
+
+        for (User user : users) {
+            out += user + " ";
+        }
+        return out;
     }
 
     // TODO more sync methods

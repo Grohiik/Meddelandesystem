@@ -24,6 +24,7 @@ import shared.entity.*;
  * @version 1.0
  */
 public class ServerController {
+    private PropertyChangeSupport loggerPropertyChange = new PropertyChangeSupport(this);
     private MessageSender messageSender = new MessageSender();
     private UnsentMessages unsentMessages = new UnsentMessages();
     private LinkedList<MessageListener>
@@ -46,7 +47,7 @@ public class ServerController {
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
         messageSender.start();
-        logger = new Logger(this, "test");
+        logger = new Logger(this, "chrissfsfsfsfsftian");
         System.out.println("Server has been started");
     }
 
@@ -62,8 +63,10 @@ public class ServerController {
         }
     }
 
-    PropertyChangeSupport loggerPropertyChange = new PropertyChangeSupport(this);
-
+    /**
+     * Adds a logger listener
+     * @param listener that is used to log
+     */
     public void addLoggerListener(PropertyChangeListener listener) {
         loggerPropertyChange.addPropertyChangeListener(listener);
     }
@@ -124,7 +127,7 @@ public class ServerController {
 
     /**
      * Messages are added to a buffer and then this class uses it's HashMap to figure out where to
-     * send it. This is used to know who's the sender.
+     * send it.
      * TODO add comments
      */
     private class MessageSender extends Thread {
@@ -135,6 +138,7 @@ public class ServerController {
             clientTransmissions.put(user, clientTransmission);
         }
 
+        //TODO SOMEWHERE HERE CHRISTIAN
         @Override
         public void run() {
             while (!interrupted()) {
