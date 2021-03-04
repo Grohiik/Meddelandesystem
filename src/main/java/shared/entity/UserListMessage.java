@@ -1,6 +1,7 @@
 package shared.entity;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -12,7 +13,6 @@ import java.util.Date;
  */
 public class UserListMessage implements IMessage, Serializable {
     private User[] users;
-    private Date sentTime;
     private Date receiveTime;
 
     public UserListMessage(User[] users) {
@@ -24,27 +24,27 @@ public class UserListMessage implements IMessage, Serializable {
     }
 
     @Override
-    public void setReceiveTime(Date receiveTime) {
-        this.receiveTime = receiveTime;
-    }
-
-    @Override
     public Date getReceiveTime() {
         return receiveTime;
     }
 
     @Override
-    public void setSentTime(Date sentTime) {
-        this.sentTime = sentTime;
-    }
-
-    @Override
-    public Date getSentTime() {
-        return sentTime;
+    public void setReceiveTime(Date receiveTime) {
+        this.receiveTime = receiveTime;
     }
 
     @Override
     public User[] getReceiverList() {
         return users;
+    }
+
+    @Override
+    public String toString() {
+        String out = "";
+        for (User user : users) {
+            out += user + " ";
+        }
+        out += "at: " + receiveTime;
+        return out;
     }
 }
