@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import server.entity.Buffer;
+import server.entity.Logger;
 import server.entity.UnsentMessages;
 import shared.entity.*;
 
@@ -30,6 +31,7 @@ public class ServerController {
     private LinkedList<MessageListener>
         connectedClientList; // Is created when clients tries to connect
     private Clients clients;
+    private Logger logger;
     private int port;
 
     public ServerController(int port) {
@@ -46,6 +48,7 @@ public class ServerController {
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
         messageSender.start();
+        logger = new Logger(this, "test");
         System.out.println("Server has been started");
     }
 
