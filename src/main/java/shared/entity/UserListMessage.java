@@ -24,6 +24,11 @@ public class UserListMessage implements IMessage, Serializable {
     }
 
     @Override
+    public Date getReceiveTime() {
+        return receiveTime;
+    }
+
+    @Override
     public void setReceiveTime(Date receiveTime) {
         this.receiveTime = receiveTime;
     }
@@ -34,8 +39,7 @@ public class UserListMessage implements IMessage, Serializable {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String out = "";
         for (User user : users) {
             out += user + " ";

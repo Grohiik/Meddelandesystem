@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * IMessage
+ * IMessage is a interface for Messages
  *
  * @author Christian Heisterkamp
  * @version 1.0
