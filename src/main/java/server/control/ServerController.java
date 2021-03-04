@@ -1,5 +1,7 @@
 package server.control;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,11 +28,11 @@ public class ServerController {
     private MessageSender messageSender = new MessageSender();
     private UnsentMessages unsentMessages = new UnsentMessages();
     private LinkedList<MessageListener>
-        connectedClientList; // Is created when clients tries to connect
+            connectedClientList; // Is created when clients tries to connect
     private Clients clients;
     private int port;
 
-    public ServerController() {
+    public ServerController(int port) {
         startServer(port);
     }
 
@@ -57,6 +59,12 @@ public class ServerController {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+    }
+
+    PropertyChangeSupport loggerPropertyChange = new PropertyChangeSupport(this);
+
+    public void addLoggerListener(PropertyChangeListener listener) {
+        loggerPropertyChange.addPropertyChangeListener(listener);
     }
 
     /**
@@ -107,8 +115,8 @@ public class ServerController {
             for (MessageListener listener : connectedClientList) {
                 users.add(listener.user);
             }
-
-            UserListMessage userListMessage = new UserListMessage((User[]) users.toArray());
+            UserListMessage userListMessage =
+                    new UserListMessage(users.toArray(new User[users.size()]));
 
             messageSender.messagesToSend.put(userListMessage);
         }
@@ -134,7 +142,10 @@ public class ServerController {
                     IMessage message = messagesToSend.get();
                     User[] receivers = message.getReceiverList();
                     for (User receiver : receivers) {
-                        clientTransmissions.get(receiver).receivedMessages.put(message);
+                        ClientTransmission clientTransmission = clientTransmissions.get(receiver);
+                        if (clientTransmission != null) {
+                            clientTransmission.receivedMessages.put(message);
+                        }
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -168,18 +179,26 @@ public class ServerController {
             boolean isValidUser = false;
 
             try {
+                ObjectOutputStream objectOutputStream =
+                        new ObjectOutputStream(socket.getOutputStream());
+
                 objectInputStream =
-                    new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+                        new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
                 try {
                     user = (User) objectInputStream.readObject();
+                    if (clients.get(user) == null) {
+                        clients.put(user, new Client());
+                    }
+
                     Client client = clients.get(user);
                     client.setIsOnline(true);
                     clients.put(user, client);
 
                     isValidUser = true;
 
-                    ClientTransmission clientTransmission = new ClientTransmission(user, socket);
+                    ClientTransmission clientTransmission =
+                            new ClientTransmission(user, socket, objectOutputStream);
                     messageSender.addClientTransmission(user, clientTransmission);
                     clientTransmission.start();
 
