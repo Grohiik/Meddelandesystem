@@ -151,6 +151,7 @@ public class ServerController {
                             clientTransmission.receivedMessages.put(message);
                         }
                     }
+                    loggerPropertyChange.firePropertyChange(null,null, message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
