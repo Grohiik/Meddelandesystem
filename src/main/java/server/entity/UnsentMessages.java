@@ -11,7 +11,7 @@ import shared.entity.*;
  * @version 1.0
  */
 public class UnsentMessages {
-    private HashMap<User, ArrayList<Message>> unsent;
+    private HashMap<User, ArrayList<Message>> unsent = new HashMap<>();
 
     /**
      * adds new unsent messages
@@ -33,6 +33,9 @@ public class UnsentMessages {
      * @return returns an ArrayList with Messages for the server to send
      */
     public synchronized ArrayList<Message> get(User user) {
+        if (!unsent.containsKey(user)) {
+            return null;
+        }
         ArrayList<Message> returnList = unsent.get(user);
         unsent.remove(user);
         return returnList;

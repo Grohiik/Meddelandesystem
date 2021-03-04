@@ -30,6 +30,9 @@ public class Clients {
      * @return the user it is
      */
     public synchronized Client get(User user) {
+        if (clients.get(user) == null) {
+            return null;
+        }
         return clients.get(user);
     }
 

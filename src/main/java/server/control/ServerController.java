@@ -142,7 +142,10 @@ public class ServerController {
                     IMessage message = messagesToSend.get();
                     User[] receivers = message.getReceiverList();
                     for (User receiver : receivers) {
-                        clientTransmissions.get(receiver).receivedMessages.put(message);
+                        ClientTransmission clientTransmission = clientTransmissions.get(receiver);
+                        if (clientTransmission != null) {
+                            clientTransmission.receivedMessages.put(message);
+                        }
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -176,24 +179,33 @@ public class ServerController {
             boolean isValidUser = false;
 
             try {
+                ObjectOutputStream objectOutputStream =
+                    new ObjectOutputStream(socket.getOutputStream());
+
                 objectInputStream =
                     new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
                 try {
                     user = (User) objectInputStream.readObject();
+                    if (clients.get(user) == null) {
+                        clients.put(user, new Client());
+                    }
+
                     Client client = clients.get(user);
                     client.setIsOnline(true);
                     clients.put(user, client);
 
                     isValidUser = true;
 
-                    ClientTransmission clientTransmission = new ClientTransmission(user, socket);
+                    ClientTransmission clientTransmission =
+                        new ClientTransmission(user, socket, objectOutputStream);
                     messageSender.addClientTransmission(user, clientTransmission);
-                    clientTransmission.start();
 
-                    ArrayList<Message> currentUnsentMessages = unsentMessages.get(user);
-                    for (Message currentMessage : currentUnsentMessages) {
-                        clientTransmission.receivedMessages.put(currentMessage);
+                    if (unsentMessages.get(user) != null) {
+                        ArrayList<Message> currentUnsentMessages = unsentMessages.get(user);
+                        for (Message currentMessage : currentUnsentMessages) {
+                            clientTransmission.receivedMessages.put(currentMessage);
+                        }
                     }
 
                 } catch (ClassNotFoundException e) {
@@ -234,21 +246,21 @@ public class ServerController {
      * There it is added to be sent when recipient comes online.
      */
     private class ClientTransmission extends Thread {
+        ObjectOutputStream objectOutputStream;
         private Buffer<IMessage> receivedMessages = new Buffer<>();
         private Socket socket;
         private User user;
 
-        public ClientTransmission(User user, Socket socket) {
+        public ClientTransmission(User user, Socket socket, ObjectOutputStream objectOutputStream) {
             this.user = user;
             this.socket = socket;
+            this.objectOutputStream = objectOutputStream;
             start();
         }
 
         @Override
         public void run() {
             try {
-                ObjectOutputStream objectOutputStream =
-                    new ObjectOutputStream(socket.getOutputStream());
                 Client client = clients.get(user);
 
                 while (!interrupted()) {

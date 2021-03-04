@@ -8,12 +8,9 @@ package shared.entity;
  */
 public class Client {
     private boolean isOnline = false;
-    private ObjectOutputStream oos;
 
     /**
-     * Create client for sending message
-     *
-     * @param oos Connected client object output stream.
+     * Create client for checking if online
      */
     public Client() {}
 
