@@ -8,6 +8,7 @@ import shared.entity.*;
  * Unsent messages
  * stores messages that failed to be sent to be able to send them later
  * @author Eric Lundin
+ * @author Linnéa Mörk
  * @version 1.0
  */
 public class UnsentMessages {

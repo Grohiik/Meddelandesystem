@@ -3,10 +3,11 @@ package shared.entity;
 import java.io.Serializable;
 import javax.swing.*;
 
+//TODO MANY COMMENTS MISSING
 /**
  * The user class is used to identify users and direct messages to the right client/clients
  *
- * @author Eric Lundin al3214
+ * @author Eric Lundin
  * @version 1.0
  */
 public class User implements Serializable {
@@ -48,7 +49,7 @@ public class User implements Serializable {
     }
 
     /**
-     * This function is usefull for comparing stuff
+     * This function is useful for comparing stuff
      * @param obj
      * @return
      *

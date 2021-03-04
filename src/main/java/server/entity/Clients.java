@@ -1,4 +1,6 @@
-package shared.entity;
+package server.entity;
+
+import shared.entity.User;
 
 import java.util.HashMap;
 
@@ -6,12 +8,11 @@ import java.util.HashMap;
  * Class that handles all Clients, might be moved to another directory
  *
  * @author Marcus Linné
+ * @author Linnéa Mörk
  * @version 1.0
  */
 public class Clients {
-    private HashMap<User, Client>
-        clients = new HashMap<>(); // TODO complete this, might need more of the code layout to fully complete
-    // missing some additions
+    private HashMap<User, Client> clients = new HashMap<>();
 
     /**
      * says error due to sync but should be sync
@@ -30,7 +31,7 @@ public class Clients {
      * @return the user it is
      */
     public synchronized Client get(User user) {
-        if (clients.get(user) == null) {
+        if (!clients.containsKey(user)) {
             return null;
         }
         return clients.get(user);
