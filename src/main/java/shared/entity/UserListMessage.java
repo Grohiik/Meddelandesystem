@@ -13,7 +13,6 @@ import java.util.Date;
  */
 public class UserListMessage implements IMessage, Serializable {
     private User[] users;
-    private Date sentTime;
     private Date receiveTime;
 
     public UserListMessage(User[] users) {
@@ -30,21 +29,6 @@ public class UserListMessage implements IMessage, Serializable {
     }
 
     @Override
-    public Date getReceiveTime() {
-        return receiveTime;
-    }
-
-    @Override
-    public void setSentTime(Date sentTime) {
-        this.sentTime = sentTime;
-    }
-
-    @Override
-    public Date getSentTime() {
-        return sentTime;
-    }
-
-    @Override
     public User[] getReceiverList() {
         return users;
     }
@@ -56,6 +40,7 @@ public class UserListMessage implements IMessage, Serializable {
         for (User user : users) {
             out += user + " ";
         }
+        out += "at: " + receiveTime;
         return out;
     }
 }

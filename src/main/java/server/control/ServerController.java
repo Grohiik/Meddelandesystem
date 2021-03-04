@@ -221,7 +221,7 @@ public class ServerController {
 
                 while (!interrupted()) {
                     try {
-                        IMessage message = (IMessage) objectInputStream.readObject();
+                        Message message = (Message) objectInputStream.readObject();
                         message.setSentTime(new Date());
                         messageSender.messagesToSend.put(message);
                     } catch (ClassNotFoundException e) {
