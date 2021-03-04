@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-
 import server.entity.*;
 import shared.entity.*;
 
@@ -70,6 +69,20 @@ public class ServerController {
     }
 
     /**
+     * Method used to transmit all users that are online
+     */
+    private void sendUserList() {
+        ArrayList<User> users = new ArrayList<>();
+        for (MessageListener listener : connectedClientList) {
+            users.add(listener.user);
+        }
+        UserListMessage userListMessage =
+            new UserListMessage(users.toArray(new User[users.size()]));
+
+        messageSender.messagesToSend.put(userListMessage);
+    }
+
+    /**
      * TODO keep or not keep ListenerList
      * ServerSocketListener, with new thread and tcp, uses LinkedList to keep track of objects
      * Sub class that listens to incoming connections to the server. DONE
@@ -102,25 +115,10 @@ public class ServerController {
                     socket = serverSocket.accept();
                     MessageListener messageListener = new MessageListener(socket, this);
                     connectedClientList.add(messageListener);
-                    sendUserList();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        /**
-         * Method used to transmit all users that are online
-         */
-        private void sendUserList() {
-            ArrayList<User> users = new ArrayList<>();
-            for (MessageListener listener : connectedClientList) {
-                users.add(listener.user);
-            }
-            UserListMessage userListMessage =
-                new UserListMessage(users.toArray(new User[users.size()]));
-
-            messageSender.messagesToSend.put(userListMessage);
         }
     }
 
@@ -214,6 +212,7 @@ public class ServerController {
                     System.err.println("ERROR, WRONG USER FORMAT");
                     return;
                 }
+                sendUserList();
 
                 while (!interrupted()) {
                     try {
@@ -234,7 +233,7 @@ public class ServerController {
             }
 
             connectedClientList.remove(this);
-            serverSocketListener.sendUserList();
+            sendUserList();
 
             if (isValidUser) {
                 clients.get(user).setIsOnline(false);
