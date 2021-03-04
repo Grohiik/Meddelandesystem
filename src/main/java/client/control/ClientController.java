@@ -343,17 +343,21 @@ final public class ClientController {
         }
 
         if (activeUserList == connectedUserList && activeUserList.size() > 1) {
-            int size = activeUserList.size() - 1;
-            var usernames = new String[size];
-            var images = new ImageIcon[size];
+            final int size = activeUserList.size();
+            final int newSize = activeUserList.size() - 1;
+            var usernames = new String[newSize];
+            var images = new ImageIcon[newSize];
+
+            int newListCounter = 0;
             for (int i = 0; i < size; i++) {
-                var user = activeUserList.get(i);
-                System.out.println("user: " + user.hashCode() + "::"
-                                   + "this: " + this.user.hashCode());
-                int index = user.hashCode() != this.user.hashCode() ? i : i + 1;
-                usernames[i] = activeUserList.get(index).getUsername();
-                images[i] = activeUserList.get(index).getImage();
+                final var newUser = activeUserList.get(i);
+                if (!newUser.equals(user)) {
+                    usernames[newListCounter] = newUser.getUsername();
+                    images[newListCounter] = newUser.getImage();
+                    newListCounter++;
+                }
             }
+
             clientUI.setUserList(usernames, images);
         }
     }
@@ -413,6 +417,7 @@ final public class ClientController {
             var userList = (UserListMessage) msg;
             if (connectedUserList == null) connectedUserList = new ArrayList<>();
             var arrUser = userList.getUsers();
+            connectedUserList.clear();
             for (var user : arrUser) connectedUserList.add(user);
 
             if (activeUserList == null) activeUserList = connectedUserList;
