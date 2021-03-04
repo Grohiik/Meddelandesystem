@@ -200,11 +200,12 @@ public class ServerController {
                     ClientTransmission clientTransmission =
                             new ClientTransmission(user, socket, objectOutputStream);
                     messageSender.addClientTransmission(user, clientTransmission);
-                    clientTransmission.start();
 
-                    ArrayList<Message> currentUnsentMessages = unsentMessages.get(user);
-                    for (Message currentMessage : currentUnsentMessages) {
-                        clientTransmission.receivedMessages.put(currentMessage);
+                    if (unsentMessages.get(user) != null) {
+                        ArrayList<Message> currentUnsentMessages = unsentMessages.get(user);
+                        for (Message currentMessage : currentUnsentMessages) {
+                            clientTransmission.receivedMessages.put(currentMessage);
+                        }
                     }
 
                 } catch (ClassNotFoundException e) {
@@ -245,21 +246,21 @@ public class ServerController {
      * There it is added to be sent when recipient comes online.
      */
     private class ClientTransmission extends Thread {
+        ObjectOutputStream objectOutputStream;
         private Buffer<IMessage> receivedMessages = new Buffer<>();
         private Socket socket;
         private User user;
 
-        public ClientTransmission(User user, Socket socket) {
+        public ClientTransmission(User user, Socket socket, ObjectOutputStream objectOutputStream) {
             this.user = user;
             this.socket = socket;
+            this.objectOutputStream = objectOutputStream;
             start();
         }
 
         @Override
         public void run() {
             try {
-                ObjectOutputStream objectOutputStream =
-                    new ObjectOutputStream(socket.getOutputStream());
                 Client client = clients.get(user);
 
                 while (!interrupted()) {
