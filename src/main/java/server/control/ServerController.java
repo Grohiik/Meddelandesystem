@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-
 import server.entity.*;
 import shared.entity.*;
 
@@ -25,6 +24,7 @@ import shared.entity.*;
  * @version 1.0
  */
 public class ServerController {
+    private PropertyChangeSupport loggerPropertyChange = new PropertyChangeSupport(this);
     private MessageSender messageSender = new MessageSender();
     private UnsentMessages unsentMessages = new UnsentMessages();
     private LinkedList<MessageListener>
@@ -47,7 +47,7 @@ public class ServerController {
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
         messageSender.start();
-        logger = new Logger(this, "test");
+        logger = new Logger(this, "chrissfsfsfsfsftian");
         System.out.println("Server has been started");
     }
 
@@ -63,10 +63,26 @@ public class ServerController {
         }
     }
 
-    PropertyChangeSupport loggerPropertyChange = new PropertyChangeSupport(this);
-
+    /**
+     * Adds a logger listener
+     * @param listener that is used to log
+     */
     public void addLoggerListener(PropertyChangeListener listener) {
         loggerPropertyChange.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Method used to transmit all users that are online
+     */
+    private void sendUserList() {
+        ArrayList<User> users = new ArrayList<>();
+        for (MessageListener listener : connectedClientList) {
+            users.add(listener.user);
+        }
+        UserListMessage userListMessage =
+            new UserListMessage(users.toArray(new User[users.size()]));
+
+        messageSender.messagesToSend.put(userListMessage);
     }
 
     /**
@@ -102,31 +118,16 @@ public class ServerController {
                     socket = serverSocket.accept();
                     MessageListener messageListener = new MessageListener(socket, this);
                     connectedClientList.add(messageListener);
-                    sendUserList();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-        /**
-         * Method used to transmit all users that are online
-         */
-        private void sendUserList() {
-            ArrayList<User> users = new ArrayList<>();
-            for (MessageListener listener : connectedClientList) {
-                users.add(listener.user);
-            }
-            UserListMessage userListMessage =
-                new UserListMessage(users.toArray(new User[users.size()]));
-
-            messageSender.messagesToSend.put(userListMessage);
-        }
     }
 
     /**
      * Messages are added to a buffer and then this class uses it's HashMap to figure out where to
-     * send it. This is used to know who's the sender.
+     * send it.
      * TODO add comments
      */
     private class MessageSender extends Thread {
@@ -137,6 +138,7 @@ public class ServerController {
             clientTransmissions.put(user, clientTransmission);
         }
 
+        // TODO SOMEWHERE HERE CHRISTIAN
         @Override
         public void run() {
             while (!interrupted()) {
@@ -149,6 +151,7 @@ public class ServerController {
                             clientTransmission.receivedMessages.put(message);
                         }
                     }
+                    loggerPropertyChange.firePropertyChange(null, null, message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -190,7 +193,7 @@ public class ServerController {
                 try {
                     user = (User) objectInputStream.readObject();
                     if (clients.get(user) == null) {
-                        clients.put(user, new Client());
+                        clients.put(user, new Client(user));
                     }
 
                     Client client = clients.get(user);
@@ -214,10 +217,11 @@ public class ServerController {
                     System.err.println("ERROR, WRONG USER FORMAT");
                     return;
                 }
+                sendUserList();
 
                 while (!interrupted()) {
                     try {
-                        IMessage message = (IMessage) objectInputStream.readObject();
+                        Message message = (Message) objectInputStream.readObject();
                         message.setSentTime(new Date());
                         messageSender.messagesToSend.put(message);
                     } catch (ClassNotFoundException e) {
@@ -234,7 +238,7 @@ public class ServerController {
             }
 
             connectedClientList.remove(this);
-            serverSocketListener.sendUserList();
+            sendUserList();
 
             if (isValidUser) {
                 clients.get(user).setIsOnline(false);
