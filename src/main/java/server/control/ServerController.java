@@ -28,7 +28,7 @@ public class ServerController {
     private MessageSender messageSender = new MessageSender();
     private UnsentMessages unsentMessages = new UnsentMessages();
     private LinkedList<MessageListener>
-            connectedClientList; // Is created when clients tries to connect
+        connectedClientList; // Is created when clients tries to connect
     private Clients clients;
     private int port;
 
@@ -116,7 +116,7 @@ public class ServerController {
                 users.add(listener.user);
             }
             UserListMessage userListMessage =
-                    new UserListMessage(users.toArray(new User[users.size()]));
+                new UserListMessage(users.toArray(new User[users.size()]));
 
             messageSender.messagesToSend.put(userListMessage);
         }
@@ -180,10 +180,10 @@ public class ServerController {
 
             try {
                 ObjectOutputStream objectOutputStream =
-                        new ObjectOutputStream(socket.getOutputStream());
+                    new ObjectOutputStream(socket.getOutputStream());
 
                 objectInputStream =
-                        new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+                    new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
                 try {
                     user = (User) objectInputStream.readObject();
@@ -198,7 +198,7 @@ public class ServerController {
                     isValidUser = true;
 
                     ClientTransmission clientTransmission =
-                            new ClientTransmission(user, socket, objectOutputStream);
+                        new ClientTransmission(user, socket, objectOutputStream);
                     messageSender.addClientTransmission(user, clientTransmission);
 
                     if (unsentMessages.get(user) != null) {
