@@ -1,4 +1,4 @@
-package server.entity;
+package server.control;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -90,7 +90,7 @@ public class Logger implements PropertyChangeListener {
                     System.out.println("Enter end date");
                     endDate = format.parse(scanner.nextLine());
                     for (Message currentMessage : messageList) {
-                        currentDate = currentMessage.getReceiveDate();
+                        currentDate = currentMessage.getReceiveTime();
                         if (currentDate.after(startDate) && currentDate.before(endDate)) {
                             System.out.println(currentMessage);
                         }

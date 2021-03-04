@@ -1,5 +1,7 @@
 package server.control;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,7 +32,7 @@ public class ServerController {
     private Clients clients;
     private int port;
 
-    public ServerController() {
+    public ServerController(int port) {
         startServer(port);
     }
 
@@ -57,6 +59,12 @@ public class ServerController {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+    }
+
+    PropertyChangeSupport loggerPropertyChange = new PropertyChangeSupport(this);
+
+    public void addLoggerListener(PropertyChangeListener listener) {
+        loggerPropertyChange.addPropertyChangeListener(listener);
     }
 
     /**
@@ -107,8 +115,8 @@ public class ServerController {
             for (MessageListener listener : connectedClientList) {
                 users.add(listener.user);
             }
-
-            UserListMessage userListMessage = new UserListMessage((User[]) users.toArray());
+            UserListMessage userListMessage =
+                new UserListMessage(users.toArray(new User[users.size()]));
 
             messageSender.messagesToSend.put(userListMessage);
         }

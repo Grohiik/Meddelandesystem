@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class Clients {
     private HashMap<User, Client>
-        clients; // TODO complete this, might need more of the code layout to fully complete
+        clients = new HashMap<>(); // TODO complete this, might need more of the code layout to fully complete
     // missing some additions
 
     /**

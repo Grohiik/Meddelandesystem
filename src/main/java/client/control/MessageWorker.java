@@ -186,8 +186,9 @@ public class MessageWorker implements Runnable {
     private boolean connecting() {
         try {
             socket = new Socket(address, port);
-            oOutputStream = new ObjectOutputStream(socket.getOutputStream());
             oInputStream = new ObjectInputStream(socket.getInputStream());
+            oOutputStream = new ObjectOutputStream(socket.getOutputStream());
+
 
             return true;
         } catch (IOException e) {

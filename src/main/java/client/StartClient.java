@@ -14,7 +14,7 @@ final public class StartClient {
         var controller = new ClientController();
         // FIXME: Use environment variables.
         if (args.length > 1 && args[0].equals("-ip")) controller.setServerAddress(args[1]);
-        controller.setServerAddress("167.99.42.19");
+        controller.setServerAddress("localhost");
         controller.startGUI();
     }
 }
