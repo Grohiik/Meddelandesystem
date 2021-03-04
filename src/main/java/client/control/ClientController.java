@@ -294,7 +294,7 @@ final public class ClientController {
      * @param index The index of the selected user in the user list.
      */
     public void showMessage(int index) {
-        var selectedUser = connectedUserList.get(index);
+        var selectedUser = activeUserList.get(index);
         var messages = userMessageMap.get(selectedUser);
 
         clientUI.clearMessages();
@@ -342,20 +342,15 @@ final public class ClientController {
             }
         }
 
-        if (activeUserList == connectedUserList && activeUserList.size() > 1) {
+        if (activeUserList == connectedUserList) {
             final int size = activeUserList.size();
-            final int newSize = activeUserList.size() - 1;
-            var usernames = new String[newSize];
-            var images = new ImageIcon[newSize];
+            var usernames = new String[size];
+            var images = new ImageIcon[size];
 
-            int newListCounter = 0;
             for (int i = 0; i < size; i++) {
                 final var newUser = activeUserList.get(i);
-                if (!newUser.equals(user)) {
-                    usernames[newListCounter] = newUser.getUsername();
-                    images[newListCounter] = newUser.getImage();
-                    newListCounter++;
-                }
+                usernames[i] = newUser.getUsername();
+                images[i] = newUser.getImage();
             }
 
             clientUI.setUserList(usernames, images);
@@ -418,7 +413,8 @@ final public class ClientController {
             if (connectedUserList == null) connectedUserList = new ArrayList<>();
             var arrUser = userList.getUsers();
             connectedUserList.clear();
-            for (var user : arrUser) connectedUserList.add(user);
+            for (var user : arrUser)
+                if (!user.equals(this.user)) connectedUserList.add(user);
 
             if (activeUserList == null) activeUserList = connectedUserList;
         }
