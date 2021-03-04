@@ -1,8 +1,9 @@
 package server.entity;
 
-import shared.entity.User;
-
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import shared.entity.User;
 
 /**
  * Class that handles all Clients, might be moved to another directory
@@ -25,7 +26,7 @@ public class Clients {
     }
 
     /**
-     * getter
+     * Gets the user on the connected client
      *
      * @param user Which user account
      * @return the user it is
@@ -37,5 +38,14 @@ public class Clients {
         return clients.get(user);
     }
 
-    // TODO more sync methods
+    @Override
+    public String toString() {
+        String out = "";
+        Set<User> users = clients.keySet();
+
+        for (User user : users) {
+            out += user + " ";
+        }
+        return out;
+    }
 }

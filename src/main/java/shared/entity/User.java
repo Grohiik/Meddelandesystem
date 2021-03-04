@@ -1,12 +1,12 @@
 package shared.entity;
 
+import java.awt.*;
 import java.io.Serializable;
 import javax.swing.*;
 
-//TODO MANY COMMENTS MISSING
 /**
  * The user class is used to identify users and direct messages to the right client/clients
- *
+ * TODO MANY COMMENTS MISSING
  * @author Eric Lundin
  * @version 1.0
  */
@@ -60,5 +60,10 @@ public class User implements Serializable {
             return username.equals(((User) obj).getUsername());
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return username;
     }
 }
