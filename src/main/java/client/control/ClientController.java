@@ -294,7 +294,7 @@ final public class ClientController {
      * @param index The index of the selected user in the user list.
      */
     public void showMessage(int index) {
-        var selectedUser = connectedUserList.get(index);
+        var selectedUser = activeUserList.get(index);
         var messages = userMessageMap.get(selectedUser);
 
         clientUI.clearMessages();
@@ -342,18 +342,17 @@ final public class ClientController {
             }
         }
 
-        if (activeUserList == connectedUserList && activeUserList.size() > 1) {
-            int size = activeUserList.size() - 1;
+        if (activeUserList == connectedUserList) {
+            final int size = activeUserList.size();
             var usernames = new String[size];
             var images = new ImageIcon[size];
+
             for (int i = 0; i < size; i++) {
-                var user = activeUserList.get(i);
-                System.out.println("user: " + user.hashCode() + "::"
-                                   + "this: " + this.user.hashCode());
-                int index = user.hashCode() != this.user.hashCode() ? i : i + 1;
-                usernames[i] = activeUserList.get(index).getUsername();
-                images[i] = activeUserList.get(index).getImage();
+                final var newUser = activeUserList.get(i);
+                usernames[i] = newUser.getUsername();
+                images[i] = newUser.getImage();
             }
+
             clientUI.setUserList(usernames, images);
         }
     }
@@ -413,7 +412,9 @@ final public class ClientController {
             var userList = (UserListMessage) msg;
             if (connectedUserList == null) connectedUserList = new ArrayList<>();
             var arrUser = userList.getUsers();
-            for (var user : arrUser) connectedUserList.add(user);
+            connectedUserList.clear();
+            for (var user : arrUser)
+                if (!user.equals(this.user)) connectedUserList.add(user);
 
             if (activeUserList == null) activeUserList = connectedUserList;
         }
