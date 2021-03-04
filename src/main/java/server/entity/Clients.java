@@ -1,8 +1,9 @@
 package server.entity;
 
-import shared.entity.User;
-
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import shared.entity.User;
 
 /**
  * Class that handles all Clients, might be moved to another directory

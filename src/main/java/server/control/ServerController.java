@@ -192,7 +192,7 @@ public class ServerController {
                 try {
                     user = (User) objectInputStream.readObject();
                     if (clients.get(user) == null) {
-                        clients.put(user, new Client());
+                        clients.put(user, new Client(user));
                     }
 
                     Client client = clients.get(user);
