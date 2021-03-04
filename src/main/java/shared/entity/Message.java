@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
  * Message
  *
  * @author Christian Heisterkamp
+ * @author Marcus Linné
  * @version 1.0
  */
 public class Message implements IMessage, Serializable {
