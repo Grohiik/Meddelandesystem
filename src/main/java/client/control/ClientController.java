@@ -49,6 +49,8 @@ final public class ClientController {
 
     private IOnEvent onUpdateGUI;
 
+    private FileIO fileIO;
+
     /**
      * Default constructor for the controller. This sets the server address to "localhost" and its
      * port to 3000.
@@ -66,6 +68,8 @@ final public class ClientController {
     public ClientController(String address, int port) {
         this.serverAddress = address;
         this.serverPort = port;
+
+        fileIO = new FileIO();
     }
 
     /**
@@ -79,11 +83,8 @@ final public class ClientController {
         User tmpUser = null;
         ArrayList<User> tmpContactList = null;
 
-        try {
-            tmpUser = readUser();
-            tmpContactList = readContactList();
-        } catch (IOException e) {
-        }
+        tmpUser = fileIO.<User>read("User.dat");
+        tmpContactList = fileIO.<ArrayList<User>>read("ContactList.dat");
 
         if (tmpUser == null) {
             contactList = new ArrayList<>();
@@ -164,10 +165,7 @@ final public class ClientController {
             new ImageIcon(filename).getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
         user = new User(username, new ImageIcon(image));
 
-        try {
-            createUser(user);
-        } catch (IOException e) {
-        }
+        fileIO.<User>save("User.dat", user);
     }
 
     /**
@@ -181,13 +179,16 @@ final public class ClientController {
         boolean isDuplicate = false;
         int size = contactList.size();
         for (int i = 0; i < size; i++) {
-            if (contactList.get(i) == connectedUserList.get(index)) {
+            if (contactList.get(i) == activeUserList.get(index)) {
                 isDuplicate = true;
                 break;
             }
         }
 
-        if (!isDuplicate) contactList.add(connectedUserList.get(index));
+        if (!isDuplicate) {
+            contactList.add(activeUserList.get(index));
+            fileIO.save("ContactList.dat", contactList);
+        }
     }
 
     /**
@@ -342,19 +343,17 @@ final public class ClientController {
             }
         }
 
-        if (activeUserList == connectedUserList) {
-            final int size = activeUserList.size();
-            var usernames = new String[size];
-            var images = new ImageIcon[size];
+        final int size = activeUserList.size();
+        var usernames = new String[size];
+        var images = new ImageIcon[size];
 
-            for (int i = 0; i < size; i++) {
-                final var newUser = activeUserList.get(i);
-                usernames[i] = newUser.getUsername();
-                images[i] = newUser.getImage();
-            }
-
-            clientUI.setUserList(usernames, images);
+        for (int i = 0; i < size; i++) {
+            final var newUser = activeUserList.get(i);
+            usernames[i] = newUser.getUsername();
+            images[i] = newUser.getImage();
         }
+
+        clientUI.setUserList(usernames, images);
     }
 
     /**
@@ -445,82 +444,5 @@ final public class ClientController {
      */
     private void onFailedConnect() {
         System.out.println("FAILED TO CONNECT!");
-    }
-
-    /**
-     * Read the stored user data from disk.
-     *
-     * @throws IOException Error in reading the file.
-     */
-    private User readUser() throws IOException {
-        try (ObjectInputStream ois = new ObjectInputStream(
-                 new BufferedInputStream(new FileInputStream("data/User.dat")))) {
-            try {
-                return (User) ois.readObject();
-            } catch (ClassNotFoundException e) {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Create User object file in the data directory.
-     *
-     * @param user The User object to be stored in the file.
-     */
-    private void createUser(User user) throws IOException {
-        // Create "data" directory in the project root.
-        File data = new File("data");
-        if (!data.exists()) data.mkdir();
-
-        try (ObjectOutputStream oos =
-                 new ObjectOutputStream(new FileOutputStream("data/User.dat"))) {
-            oos.writeObject((User) user);
-            oos.flush();
-        }
-    }
-
-    /**
-     * Create contact list from list of added users.
-     *
-     * @param users Contact list of users in ArrayList
-     * @throws IOException
-     */
-    private void saveContactList(ArrayList<User> users) throws IOException {
-        // Create "data" directory in the project root.
-        File data = new File("data");
-        if (!data.exists()) data.mkdir();
-
-        try (ObjectOutputStream oos =
-                 new ObjectOutputStream(new FileOutputStream("data/ContactList.dat"))) {
-            int size = users.size();
-            oos.writeInt(size);
-            for (int i = 0; i < size; i++) {
-                oos.writeObject(users.get(i));
-            }
-            oos.flush();
-        }
-    }
-
-    /**
-     * Read stored contact list from disk.
-     *
-     * @return Contact list of users in ArrayList.
-     * @throws IOException Error reading file.
-     */
-    private ArrayList<User> readContactList() throws IOException {
-        ArrayList<User> users = new ArrayList<>();
-
-        try (ObjectInputStream ois = new ObjectInputStream(
-                 new BufferedInputStream(new FileInputStream("data/User.dat")))) {
-            try {
-                int size = ois.readInt();
-                for (int i = 0; i < size; i++) {
-                    users.add((User) ois.readObject());
-                }
-            } catch (ClassNotFoundException e) {
-            }
-        }
-        return users;
     }
 }
