@@ -1,4 +1,6 @@
-package shared.entity;
+package server.entity;
+
+import shared.entity.User;
 
 import java.util.HashMap;
 

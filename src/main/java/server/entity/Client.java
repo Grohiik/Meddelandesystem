@@ -1,4 +1,4 @@
-package shared.entity;
+package server.entity;
 
 /**
  * Client
