@@ -1,12 +1,20 @@
 package client;
 
+import client.control.ClientController;
+
 /**
- * StartClient
+ * StartClient class configures how the client should be started. This include setting which server
+ * to connect to.
  *
+ * @author Pratchaya Khansomboon
  * @version 1.0
  */
-public class StartClient {
+final public class StartClient {
     public static void main(String[] args) {
-        System.out.println("Hello, Client!");
+        var controller = new ClientController();
+        // FIXME: Use environment variables.
+        if (args.length > 1 && args[0].equals("-ip")) controller.setServerAddress(args[1]);
+        controller.setServerAddress("167.99.42.19");
+        controller.startGUI();
     }
 }
