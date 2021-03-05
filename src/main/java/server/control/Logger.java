@@ -66,6 +66,7 @@ public class Logger implements PropertyChangeListener {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        ((IMessage) evt.getNewValue()).setReceiveTime(new Date());
         messageList.add((IMessage) evt.getNewValue());
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(loggerFileName);

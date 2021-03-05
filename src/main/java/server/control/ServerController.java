@@ -152,10 +152,13 @@ public class ServerController {
                             clientTransmission.receivedMessages.put(message);
                         }
                     }
-                    if (receivers.length == 0) {
-                        message.setReceiveTime(new Date());
+                    if (message instanceof Message) {
+                        loggerPropertyChange.firePropertyChange(null, null,
+                                                                new Message((Message) message));
+                    } else if (message instanceof UserListMessage) {
+                        loggerPropertyChange.firePropertyChange(
+                            null, null, new UserListMessage((UserListMessage) message));
                     }
-                    loggerPropertyChange.firePropertyChange(null, null, message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
