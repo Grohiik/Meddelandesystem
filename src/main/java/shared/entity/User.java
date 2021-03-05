@@ -1,12 +1,10 @@
 package shared.entity;
 
-import java.awt.*;
 import java.io.Serializable;
 import javax.swing.*;
 
-// TODO MANY COMMENTS MISSING
 /**
- * The user class is used to identify users and direct messages to the right client/clients
+ * The User class is used to identify users and direct messages to the right client/clients.
  *
  * @author Eric Lundin
  * @version 1.0
@@ -16,8 +14,8 @@ public class User implements Serializable {
     ImageIcon image;
 
     /**
-     * @param username
-     * @param image
+     * @param username username of the user.
+     * @param image    image for the user profile.
      */
     public User(String username, ImageIcon image) {
         this.image = image;
@@ -41,7 +39,6 @@ public class User implements Serializable {
     }
 
     /**
-     *
      * @return returns a hashcode of the username String
      */
     @Override
@@ -53,7 +50,6 @@ public class User implements Serializable {
      * This function is useful for comparing stuff
      * @param obj
      * @return
-     *
      */
     @Override
     public boolean equals(Object obj) {
@@ -64,8 +60,7 @@ public class User implements Serializable {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return username;
     }
 }
