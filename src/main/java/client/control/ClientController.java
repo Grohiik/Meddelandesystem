@@ -1,6 +1,6 @@
 package client.control;
 
-import client.boundary.listener.IOnEvent;
+import client.control.event.IOnEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import shared.entity.IMessage;
 import shared.entity.Message;
 import shared.entity.User;
 import shared.entity.UserListMessage;
+
 
 /**
  * ClientController controls and show the whole graphical interface and its logic.

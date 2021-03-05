@@ -2,8 +2,8 @@ package client.boundary.panel;
 
 import client.boundary.component.ListPanel;
 import client.boundary.component.UserPanel;
-import client.boundary.listener.IOnEvent;
-import client.boundary.listener.IOnEventParam;
+import client.boundary.event.IOnEvent;
+import client.boundary.event.IOnEventParam;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.ImageIcon;

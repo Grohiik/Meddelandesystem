@@ -1,4 +1,4 @@
-package client.boundary.listener;
+package client.boundary.event;
 
 /**
  * IOnEvent interface use for setting call for no return and no parameter callback.

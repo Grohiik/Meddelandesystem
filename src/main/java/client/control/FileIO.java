@@ -15,7 +15,7 @@ import java.io.ObjectOutputStream;
  * @author  Eric Lundin
  * @version 1.0
  */
-public class FileIO {
+final public class FileIO {
     private String directory = "data";
 
     /**

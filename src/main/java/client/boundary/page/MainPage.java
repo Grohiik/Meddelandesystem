@@ -2,8 +2,8 @@ package client.boundary.page;
 
 import client.boundary.ClientUI;
 import client.boundary.component.MessagePanel;
-import client.boundary.listener.IOnEvent;
-import client.boundary.listener.IOnEventParam;
+import client.boundary.event.IOnEvent;
+import client.boundary.event.IOnEventParam;
 import client.boundary.panel.ChatPanel;
 import client.boundary.panel.UserListPanel;
 import java.awt.BorderLayout;

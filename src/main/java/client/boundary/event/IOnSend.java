@@ -1,4 +1,4 @@
-package client.boundary.listener;
+package client.boundary.event;
 
 /**
  * IOnSend listen for send

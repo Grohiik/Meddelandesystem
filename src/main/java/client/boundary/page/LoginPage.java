@@ -1,7 +1,7 @@
 package client.boundary.page;
 
 import client.boundary.ClientUI;
-import client.boundary.listener.IOnLogin;
+import client.boundary.event.IOnLogin;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;

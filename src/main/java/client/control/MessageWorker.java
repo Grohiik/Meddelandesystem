@@ -1,7 +1,7 @@
 package client.control;
 
-import client.control.listeners.IOnEvent;
-import client.control.listeners.IOnEventParam;
+import client.control.event.IOnEvent;
+import client.control.event.IOnEventParam;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

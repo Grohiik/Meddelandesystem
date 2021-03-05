@@ -1,4 +1,4 @@
-package client.boundary.listener;
+package client.boundary.event;
 
 /**
  * IOEventParam is an interface for events with one parameter.
