@@ -1,6 +1,7 @@
 package shared.entity;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.ImageIcon;
@@ -34,6 +35,14 @@ public class Message implements IMessage, Serializable {
         this.receiverList = receiverList;
         this.text = text;
         this.image = image;
+    }
+
+    public Message(Message message) {
+        this.sender = message.sender;
+        this.receiverList = message.receiverList;
+        this.text = message.text;
+        this.image = message.image;
+        this.sentTime = message.sentTime;
     }
 
     public Date getSentTime() {
