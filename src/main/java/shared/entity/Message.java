@@ -114,7 +114,7 @@ public class Message implements IMessage, Serializable {
         }
 
         String out = String.format(
-            "%s sent a message to%s with the content %s %s Sent: %s Received: %s", sender,
+            "%s sent a message to%s with the content %s %s| Sent: %s | Received: %s", sender,
             receiverString, text, imageString, sentTimeString, receiveTimeString);
 
         return out;
