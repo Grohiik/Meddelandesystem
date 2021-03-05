@@ -26,10 +26,8 @@ public class Logger implements PropertyChangeListener {
     private ArrayList<IMessage> messageList;
     LoggerUI loggerUI;
 
-    // TODO create a parser so it shows who joined and left and when that was
-
     /**
-     * Takes a ServerController and subscribes to its PropertyChangeSupport,
+     * Takes a ServerController and subscribes to it's PropertyChangeSupport,
      * and a file to store the traffic in. Creates a new file if it doesn't exist.
      * TODO improve file creation if possible
      *
@@ -64,7 +62,7 @@ public class Logger implements PropertyChangeListener {
      * PropertyChange that gets called when the server receives a new message.
      * Adds the message to the messageList and rewrites object file.
      *
-     * @param evt event with the "new Value" being the message too add
+     * @param evt event with the "new Value" being the message to add
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

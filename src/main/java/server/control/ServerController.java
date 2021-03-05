@@ -16,7 +16,7 @@ import server.entity.*;
 import shared.entity.*;
 
 /**
- * ServerController that controls the server side
+ * ServerController that controls the server side.
  *
  * @author Marcus Linné
  * @author Christian Heisterkamp
@@ -52,6 +52,7 @@ public class ServerController {
     }
 
     /**
+     * TODO IMPLEMENT
      * Used to turn off the server by closing the serverSocket.
      * @param serverSocket ServerSocket to be closed.
      */
@@ -64,15 +65,15 @@ public class ServerController {
     }
 
     /**
-     * Adds a logger listener
-     * @param listener that is used to log
+     * Adds a logger listener.
+     * @param listener that is used to log.
      */
     public void addLoggerListener(PropertyChangeListener listener) {
         loggerPropertyChange.addPropertyChangeListener(listener);
     }
 
     /**
-     * Method used to transmit all users that are online
+     * Method used to transmit which users that are online.
      */
     private void sendUserList() {
         ArrayList<User> users = new ArrayList<>();
@@ -87,7 +88,7 @@ public class ServerController {
 
     /**
      * TODO keep or not keep ListenerList
-     * ServerSocketListener, with new thread and tcp, uses LinkedList to keep track of objects
+     * ServerSocketListener, with new thread and TCP, uses LinkedList to keep track of objects
      * Sub class that listens to incoming connections to the server. DONE
      * All connections receive a personal server thread. DONE
      * Transfers accepted incoming connections to MessageListener. DONE
@@ -127,8 +128,9 @@ public class ServerController {
 
     /**
      * Messages are added to a buffer and then this class uses it's HashMap to figure out where to
-     * send it.
-     * TODO add comments
+     * send it. Also invokes a PropertyChange so that the logger can notice any actions made.
+     * Has a Buffer to store messages waiting to be sent and a HashMap which stores available
+     * clients.
      */
     private class MessageSender extends Thread {
         private Buffer<IMessage> messagesToSend = new Buffer<>();
@@ -162,12 +164,11 @@ public class ServerController {
     }
 
     /**
-     * MessageListener puts messages into a buffer DONE
-     * Sub class that listens for messages and makes clients show as online if what the Listener
-     * receive is valid. Sets receive time as well on the message.
-     * Each connected client has a MessageListener.
-     * When User connects it will check if there are any,
-     * non delivered messages to the user and receive those.
+     * Sub class that listens for messages from its client, as each client has a MessageListener.
+     * and makes clients show as online if the Listener receive valid info. Sets receive time of the
+     * message.
+     * Each connected client has a MessageListener. When a User connects it will check if
+     * there are any, non delivered messages to the user and receive those.
      */
     private class MessageListener extends Thread {
         private ServerSocketListener serverSocketListener;
