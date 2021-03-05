@@ -4,7 +4,7 @@ import shared.entity.User;
 
 /**
  * Client
- * TODO comments
+ *
  * @author Pratchaya Khansomboon
  * @author Linnéa Mörk
  * @version 1.0
@@ -26,7 +26,8 @@ public class Client {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return user.toString();
     }
 }

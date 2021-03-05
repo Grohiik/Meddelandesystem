@@ -1,7 +1,6 @@
 package server.entity;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import shared.entity.User;
 
@@ -16,7 +15,7 @@ public class Clients {
     private HashMap<User, Client> clients = new HashMap<>();
 
     /**
-     * says error due to sync but should be sync
+     * Method used to add a clients to the HashMap.
      *
      * @param user which user it is
      * @param client which client it is
@@ -26,7 +25,7 @@ public class Clients {
     }
 
     /**
-     * Gets the user on the connected client
+     * Gets the connected clients user.
      *
      * @param user Which user account
      * @return the user it is
