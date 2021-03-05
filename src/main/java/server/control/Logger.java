@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
-
 import shared.entity.IMessage;
 import shared.entity.Message;
 import shared.entity.UserListMessage;
@@ -93,16 +92,20 @@ public class Logger implements PropertyChangeListener {
             ArrayList<String> lastList = new ArrayList<>();
             ArrayList<String> thisList;
 
-            System.out.println("Logger online");
+            System.out.println("The server logger is online and running");
 
             while (!interrupted()) {
                 try {
-                    System.out.println("\n---------------------------------\n");
-                    System.out.println("Enter start date:");
+                    System.out.println("-----------------------------------------");
+                    System.out.print("Enter start date: ");
                     startDate = format.parse(scanner.nextLine());
-                    System.out.println("Enter end date:");
+                    System.out.print("Enter end date: ");
                     endDate = format.parse(scanner.nextLine());
-                    System.out.println("\n---------------------------------\n");
+                    System.out.println("-----------------------------------------");
+                    System.out.println("Showing log between: " + format.format(startDate) + " and "
+                                       + format.format(endDate));
+                    System.out.println("-----------------------------------------");
+
                     for (IMessage currentMessage : messageList) {
                         currentDate = currentMessage.getReceiveTime();
 

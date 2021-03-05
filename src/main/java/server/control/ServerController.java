@@ -47,7 +47,7 @@ public class ServerController {
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
         messageSender.start();
-        logger = new Logger(this, "chrissfsfsfsfsftian");
+        logger = new Logger(this, "testingnew");
         System.out.println("Server has been started");
     }
 
