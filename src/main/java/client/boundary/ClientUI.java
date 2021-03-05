@@ -22,7 +22,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author  Eric Lundin
  * @version 1.0
  */
-public class ClientUI {
+public class ClientUI implements IUserInterface {
     private final JFileChooser fileChooser;
 
     private final JFrame frame;
@@ -54,6 +54,7 @@ public class ClientUI {
      *
      * @param onLogin Event callback when the user press confirm.
      */
+    @Override
     public void showLogin(IOnLogin onLogin) {
         loginPage.setOnConfirm(onLogin);
 
@@ -66,6 +67,7 @@ public class ClientUI {
      * Show the Main page of the application. It has the chat and the list of all the connected
      * added friends.
      */
+    @Override
     public void showMain() {
         frame.setSize(850, 520);
         frame.setMinimumSize(new Dimension(850, 520));
@@ -78,6 +80,7 @@ public class ClientUI {
     /**
      * Clear the messages in the ChatPanel.
      */
+    @Override
     public void clearMessages() {
         mainPage.clearMessages();
     }
@@ -87,6 +90,7 @@ public class ClientUI {
      *
      * @param onAddRecipient The function callback with one int parameter.
      */
+    @Override
     public void setOnAddRecipientAction(IOnEventParam<Integer> onAddRecipient) {
         mainPage.setOnAddRecipient(onAddRecipient);
     }
@@ -96,6 +100,7 @@ public class ClientUI {
      *
      * @param onRemoveRecipient The function callback with one int parameter.
      */
+    @Override
     public void setOnRemoveRecipientAction(IOnEventParam<Integer> onRemoveRecipient) {
         mainPage.setOnRemoveRecipient(onRemoveRecipient);
     }
@@ -105,6 +110,7 @@ public class ClientUI {
      *
      * @param onSend The function callback with one string parameter.
      */
+    @Override
     public void setOnSendTextAction(IOnEventParam<String> onSend) {
         mainPage.setOnSendText(onSend);
     }
@@ -114,6 +120,7 @@ public class ClientUI {
      *
      * @param onSend The function callback with one string parameter.
      */
+    @Override
     public void setOnSendFileAction(IOnEventParam<String> onSend) {
         mainPage.setOnSendFile(onSend);
     }
@@ -123,6 +130,7 @@ public class ClientUI {
      *
      * @param onTyping The function callback with no parameter.
      */
+    @Override
     public void setOnTypingAction(IOnEvent onTyping) {
         mainPage.setOnTyping(onTyping);
     }
@@ -132,6 +140,7 @@ public class ClientUI {
      *
      * @param onShowMessages The function callback with one int parameter.
      */
+    @Override
     public void setOnShowMessageAction(IOnEventParam<Integer> onShowMessages) {
         mainPage.setOnShowMessages(onShowMessages);
     }
@@ -141,6 +150,7 @@ public class ClientUI {
      *
      * @param onShowFriend The function callback with no parameter.
      */
+    @Override
     public void setOnShowFriendAction(IOnEvent onShowFriend) {
         mainPage.setOnShowFriend(onShowFriend);
     }
@@ -150,6 +160,7 @@ public class ClientUI {
      *
      * @param onShowOnline The function callback with no parameter.
      */
+    @Override
     public void setOnShowOnlineAction(IOnEvent onShowOnline) {
         mainPage.setOnShowOnline(onShowOnline);
     }
@@ -159,6 +170,7 @@ public class ClientUI {
      *
      * @param onConnect The function callback with no parameter.
      */
+    @Override
     public void setOnConnectAction(IOnEvent onConnect) {
         mainPage.setOnConnect(onConnect);
     }
@@ -168,6 +180,7 @@ public class ClientUI {
      *
      * @param onDisconnect The function callback with no parameter.
      */
+    @Override
     public void setOnDisconnectAction(IOnEvent onDisconnect) {
         mainPage.setOnDisconnect(onDisconnect);
     }
@@ -177,6 +190,7 @@ public class ClientUI {
      *
      * @param names The string array of names.
      */
+    @Override
     public void showRecipients(String[] names) {
         mainPage.setRecipient(names);
     }
@@ -186,6 +200,7 @@ public class ClientUI {
      *
      * @param title Text for the title.
      */
+    @Override
     public void setTitle(String title) {
         frame.setTitle(title);
     }
@@ -195,6 +210,7 @@ public class ClientUI {
      *
      * @param name The username.
      */
+    @Override
     public void setUserTitle(String name) {
         frame.setTitle(name + " - " + windowTitle);
     }
@@ -206,6 +222,7 @@ public class ClientUI {
      * @param usernames The string array of usernames.
      * @param images    The image array.
      */
+    @Override
     public void setUserList(String[] usernames, ImageIcon[] images) {
         mainPage.setUserList(usernames, images);
     }
@@ -217,6 +234,7 @@ public class ClientUI {
      * @param name The name of the user for the message.
      * @param text The text content of the message.
      */
+    @Override
     public void addMessage(String time, String name, String text) {
         mainPage.addMessage(time, name, text);
     }
@@ -224,10 +242,11 @@ public class ClientUI {
     /**
      * Add the image message to the {@link client.boundary.panel.ChatPanel}.
      *
-     * @param time The string formatted time.
-     * @param name The name of the user for the message.
+     * @param time  The string formatted time.
+     * @param name  The name of the user for the message.
      * @param image The image content of the message.
      */
+    @Override
     public void addMessage(String time, String name, ImageIcon image) {
         mainPage.addMessage(time, name, image);
     }

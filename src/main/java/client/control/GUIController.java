@@ -1,6 +1,6 @@
 package client.control;
 
-import client.boundary.ClientUI;
+import client.boundary.IUserInterface;
 import java.awt.Image;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -15,29 +15,29 @@ import shared.entity.User;
  * @version 1.0
  */
 final public class GUIController {
-    private ClientUI clientUI;
+    private IUserInterface userInterface;
     private ClientController controller;
 
     private FileIO fileIO;
 
     // Events callbacks
 
-    public void start(final ClientController controller, final ClientUI clientUI) {
+    public void start(final ClientController controller, final IUserInterface userInterface) {
         this.controller = controller;
-        this.clientUI = clientUI;
+        this.userInterface = userInterface;
 
-        this.clientUI.setOnSendTextAction(this::onSendAction);
-        this.clientUI.setOnSendFileAction(this::onSendFileAction);
-        this.clientUI.setOnTypingAction(this::onTypingAction);
-        this.clientUI.setOnShowMessageAction(this::onShowMessages);
-        this.clientUI.setOnShowFriendAction(this::onShowFriendAction);
-        this.clientUI.setOnShowOnlineAction(this::onShowOnlineAction);
+        this.userInterface.setOnSendTextAction(this::onSendAction);
+        this.userInterface.setOnSendFileAction(this::onSendFileAction);
+        this.userInterface.setOnTypingAction(this::onTypingAction);
+        this.userInterface.setOnShowMessageAction(this::onShowMessages);
+        this.userInterface.setOnShowFriendAction(this::onShowFriendAction);
+        this.userInterface.setOnShowOnlineAction(this::onShowOnlineAction);
 
-        this.clientUI.setOnConnectAction(controller::connect);
-        this.clientUI.setOnDisconnectAction(controller::disconnect);
+        this.userInterface.setOnConnectAction(controller::connect);
+        this.userInterface.setOnDisconnectAction(controller::disconnect);
 
-        this.clientUI.setOnAddRecipientAction(controller::addRecipient);
-        this.clientUI.setOnRemoveRecipientAction(controller::removeRecipient);
+        this.userInterface.setOnAddRecipientAction(controller::addRecipient);
+        this.userInterface.setOnRemoveRecipientAction(controller::removeRecipient);
 
         controller.setOnUpdate(this::update);
         controller.setOnConnect(this::onConnect);
@@ -49,12 +49,12 @@ final public class GUIController {
     public void loadCached() {
         final var user = fileIO.read("User.dat", User.class);
         if (user == null) {
-            clientUI.showLogin(this::login);
+            userInterface.showLogin(this::login);
         } else {
             controller.setUser(user);
             controller.connect();
-            clientUI.showMain();
-            clientUI.setUserTitle(user.getUsername());
+            userInterface.showMain();
+            userInterface.setUserTitle(user.getUsername());
         }
     }
 
@@ -114,8 +114,8 @@ final public class GUIController {
         controller.setUser(user);
 
         controller.connect();
-        clientUI.showMain();
-        clientUI.setUserTitle(user.getUsername());
+        userInterface.showMain();
+        userInterface.setUserTitle(user.getUsername());
     }
 
     private void update() {
@@ -123,7 +123,7 @@ final public class GUIController {
         if (recipients != null) {
             final String names[] = new String[recipients.size()];
             for (int i = 0; i < names.length; i++) names[i] = recipients.get(i).getUsername();
-            clientUI.showRecipients(names);
+            userInterface.showRecipients(names);
         }
 
         final var messages = controller.getMessages();
@@ -140,20 +140,20 @@ final public class GUIController {
             images[i] = newUser.getImage();
         }
 
-        clientUI.setUserList(usernames, images);
+        userInterface.setUserList(usernames, images);
     }
 
     private void showMessages(final List<Message> messages) {
         final int size = messages.size();
-        clientUI.clearMessages();
+        userInterface.clearMessages();
         for (int i = 0; i < size; i++) {
             var message = messages.get(i);
             var time = message.getSentTime().toString();
             var username = message.getSender().getUsername();
             if (message.getImage() == null) {
-                clientUI.addMessage(time, username, message.getText());
+                userInterface.addMessage(time, username, message.getText());
             } else {
-                clientUI.addMessage(time, username, message.getImage());
+                userInterface.addMessage(time, username, message.getImage());
             }
         }
     }
