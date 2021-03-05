@@ -79,8 +79,8 @@ public class ServerController {
         for (MessageListener listener : connectedClientList) {
             users.add(listener.user);
         }
-        UserListMessage userListMessage =
-            new UserListMessage(users.toArray(new User[users.size()]));
+
+        IMessage userListMessage = new UserListMessage(users.toArray(new User[users.size()]));
 
         messageSender.messagesToSend.put(userListMessage);
     }
@@ -138,7 +138,6 @@ public class ServerController {
             clientTransmissions.put(user, clientTransmission);
         }
 
-        // TODO SOMEWHERE HERE CHRISTIAN
         @Override
         public void run() {
             while (!interrupted()) {
@@ -150,6 +149,9 @@ public class ServerController {
                         if (clientTransmission != null) {
                             clientTransmission.receivedMessages.put(message);
                         }
+                    }
+                    if (receivers.length == 0) {
+                        message.setReceiveTime(new Date());
                     }
                     loggerPropertyChange.firePropertyChange(null, null, message);
                 } catch (InterruptedException e) {

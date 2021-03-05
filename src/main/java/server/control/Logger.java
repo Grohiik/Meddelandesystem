@@ -3,15 +3,16 @@ package server.control;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
-import server.control.ServerController;
+
 import shared.entity.IMessage;
 import shared.entity.Message;
+import shared.entity.UserListMessage;
 
 /**
  * Logger that logs all messages being sent to the server.
@@ -90,19 +91,51 @@ public class Logger implements PropertyChangeListener {
             Date currentDate;
             Scanner scanner = new Scanner(System.in);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            ArrayList<String> lastList = new ArrayList<>();
+            ArrayList<String> thisList;
+
+            System.out.println("Logger online");
+
             while (!interrupted()) {
                 try {
-                    System.out.println("Enter start date");
+                    System.out.println("\n---------------------------------\n");
+                    System.out.println("Enter start date:");
                     startDate = format.parse(scanner.nextLine());
-                    System.out.println("Enter end date");
+                    System.out.println("Enter end date:");
                     endDate = format.parse(scanner.nextLine());
+                    System.out.println("\n---------------------------------\n");
                     for (IMessage currentMessage : messageList) {
                         currentDate = currentMessage.getReceiveTime();
+
                         if (currentDate == null) {
                             continue;
                         }
                         if (currentDate.after(startDate) && currentDate.before(endDate)) {
-                            System.out.println(currentMessage);
+                            if (currentMessage instanceof UserListMessage) {
+                                thisList = new ArrayList<>(
+                                    Arrays.asList(currentMessage.toString().split(" ")));
+
+                                for (String user : thisList) {
+                                    if (!lastList.contains(user) && !user.equals("")) {
+                                        System.out.println(
+                                            user + " connected at: " + format.format(currentDate));
+                                    }
+                                }
+
+                                for (String user : lastList) {
+                                    if (!thisList.contains(user) && !user.equals("")) {
+                                        System.out.println(user + " disconnected at: "
+                                                           + format.format(currentDate));
+                                    }
+                                }
+
+                                lastList = thisList;
+                            } else {
+                                System.out.println(currentMessage);
+                            }
+                        }
+                        if (currentDate.after(endDate)) {
+                            break;
                         }
                     }
                 } catch (ParseException e) {
