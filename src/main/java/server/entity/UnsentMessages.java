@@ -2,11 +2,12 @@ package server.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import shared.entity.*;
 
 /**
- * Unsent messages
- * stores messages that failed to be sent to be able to send them later
+ * UnsentMessages stores messages that failed to be sent to be able to send them later
+ *
  * @author Eric Lundin
  * @author Linnéa Mörk
  * @version 1.0
@@ -15,7 +16,7 @@ public class UnsentMessages {
     private HashMap<User, ArrayList<Message>> unsent = new HashMap<>();
 
     /**
-     * adds new unsent messages
+     * Adds new unsent messages
      * @param user the user which could not receive the message
      * @param message the message which could not be sent
      */
