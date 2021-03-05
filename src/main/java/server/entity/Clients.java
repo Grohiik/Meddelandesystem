@@ -5,7 +5,7 @@ import java.util.Set;
 import shared.entity.User;
 
 /**
- * Class that handles all Clients, might be moved to another directory
+ * Class that handles all Clients.
  *
  * @author Marcus Linné
  * @author Linnéa Mörk
