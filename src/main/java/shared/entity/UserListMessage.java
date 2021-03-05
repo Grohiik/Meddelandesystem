@@ -18,6 +18,10 @@ public class UserListMessage implements IMessage, Serializable {
         this.users = users;
     }
 
+    public UserListMessage(UserListMessage userListMessage) {
+        this.users = userListMessage.users;
+    }
+
     public User[] getUsers() {
         return users;
     }
