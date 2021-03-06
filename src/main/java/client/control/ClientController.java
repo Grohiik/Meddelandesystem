@@ -230,7 +230,7 @@ final public class ClientController {
         if (recipientList == null) recipientList = new ArrayList<>();
         if (index < 0) return;
         recipientList.clear();
-        recipientList.add(connectedUserList.get(index));
+        recipientList.add(activeUserList.get(index));
     }
 
     /**
