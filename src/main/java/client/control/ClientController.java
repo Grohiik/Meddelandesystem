@@ -246,9 +246,9 @@ final public class ClientController {
      * @param filename file path to load
      */
     public void sendImageMessage(String filename) {
-        ImageIcon imageIcon = new ImageIcon(filename);
+        final var image = new ImageIcon(filename);
         var message = new Message();
-        message.setImage(imageIcon);
+        message.setImage(image);
         message.setSender(user);
         sendMessage(message);
     }

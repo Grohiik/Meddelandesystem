@@ -21,10 +21,10 @@ final public class GUIController {
     private ClientController controller;
 
     private FileIO fileIO;
+    private boolean isCached;
 
-    // Events callbacks
-
-    public void start(final ClientController controller, final IUserInterface userInterface) {
+    public void registerEvents(final ClientController controller,
+                               final IUserInterface userInterface) {
         this.controller = controller;
         this.userInterface = userInterface;
 
@@ -49,8 +49,11 @@ final public class GUIController {
         fileIO = new FileIO();
     }
 
-    public void loadCached() {
-        final var user = fileIO.read("User.dat", User.class);
+    public void loadCached(boolean isCached) {
+        this.isCached = isCached;
+
+        User user = null;
+        if (isCached) user = fileIO.read("User.dat", User.class);
         if (user == null) {
             userInterface.showLogin(this::login);
         } else {
@@ -74,7 +77,7 @@ final public class GUIController {
 
     public void onAddFriendAction(int index) {
         controller.addFriend(index);
-        fileIO.save("FriendList.dat", controller.getFriendList());
+        if (isCached) fileIO.save("FriendList.dat", controller.getFriendList());
         update();
     }
 

@@ -32,9 +32,8 @@ final public class StartClient {
         final var controller = new ClientController(server, port);
         final var ui = new ClientUI();
         final var gui = new GUIController();
-        gui.start(controller, ui);
-
-        if (isLoadCache) gui.loadCached();
+        gui.registerEvents(controller, ui);
+        gui.loadCached(isLoadCache);
     }
 
     private static HashMap<String, String> parseArguments(String[] args) {
