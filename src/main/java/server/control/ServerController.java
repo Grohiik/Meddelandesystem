@@ -212,9 +212,9 @@ public class ServerController {
                         new ClientTransmission(user, socket, objectOutputStream);
                     messageSender.addClientTransmission(user, clientTransmission);
 
-                    var unsenttest = unsentMessages.get(user);
-                    if (unsenttest != null) {
-                        ArrayList<Message> currentUnsentMessages = unsenttest;
+                    var allUnsentMessages = unsentMessages.get(user);
+                    if (allUnsentMessages != null) {
+                        ArrayList<Message> currentUnsentMessages = allUnsentMessages;
                         for (Message currentMessage : currentUnsentMessages) {
                             clientTransmission.receivedMessages.put(currentMessage);
                         }
