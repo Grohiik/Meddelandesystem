@@ -29,15 +29,12 @@ final public class StartClient {
             if (isLoad != null && (isLoad.equals("false") || isLoad.equals("f")))
                 isLoadCache = false;
         }
+        final var controller = new ClientController(server, port);
+        final var ui = new ClientUI();
+        final var gui = new GUIController();
+        gui.start(controller, ui);
 
-        if (isLoadCache) {
-            final var controller = new ClientController(server, port);
-            final var ui = new ClientUI();
-            final var gui = new GUIController();
-            gui.start(controller, ui);
-
-            gui.loadCached();
-        }
+        if (isLoadCache) gui.loadCached();
     }
 
     private static HashMap<String, String> parseArguments(String[] args) {

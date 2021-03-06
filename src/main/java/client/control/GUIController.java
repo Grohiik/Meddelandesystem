@@ -3,6 +3,7 @@ package client.control;
 import client.boundary.IUserInterface;
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.ImageIcon;
 import shared.entity.Message;
@@ -109,13 +110,13 @@ final public class GUIController {
     }
 
     public void onConnect() {
-        // TODO: show we're connected
-        System.out.println("GUIController::Connected");
+        userInterface.addMessage(new Date().toString(), "System",
+                                 "You're now connected to the server");
     }
 
     public void onDisconnect() {
-        // TODO show we're disconnected
-        System.out.println("GUIController::Disconnected");
+        userInterface.addMessage(new Date().toString(), "System",
+                                 "You're disconnected from the server");
     }
 
     private void login(String username, String filename) {

@@ -40,6 +40,7 @@ public class UserListPanel {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         showFriendButton = new JButton("Friends");
         showOnlineButton = new JButton("Online");
+        showOnlineButton.setEnabled(false);
         addFriendButton = new JButton("Add Friend");
         buttonPanel.add(showFriendButton);
         buttonPanel.add(showOnlineButton);
@@ -91,11 +92,19 @@ public class UserListPanel {
     }
 
     public void setOnShowFriend(IOnEvent listener) {
-        showFriendButton.addActionListener(e -> listener.signal());
+        showFriendButton.addActionListener(e -> {
+            showFriendButton.setEnabled(false);
+            showOnlineButton.setEnabled(true);
+            listener.signal();
+        });
     }
 
     public void setOnShowOnline(IOnEvent listener) {
-        showOnlineButton.addActionListener(e -> listener.signal());
+        showOnlineButton.addActionListener(e -> {
+            listener.signal();
+            showOnlineButton.setEnabled(false);
+            showFriendButton.setEnabled(true);
+        });
     }
 
     public int getSelected() {
