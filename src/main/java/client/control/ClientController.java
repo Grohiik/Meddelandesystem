@@ -214,9 +214,9 @@ final public class ClientController {
      */
     public void setFriendList(List<User> friendList) {
         this.friendList = friendList;
-        if (userMessageMap == null)
-            for (User user : this.friendList)
-                userMessageMap.putIfAbsent(user, new ArrayList<Message>());
+        if (userMessageMap != null) userMessageMap = new HashMap<>();
+        for (User user : this.friendList)
+            userMessageMap.putIfAbsent(user, new ArrayList<Message>());
     }
 
     /**
