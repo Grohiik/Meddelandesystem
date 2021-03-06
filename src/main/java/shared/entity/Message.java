@@ -96,14 +96,15 @@ public class Message implements IMessage, Serializable {
     @Override
     public String toString() {
         String receiverString = "";
-        String imageString = "";
+        String contentString = text;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         for (User currentUser : receiverList) {
             receiverString += " " + currentUser;
         }
-        if (image != null) {
-            imageString = "and an image";
+
+        if (text == null) {
+            contentString = "of an image";
         }
 
         String receiveTimeString = format.format(receiveTime);
@@ -113,9 +114,9 @@ public class Message implements IMessage, Serializable {
             sentTimeString = format.format(sentTime);
         }
 
-        String out = String.format(
-            "%s sent a message to%s with the content %s %s| Sent: %s | Received: %s", sender,
-            receiverString, text, imageString, sentTimeString, receiveTimeString);
+        String out =
+                String.format("%s sent a message to%s with the content %s| Sent: %s | Received: %s",
+                        sender, receiverString, contentString, sentTimeString, receiveTimeString);
 
         return out;
     }
