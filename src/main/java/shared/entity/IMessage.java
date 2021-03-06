@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * IMessage is a interface for Messages
- * TODO IMPROVE COMMENTS
+ *
  * @author Christian Heisterkamp
  * @version 1.0
  */

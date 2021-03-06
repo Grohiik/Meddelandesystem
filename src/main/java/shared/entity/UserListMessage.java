@@ -1,7 +1,6 @@
 package shared.entity;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -17,6 +16,10 @@ public class UserListMessage implements IMessage, Serializable {
 
     public UserListMessage(User[] users) {
         this.users = users;
+    }
+
+    public UserListMessage(UserListMessage userListMessage) {
+        this.users = userListMessage.users;
     }
 
     public User[] getUsers() {
@@ -44,7 +47,6 @@ public class UserListMessage implements IMessage, Serializable {
         for (User user : users) {
             out += user + " ";
         }
-        out += "at: " + receiveTime;
         return out;
     }
 }
