@@ -34,7 +34,6 @@ final public class ClientController {
     private HashMap<User, List<Message>> userMessageMap;
 
     private User selectedUser;
-    private List<Message> activeMessageList;
     private List<User> activeUserList;
 
     private IOnEvent onUpdate;
@@ -116,14 +115,29 @@ final public class ClientController {
         }
     }
 
+    /**
+     * Set event callback for when there's new message and when sending a message.
+     *
+     * @param onUpdate The function callback with no parameter.
+     */
     public void setOnUpdate(IOnEvent onUpdate) {
         this.onUpdate = onUpdate;
     }
 
+    /**
+     * Set event callback when connected.
+     *
+     * @param onConnect The function callback with no parameter.
+     */
     public void setOnConnect(IOnEvent onConnect) {
         this.onConnectEvent = onConnect;
     }
 
+    /**
+     * Set event callback for when there's a disconnect.
+     *
+     * @param onDisconnect The function callback with no parameter.
+     */
     public void setOnDisconnect(IOnEvent onDisconnect) {
         this.onDisconnectEvent = onDisconnect;
     }
@@ -193,10 +207,23 @@ final public class ClientController {
         return activeUserList;
     }
 
+    /**
+     * Set the friend list.
+     *
+     * @param friendList List of users.
+     */
     public void setFriendList(List<User> friendList) {
         this.friendList = friendList;
+        if (userMessageMap == null)
+            for (User user : this.friendList)
+                userMessageMap.putIfAbsent(user, new ArrayList<Message>());
     }
 
+    /**
+     * Get the friend list stored in the memory.
+     *
+     * @return List of users.
+     */
     public List<User> getFriendList() {
         return friendList;
     }
@@ -219,9 +246,9 @@ final public class ClientController {
      * @param filename file path to load
      */
     public void sendImageMessage(String filename) {
-        ImageIcon imageIcon = new ImageIcon(filename);
+        final var image = new ImageIcon(filename);
         var message = new Message();
-        message.setImage(imageIcon);
+        message.setImage(image);
         message.setSender(user);
         sendMessage(message);
     }
@@ -292,11 +319,21 @@ final public class ClientController {
         return userMessageMap.get(selectedUser);
     }
 
+    /**
+     * Get messages from the selected user.
+     *
+     * @return List of messages.
+     */
     public List<Message> getMessages() {
         if (userMessageMap == null) userMessageMap = new HashMap<>();
         return userMessageMap.get(selectedUser);
     }
 
+    /**
+     * Get the recipient list.
+     *
+     * @return List of users.
+     */
     public List<User> getRecipients() {
         return recipientList;
     }
@@ -349,6 +386,12 @@ final public class ClientController {
             var message = (Message) msg;
             var sender = message.getSender();
 
+            if (userMessageMap == null) {
+                userMessageMap = new HashMap<>();
+                userMessageMap.put(user, new ArrayList<>());
+                if (connectedUserList == null) connectedUserList = new ArrayList<>();
+            }
+
             var senderMessages = userMessageMap.get(sender);
             if (senderMessages == null) {
                 var userMessages = new ArrayList<Message>();
@@ -364,10 +407,9 @@ final public class ClientController {
             connectedUserList.clear();
             for (var user : arrUser)
                 if (!user.equals(this.user)) connectedUserList.add(user);
-
-            if (activeUserList == null) activeUserList = connectedUserList;
         }
 
+        if (activeUserList == null) activeUserList = connectedUserList;
         if (onUpdate != null) onUpdate.signal();
     }
 

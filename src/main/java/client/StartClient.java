@@ -29,17 +29,19 @@ final public class StartClient {
             if (isLoad != null && (isLoad.equals("false") || isLoad.equals("f")))
                 isLoadCache = false;
         }
-
-        if (isLoadCache) {
-            final var controller = new ClientController(server, port);
-            final var ui = new ClientUI();
-            final var gui = new GUIController();
-            gui.start(controller, ui);
-
-            gui.loadCached();
-        }
+        final var controller = new ClientController(server, port);
+        final var ui = new ClientUI();
+        final var gui = new GUIController();
+        gui.registerEvents(controller, ui);
+        gui.start(isLoadCache);
     }
 
+    /**
+     * Parse the pairs arguments.
+     *
+     * @param args Array of strings.
+     * @return     Map of the key and value.
+     */
     private static HashMap<String, String> parseArguments(String[] args) {
         if (args.length % 2 != 0) return null;
 
