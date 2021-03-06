@@ -10,19 +10,29 @@ import shared.entity.Message;
 import shared.entity.User;
 
 /**
- * GUIController
+ * GUIController class convert the entity data for boundary side. It attach events onto the boundary
+ * side and can call to show the different values.
  *
  * @author  Pratchaya Khansomboon
  * @author  Eric Lundin
  * @version 1.0
  */
 final public class GUIController {
+    // Reference to other controller and the boundary side
     private IUserInterface userInterface;
     private ClientController controller;
 
+    // Property for saving and loading data
     private FileIO fileIO;
     private boolean isCached;
 
+    /**
+     * Register the events for callbacks and store the references.
+     *
+     * @param controller    The ClientController object reference for adding
+     *                      and call the different method.
+     * @param userInterface The user interface object reference for attaching events.
+     */
     public void registerEvents(final ClientController controller,
                                final IUserInterface userInterface) {
         this.controller = controller;
@@ -49,9 +59,13 @@ final public class GUIController {
         fileIO = new FileIO();
     }
 
-    public void loadCached(boolean isCached) {
+    /**
+     * Starts the Graphical Interface.
+     *
+     * @param isCached Tells the GUI if it should load the cached data.
+     */
+    public void start(boolean isCached) {
         this.isCached = isCached;
-
         User user = null;
         if (isCached) user = fileIO.read("User.dat", User.class);
         if (user == null) {
@@ -73,38 +87,64 @@ final public class GUIController {
         }
     }
 
-    // IN
-
+    /**
+     * Callback event for add friend action. This is bounds to the boundary side. It'll also save
+     * the list on the disk if {@code isCached} is {@code true}.
+     *
+     * @param index Selected index on the user list.
+     */
     public void onAddFriendAction(int index) {
         controller.addFriend(index);
         if (isCached) fileIO.save("FriendList.dat", controller.getFriendList());
         update();
     }
 
+    /**
+     * Callback event for send text action. This is bounds to the boundary side.
+     *
+     * @param text The text to be send as the message.
+     */
     public void onSendAction(String text) {
         controller.sendTextMessage(text);
     }
 
+    /**
+     * Callback event for send file action. This is bounds to the boundary side.
+     *
+     * @param filename The file path to the image.
+     */
     public void onSendFileAction(String filename) {
         controller.sendImageMessage(filename);
     }
 
+    /**
+     * Callback event for when the text field is being type. This is bounds to the boundary side.
+     */
     public void onTypingAction() {
         System.out.println("Typing...");
     }
 
+    /**
+     * Callback event for show friend action. This is bounds to the boundary side.
+     */
     public void onShowFriendAction() {
         controller.showFriendList();
         update();
     }
 
+    /**
+     * Callback event for show online action. This is bounds to the boundary side.
+     */
     public void onShowOnlineAction() {
         controller.showOnlineList();
         update();
     }
 
-    // OUT
-
+    /**
+     * Callback for when there's a show message event. This bounds to the boundary side.
+     *
+     * @param index index of the message in the list
+     */
     public void onShowMessages(int index) {
         if (index < 0) return;
         final var messages = controller.getMessages(index);
@@ -113,16 +153,34 @@ final public class GUIController {
         update();
     }
 
+    /**
+     * Callback event for when the client connects to a server.
+     * This bounds to the boundary side. Writes a message when
+     * the client connects to the server successfully.
+     */
     public void onConnect() {
         userInterface.addMessage(new Date().toString(), "System",
                                  "You're now connected to the server");
     }
 
+    /**
+     * Callback event for when the client disconnects from a server.
+     * This bounds to the boundary side. Writes a message when the
+     * client disconnects from a server successfully
+     */
     public void onDisconnect() {
         userInterface.addMessage(new Date().toString(), "System",
                                  "You're disconnected from the server");
     }
 
+    /**
+     * Callback event for when the user logs in to the server
+     * This bounds to the boundary side. Login the user with
+     * name and the file path to an image.
+     *
+     * @param username The name of the user.
+     * @param filename The file path to the image for the user.
+     */
     private void login(String username, String filename) {
         final var image =
             new ImageIcon(filename).getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
@@ -132,6 +190,11 @@ final public class GUIController {
         login(user);
     }
 
+    /**
+     * Connects the user to the server after the user is created or read from disk
+     *
+     * @param user The user that is created or read from disk
+     */
     public void login(User user) {
         controller.setUser(user);
 
@@ -140,6 +203,9 @@ final public class GUIController {
         userInterface.setUserTitle(user.getUsername());
     }
 
+    /**
+     * Update the whole GUI with current data.
+     */
     private void update() {
         final var recipients = controller.getRecipients();
         if (recipients != null) {
@@ -165,6 +231,11 @@ final public class GUIController {
         userInterface.setUserList(usernames, images);
     }
 
+    /**
+     * Show the message to the user interface.
+     *
+     * @param messages The list of messages.
+     */
     private void showMessages(final List<Message> messages) {
         final int size = messages.size();
         userInterface.clearMessages();

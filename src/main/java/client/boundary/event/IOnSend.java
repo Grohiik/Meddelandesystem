@@ -8,10 +8,10 @@ package client.boundary.event;
  */
 public interface IOnSend<T> {
     /**
-     * Send message.
+     * Send message callback.
      *
      * @param message Generic message, can be anything in your codebase
-     * @return True Successfully send, False failed to send.
+     * @return {@code true} Successfully send, {@code false} failed to send.
      */
     boolean send(T message);
 }

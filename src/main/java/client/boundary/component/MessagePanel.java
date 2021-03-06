@@ -9,7 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 /**
- * MessagePanel
+ * MessagePanel is the custom panel uses by {@link ListPanel} for rendering messages with user,
+ * timestamp and text/images.
  *
  * @author  Pratchaya Khansomboon
  * @version 1.0
@@ -21,11 +22,25 @@ public class MessagePanel extends JPanel {
     private JLabel nameLabel;
     private JLabel timeLabel;
 
+    /**
+     * Create MessagePanel that display images.
+     *
+     * @param time  The formatted sent time.
+     * @param name  The name of the sender.
+     * @param image The image object to be displayed.
+     */
     public MessagePanel(String time, String name, ImageIcon image) {
         this(time, name);
         add(new JLabel(image), BorderLayout.LINE_START);
     }
 
+    /**
+     * Create MessagePanel that display texts.
+     *
+     * @param time The formatted sent time.
+     * @param name The name of the sender.
+     * @param text The text to be displayed.
+     */
     public MessagePanel(String time, String name, String text) {
         this(time, name);
         var textArea = new JTextArea();
@@ -37,6 +52,12 @@ public class MessagePanel extends JPanel {
         add(textArea, BorderLayout.CENTER);
     }
 
+    /**
+     * Private constructor for setting time and username and the panels.
+     *
+     * @param time The formatted time.
+     * @param name The name of the sender.
+     */
     private MessagePanel(String time, String name) {
         setLayout(new BorderLayout());
         infoPanel = new JPanel();

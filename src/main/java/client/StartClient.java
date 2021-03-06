@@ -33,9 +33,15 @@ final public class StartClient {
         final var ui = new ClientUI();
         final var gui = new GUIController();
         gui.registerEvents(controller, ui);
-        gui.loadCached(isLoadCache);
+        gui.start(isLoadCache);
     }
 
+    /**
+     * Parse the pairs arguments.
+     *
+     * @param args Array of strings.
+     * @return     Map of the key and value.
+     */
     private static HashMap<String, String> parseArguments(String[] args) {
         if (args.length % 2 != 0) return null;
 

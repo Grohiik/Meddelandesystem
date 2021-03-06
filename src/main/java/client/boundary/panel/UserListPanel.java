@@ -67,6 +67,12 @@ public class UserListPanel {
         panel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Displays a list of usernames and profile pictures
+     *
+     *  @param usernames array of users to be shown
+     * @param images array of images to b shown
+     */
     public void setUserList(String[] usernames, ImageIcon[] images) {
         userList.clear();
         for (int i = 0; i < images.length; i++) {
@@ -75,22 +81,47 @@ public class UserListPanel {
         }
     }
 
+    /**
+     * Set event callback for when the AddRecipient button is pressed.
+     *
+     * @param listener The function callback listener
+     */
     public void setOnAddRecipient(IOnEventParam<Integer> listener) {
         addRecipientButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
     }
 
+    /**
+     * Set event callback for when the removeRecipient button is pressed.
+     *
+     * @param listener The function callback listener
+     */
     public void setOnRemoveRecipient(IOnEventParam<Integer> listener) {
         removeRecipientButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
     }
 
+    /**
+     * Set event callback for when the showMessage button is pressed.
+     *
+     * @param listener The function callback listener
+     */
     public void setOnShowMessage(IOnEventParam<Integer> listener) {
         showMessageButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
     }
 
+    /**
+     * Set event callback for when the addFriend button is pressed.
+     *
+     * @param listener The function callback listener
+     */
     public void setOnAddFriend(IOnEventParam<Integer> listener) {
         addFriendButton.addActionListener(e -> listener.signal(userList.getSelectedIndex()));
     }
 
+    /**
+     * Set event callback for when the showFriend button is pressed.
+     *
+     * @param listener The function callback listener
+     */
     public void setOnShowFriend(IOnEvent listener) {
         showFriendButton.addActionListener(e -> {
             showFriendButton.setEnabled(false);
@@ -99,6 +130,11 @@ public class UserListPanel {
         });
     }
 
+    /**
+     * Set event callback for when the showOnline button is pressed.
+     *
+     * @param listener The function callback listener
+     */
     public void setOnShowOnline(IOnEvent listener) {
         showOnlineButton.addActionListener(e -> {
             listener.signal();
