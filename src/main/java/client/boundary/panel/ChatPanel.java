@@ -3,10 +3,10 @@ package client.boundary.panel;
 import client.boundary.ClientUI;
 import client.boundary.component.ListPanel;
 import client.boundary.component.MessagePanel;
-import client.boundary.listener.IOnSend;
+import client.boundary.event.IOnEvent;
+import client.boundary.event.IOnSend;
 import java.awt.BorderLayout;
 import java.io.File;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 /**
  * ChatPanel
  *
- * @author Pratchaya Khansomboon
- * @author Eric Lundin
+ * @author  Pratchaya Khansomboon
+ * @author  Eric Lundin
  * @version 1.0
  */
 public class ChatPanel {
@@ -58,7 +58,6 @@ public class ChatPanel {
 
         messageTextField = new JTextField(); // accepts upto 10 characters
         messageTextField.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        messageTextField.addCaretListener(e -> onTyping());
 
         fileButton = new JButton("File");
         sendButton = new JButton("Send");
@@ -110,6 +109,10 @@ public class ChatPanel {
         fileButton.addActionListener(e -> onFileButton(listener));
     }
 
+    public void setOnTyping(IOnEvent onTyping) {
+        messageTextField.addCaretListener(e -> onTyping.signal());
+    }
+
     /**
      * File button pressed event
      */
@@ -127,13 +130,5 @@ public class ChatPanel {
     private void onSend(IOnSend<String> listener) {
         var text = messageTextField.getText();
         if (!text.isBlank() && listener.send(text)) messageTextField.setText("");
-    }
-
-    /**
-     * Typing event from the input field
-     */
-    private void onTyping() {
-        System.out.print(DATE_FORMAT.format(LocalDateTime.now()));
-        System.out.println(": Typing...");
     }
 }

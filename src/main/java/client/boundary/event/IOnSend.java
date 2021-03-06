@@ -1,9 +1,9 @@
-package client.boundary.listener;
+package client.boundary.event;
 
 /**
  * IOnSend listen for send
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
  * @version 1.0
  */
 public interface IOnSend<T> {

@@ -1,8 +1,7 @@
 package client.boundary.page;
 
 import client.boundary.ClientUI;
-import client.boundary.listener.IOnLogin;
-import client.control.ClientController;
+import client.boundary.event.IOnLogin;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -11,7 +10,7 @@ import javax.swing.JTextField;
 /**
  * LoginView
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
  * @version 1.0
  */
 public class LoginPage {
@@ -25,7 +24,7 @@ public class LoginPage {
 
     private IOnLogin onLogin;
 
-    public LoginPage(ClientController controller, ClientUI clientUI) {
+    public LoginPage(ClientUI clientUI) {
         this.clientUI = clientUI;
 
         panel = new JPanel();
@@ -54,9 +53,10 @@ public class LoginPage {
 
     private void onConfirm() {
         String username = nameTextField.getText();
-        String filename = clientUI.getSelectedFile().getAbsolutePath();
-        if (username.isBlank() || filename.isBlank()) return;
+        var file = clientUI.getSelectedFile();
+        if (username.isBlank() || file == null) return;
 
+        String filename = file.getAbsolutePath();
         onLogin.login(username, filename);
     }
 

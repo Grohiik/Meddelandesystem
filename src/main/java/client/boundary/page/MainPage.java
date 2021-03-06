@@ -2,9 +2,10 @@ package client.boundary.page;
 
 import client.boundary.ClientUI;
 import client.boundary.component.MessagePanel;
+import client.boundary.event.IOnEvent;
+import client.boundary.event.IOnEventParam;
 import client.boundary.panel.ChatPanel;
 import client.boundary.panel.UserListPanel;
-import client.control.ClientController;
 import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
@@ -14,9 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * MainView
+ * MainPage
  *
- * @author Pratchaya Khansomboon
+ * @author  Pratchaya Khansomboon
+ * @author  Eric Lundin
  * @version 1.0
  */
 public class MainPage {
@@ -24,51 +26,31 @@ public class MainPage {
     private ChatPanel chatPanel;
     private UserListPanel userListPanel;
 
-    private ClientController controller;
-    private ClientUI clientUI;
+    private JMenuItem connectMI;
+    private JMenuItem disconnectMI;
 
-    public MainPage(ClientController controller, ClientUI clientUI) {
-        this.controller = controller;
-        this.clientUI = clientUI;
+    private IOnEventParam<String> onSendText;
+    private IOnEventParam<String> onSendFile;
 
+    public MainPage(ClientUI clientUI) {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
         // Creating the MenuBar and adding components
         JMenuBar mb = new JMenuBar();
-        // JMenu m1 = new JMenu("File");
         JMenu m2 = new JMenu("Tools");
-        // mb.add(m1);
         mb.add(m2);
 
-        // JMenuItem m11 = new JMenuItem("Hello");
-        JMenuItem connectMI = new JMenuItem("Connect to server");
-        JMenuItem disconnectMI = new JMenuItem("Disconnect from server");
-        disconnectMI.addActionListener(e -> onDisconnect());
-        connectMI.addActionListener(e -> onConnect());
-
-        // m1.add(m11);
+        connectMI = new JMenuItem("Connect to server");
+        disconnectMI = new JMenuItem("Disconnect from server");
         m2.add(connectMI);
         m2.add(disconnectMI);
 
         chatPanel = new ChatPanel(clientUI);
-
-        chatPanel.addSendTextListener(msg -> {
-            controller.sendTextMessage(msg);
-            return controller.getIsConnected();
-        });
-        chatPanel.addSendFileListener(filename -> {
-            controller.sendImageMessage(filename);
-            return controller.getIsConnected();
-        });
+        chatPanel.addSendFileListener(this::sendFile);
+        chatPanel.addSendTextListener(this::sendText);
 
         userListPanel = new UserListPanel();
-        userListPanel.setOnAddRecipient(controller::addRecipient);
-        userListPanel.setOnRemoveRecipient(controller::removeRecipient);
-        userListPanel.setOnShowMessage(controller::showMessage);
-        userListPanel.setOnAddFriend(controller::addContact);
-        userListPanel.setOnShowFriend(controller::showContactList);
-        userListPanel.setOnShowOnline(controller::showOnlineList);
 
         panel.add(chatPanel.getPanel(), BorderLayout.CENTER);
         panel.add(userListPanel.getPanel(), BorderLayout.EAST);
@@ -96,14 +78,56 @@ public class MainPage {
         SwingUtilities.invokeLater(() -> userListPanel.setUserList(usernames, images));
     }
 
+    public void setOnAddRecipient(IOnEventParam<Integer> onAddRecipient) {
+        userListPanel.setOnAddRecipient(onAddRecipient);
+    }
+
+    public void setOnRemoveRecipient(IOnEventParam<Integer> onRemoveRecipient) {
+        userListPanel.setOnRemoveRecipient(onRemoveRecipient);
+    }
+
+    public void setOnConnect(IOnEvent onConnect) {
+        connectMI.addActionListener(e -> onConnect.signal());
+    }
+
+    public void setOnDisconnect(IOnEvent onDisconnect) {
+        disconnectMI.addActionListener(e -> onDisconnect.signal());
+    }
+
+    public void setOnSendText(IOnEventParam<String> onSend) {
+        onSendText = onSend;
+    }
+
+    public void setOnSendFile(IOnEventParam<String> onSend) {
+        onSendFile = onSend;
+    }
+
+    public void setOnTyping(IOnEvent onTyping) {
+        chatPanel.setOnTyping(onTyping);
+    }
+
+    public void setOnShowMessages(IOnEventParam<Integer> onShowMessages) {
+        userListPanel.setOnShowMessage(onShowMessages);
+    }
+
+    public void setOnShowFriend(IOnEvent onShowFriend) {
+        userListPanel.setOnShowFriend(onShowFriend);
+    }
+
+    public void setOnShowOnline(IOnEvent onShowOnline) {
+        userListPanel.setOnShowOnline(onShowOnline);
+    }
+
     /**
      * Send text message
      *
      * @param msg Message to send
      */
     public boolean sendText(String msg) {
-        controller.sendTextMessage(msg);
-        return controller.getIsConnected();
+        onSendText.signal(msg);
+        // controller.sendTextMessage(msg);
+        // return controller.getIsConnected();
+        return true;
     }
 
     /**
@@ -112,19 +136,25 @@ public class MainPage {
      * @param filename File path on the system
      */
     public boolean sendFile(String filename) {
-        controller.sendImageMessage(filename);
-        return controller.getIsConnected();
+        onSendFile.signal(filename);
+        // controller.sendImageMessage(filename);
+        // return controller.getIsConnected();
+        return true;
     }
 
     private void onConnect() {
-        controller.connect();
+        // controller.connect();
     }
 
     private void onDisconnect() {
-        controller.disconnect();
+        // controller.disconnect();
     }
 
     public void setRecipient(String[] names) {
         chatPanel.setRecipient(names);
+    }
+
+    public void setOnAddFriend(IOnEventParam<Integer> onAddFriend) {
+        userListPanel.setOnAddFriend(onAddFriend);
     }
 }

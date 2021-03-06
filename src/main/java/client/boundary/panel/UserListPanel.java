@@ -2,8 +2,8 @@ package client.boundary.panel;
 
 import client.boundary.component.ListPanel;
 import client.boundary.component.UserPanel;
-import client.boundary.listener.IOnEvent;
-import client.boundary.listener.IOnEventParam;
+import client.boundary.event.IOnEvent;
+import client.boundary.event.IOnEventParam;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.ImageIcon;
@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 /**
  * FriendPanel
  *
- * @author Pratchaya Khansomboon
- * @author Eric Lundin
+ * @author  Pratchaya Khansomboon
+ * @author  Eric Lundin
  * @version 1.0
  */
 public class UserListPanel {
@@ -48,7 +48,6 @@ public class UserListPanel {
         userList = new ListPanel<>();
         userList.setEnabled(true);
 
-        // FIXME: Add listener for add recipient
         removeRecipientButton = new JButton("Remove");
         removeRecipientButton.setToolTipText("Remove from recipient list");
         addRecipientButton = new JButton("Add");
