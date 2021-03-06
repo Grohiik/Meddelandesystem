@@ -16,6 +16,7 @@ public interface IUserInterface {
     void showLogin(IOnLogin onLogin);
     void showMain();
 
+    void setOnAddFriendAction(IOnEventParam<Integer> onAddFriend);
     void setOnAddRecipientAction(IOnEventParam<Integer> onAddRecipient);
     void setOnRemoveRecipientAction(IOnEventParam<Integer> onRemoveRecipient);
     void setOnSendTextAction(IOnEventParam<String> onSend);

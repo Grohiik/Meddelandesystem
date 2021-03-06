@@ -2,6 +2,7 @@ package client.control;
 
 import client.boundary.IUserInterface;
 import java.awt.Image;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import shared.entity.Message;
@@ -26,6 +27,7 @@ final public class GUIController {
         this.controller = controller;
         this.userInterface = userInterface;
 
+        this.userInterface.setOnAddFriendAction(this::onAddFriendAction);
         this.userInterface.setOnSendTextAction(this::onSendAction);
         this.userInterface.setOnSendFileAction(this::onSendFileAction);
         this.userInterface.setOnTypingAction(this::onTypingAction);
@@ -52,6 +54,15 @@ final public class GUIController {
             userInterface.showLogin(this::login);
         } else {
             controller.setUser(user);
+            final var friendListRaw = fileIO.read("FriendList.dat", List.class);
+            if (friendListRaw != null) {
+                List<User> friendList = new ArrayList<>();
+
+                for (var u : friendListRaw) {
+                    if (u instanceof User) friendList.add((User) u);
+                }
+                controller.setFriendList(friendList);
+            }
             controller.connect();
             userInterface.showMain();
             userInterface.setUserTitle(user.getUsername());
@@ -59,6 +70,12 @@ final public class GUIController {
     }
 
     // IN
+
+    public void onAddFriendAction(int index) {
+        controller.addFriend(index);
+        fileIO.save("FriendList.dat", controller.getFriendList());
+        update();
+    }
 
     public void onSendAction(String text) {
         controller.sendTextMessage(text);

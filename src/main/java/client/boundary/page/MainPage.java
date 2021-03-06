@@ -153,4 +153,8 @@ public class MainPage {
     public void setRecipient(String[] names) {
         chatPanel.setRecipient(names);
     }
+
+    public void setOnAddFriend(IOnEventParam<Integer> onAddFriend) {
+        userListPanel.setOnAddFriend(onAddFriend);
+    }
 }

@@ -11,7 +11,6 @@ import shared.entity.Message;
 import shared.entity.User;
 import shared.entity.UserListMessage;
 
-
 /**
  * ClientController controls and show the whole graphical interface and its logic.
  * It connects to  the server using {@link MessageWorker}. The incoming message and other events are
@@ -173,6 +172,7 @@ final public class ClientController {
      * Show connected user list
      */
     public void showOnlineList() {
+        if (connectedUserList == null) connectedUserList = new ArrayList<>();
         activeUserList = connectedUserList;
     }
 
@@ -180,6 +180,7 @@ final public class ClientController {
      * Show friend list
      */
     public void showFriendList() {
+        if (friendList == null) friendList = new ArrayList<>();
         activeUserList = friendList;
     }
 
@@ -190,6 +191,14 @@ final public class ClientController {
      */
     public List<User> getUsers() {
         return activeUserList;
+    }
+
+    public void setFriendList(List<User> friendList) {
+        this.friendList = friendList;
+    }
+
+    public List<User> getFriendList() {
+        return friendList;
     }
 
     /**
