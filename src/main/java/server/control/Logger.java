@@ -18,6 +18,7 @@ import shared.entity.UserListMessage;
  *
  * @author Linnéa Mörk
  * @author Christian Heisterkamp
+ * @author Marcus Linné
  * @version 1.0
  */
 public class Logger implements PropertyChangeListener {
@@ -65,8 +66,12 @@ public class Logger implements PropertyChangeListener {
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        ((IMessage) evt.getNewValue()).setReceiveTime(new Date());
-        messageList.add((IMessage) evt.getNewValue());
+        IMessage message = (IMessage) evt.getNewValue();
+        message.setReceiveTime(new Date());
+        if (message instanceof Message) {
+            ((Message) message).setImage(null);
+        }
+        messageList.add(message);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(loggerFileName);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
