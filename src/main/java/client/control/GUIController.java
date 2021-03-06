@@ -106,6 +106,7 @@ final public class GUIController {
     // OUT
 
     public void onShowMessages(int index) {
+        if (index < 0) return;
         final var messages = controller.getMessages(index);
         if (messages != null) showMessages(messages);
         controller.setRecipient(index);
