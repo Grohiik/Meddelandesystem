@@ -2,7 +2,6 @@ package server.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import shared.entity.*;
 
 /**
