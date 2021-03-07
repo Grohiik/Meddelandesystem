@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * UserInterface class for the server/loggers UI handling the IO.
  *
- * @author TODO
+ * @author Linnéa Mörk
  */
 public class UserInterface {
     public static String askForString(String output) {
