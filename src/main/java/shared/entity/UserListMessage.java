@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * UserList that lists all connected Users
+ * UserListMessage class that lists all connected Users.
  *
  * @author Marcus Linné
  * @author Linnéa Mörk
@@ -14,10 +14,18 @@ public class UserListMessage implements IMessage, Serializable {
     private User[] users;
     private Date receiveTime;
 
+    /**
+     * Constructor creating a list of users.
+     * @param users users in the list of all Users.
+     */
     public UserListMessage(User[] users) {
         this.users = users;
     }
 
+    /**
+     * Copy constructor used to copy the UserListMessage.
+     * @param userListMessage the userListMessage to copy.
+     */
     public UserListMessage(UserListMessage userListMessage) {
         this.users = userListMessage.users;
     }

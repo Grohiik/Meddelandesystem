@@ -7,7 +7,8 @@ import java.util.Date;
 import javax.swing.ImageIcon;
 
 /**
- * Message
+ * The Message class implements the interface IMessage.
+ * It handles what information each message contains and what it's characteristics are.
  *
  * @author Christian Heisterkamp
  * @author Marcus Linné
@@ -24,7 +25,7 @@ public class Message implements IMessage, Serializable {
     public Message() {}
 
     /**
-     * Constructor for Message
+     * Constructor for Message.
      * @param sender sender is which user that has sent the message.
      * @param receiverList receiverList is which users to receive the message.
      * @param text text the message contains.
@@ -37,6 +38,10 @@ public class Message implements IMessage, Serializable {
         this.image = image;
     }
 
+    /**
+     * Constructor for Message.
+     * @param message transmits everything in the constructor.
+     */
     public Message(Message message) {
         this.sender = message.sender;
         this.receiverList = message.receiverList;
@@ -96,15 +101,14 @@ public class Message implements IMessage, Serializable {
     @Override
     public String toString() {
         String receiverString = "";
-        String contentString = text;
+        String imageString = "";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         for (User currentUser : receiverList) {
             receiverString += " " + currentUser;
         }
-
-        if (text == null) {
-            contentString = "of an image";
+        if (image != null) {
+            imageString = "and an image";
         }
 
         String receiveTimeString = format.format(receiveTime);
@@ -114,9 +118,9 @@ public class Message implements IMessage, Serializable {
             sentTimeString = format.format(sentTime);
         }
 
-        String out =
-                String.format("%s sent a message to%s with the content %s| Sent: %s | Received: %s",
-                        sender, receiverString, contentString, sentTimeString, receiveTimeString);
+        String out = String.format(
+            "%s sent a message to%s with the content %s %s | Sent: %s | Received: %s", sender,
+            receiverString, text, imageString, sentTimeString, receiveTimeString);
 
         return out;
     }

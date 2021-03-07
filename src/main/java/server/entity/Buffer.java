@@ -3,7 +3,7 @@ package server.entity;
 import java.util.LinkedList;
 
 /**
- * Buffer class used as a buffer for the server
+ * Buffer class used as a buffer for the server.
  * @author Marcus Linné
  *
  * @param <T>
