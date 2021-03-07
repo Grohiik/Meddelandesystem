@@ -52,19 +52,6 @@ public class ServerController {
     }
 
     /**
-     * TODO IMPLEMENT
-     * Used to turn off the server by closing the serverSocket.
-     * @param serverSocket ServerSocket to be closed.
-     */
-    public void stopServer(ServerSocket serverSocket) {
-        try {
-            serverSocket.close();
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-    }
-
-    /**
      * Adds a logger listener.
      * @param listener that is used to log.
      */
