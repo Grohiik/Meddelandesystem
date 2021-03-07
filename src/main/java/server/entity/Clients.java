@@ -17,8 +17,8 @@ public class Clients {
     /**
      * Method used to add a clients to the HashMap.
      *
-     * @param user which user it is
-     * @param client which client it is
+     * @param user which user it is.
+     * @param client which client it is.
      */
     public synchronized void put(User user, Client client) {
         clients.put(user, client);
@@ -27,8 +27,8 @@ public class Clients {
     /**
      * Gets the connected clients user.
      *
-     * @param user Which user account
-     * @return the user it is
+     * @param user Which user account.
+     * @return the user it is.
      */
     public synchronized Client get(User user) {
         if (!clients.containsKey(user)) {

@@ -1,7 +1,7 @@
 package shared.entity;
 
 import java.io.Serializable;
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
 /**
  * The User class is used to identify users and direct messages to the right client/clients.
@@ -11,7 +11,7 @@ import javax.swing.*;
  */
 public class User implements Serializable {
     private String username;
-    ImageIcon image;
+    private ImageIcon image;
 
     /**
      * @param username username of the user.
@@ -39,7 +39,7 @@ public class User implements Serializable {
     }
 
     /**
-     * @return returns a hashcode of the username String
+     * @return returns a hashcode of the username String.
      */
     @Override
     public int hashCode() {
@@ -47,7 +47,7 @@ public class User implements Serializable {
     }
 
     /**
-     * This function is useful for comparing stuff
+     * This function is useful for comparing stuff.
      * @param obj
      * @return
      */
