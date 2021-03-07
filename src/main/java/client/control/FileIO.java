@@ -9,7 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * FileIO writes generic object to disk.
+ * FileIO writes generic object to disk in a specified directory. The default is "data" in the
+ * program root directory.
  *
  * @author  Pratchaya Khansomboon
  * @author  Eric Lundin
@@ -19,7 +20,7 @@ final public class FileIO {
     private String directory = "data";
 
     /**
-     * Set the directory data name.
+     * Set the directory name/path to be save to.
      *
      * @param name The data directory name or path.
      */
@@ -28,7 +29,7 @@ final public class FileIO {
     }
 
     /**
-     * Get the directory name.
+     * Get the directory name/path.
      *
      * @return The name or path of the data directory.
      */
@@ -73,9 +74,9 @@ final public class FileIO {
                  new BufferedInputStream(new FileInputStream(directory + "/" + filename)))) {
             try {
                 return type.cast(ois.readObject());
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException ignored) {
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         return null;

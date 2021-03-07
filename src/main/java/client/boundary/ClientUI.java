@@ -6,10 +6,12 @@ import client.boundary.event.IOnLogin;
 import client.boundary.page.LoginPage;
 import client.boundary.page.MainPage;
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -41,7 +43,7 @@ public class ClientUI implements IUserInterface {
         setupFileChooser();
 
         frame = new JFrame("Message Cat");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // frame.setLocation(0, -800); // FIXME: For dual screen only
 
@@ -193,6 +195,27 @@ public class ClientUI implements IUserInterface {
     @Override
     public void setOnDisconnectAction(IOnEvent onDisconnect) {
         mainPage.setOnDisconnect(onDisconnect);
+    }
+
+    /**
+     * Set the event callback for closing window action.
+     *
+     * @param onWindowClose The function callback with no parameter.
+     */
+    @Override
+    public void setOnCloseWindowAction(IOnEvent onWindowClose) {
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (JOptionPane.showConfirmDialog(
+                        frame, "Are you sure you want to close this window?", "Close Window?",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+                    == JOptionPane.YES_OPTION) {
+                    onWindowClose.signal();
+                    System.exit(0);
+                }
+            }
+        });
     }
 
     /**

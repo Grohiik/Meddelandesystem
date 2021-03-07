@@ -1,6 +1,7 @@
 package client.boundary.component;
 
 import java.awt.FlowLayout;
+import java.io.Serial;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
  * @version 1.0
  */
 public class UserPanel extends JPanel {
+    @Serial
     private static final long serialVersionUID = 6497655480580447853L;
 
     /**

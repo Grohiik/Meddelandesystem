@@ -27,6 +27,7 @@ public interface IUserInterface {
     void setOnShowOnlineAction(IOnEvent onShowOnline);
     void setOnConnectAction(IOnEvent onConnect);
     void setOnDisconnectAction(IOnEvent onDisconnect);
+    void setOnCloseWindowAction(IOnEvent onWindowClose);
 
     void setRecipients(String[] names);
     void setTitle(String title);

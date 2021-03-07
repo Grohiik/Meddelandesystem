@@ -3,6 +3,7 @@ package client.boundary.component;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.io.Serial;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,6 +17,7 @@ import javax.swing.JTextArea;
  * @version 1.0
  */
 public class MessagePanel extends JPanel {
+    @Serial
     private static final long serialVersionUID = 6468922715498168398L;
     private JPanel infoPanel;
 

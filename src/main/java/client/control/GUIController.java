@@ -48,6 +48,7 @@ final public class GUIController {
 
         this.userInterface.setOnConnectAction(controller::connect);
         this.userInterface.setOnDisconnectAction(controller::disconnect);
+        this.userInterface.setOnCloseWindowAction(this::onWindowClose);
 
         this.userInterface.setOnAddRecipientAction(controller::addRecipient);
         this.userInterface.setOnRemoveRecipientAction(controller::removeRecipient);
@@ -95,7 +96,6 @@ final public class GUIController {
      */
     public void onAddFriendAction(int index) {
         controller.addFriend(index);
-        if (isCached) fileIO.save("FriendList.dat", controller.getFriendList());
         update();
     }
 
@@ -174,6 +174,19 @@ final public class GUIController {
     }
 
     /**
+     * Connects the user to the server after the user is created or read from disk
+     *
+     * @param user The user that is created or read from disk
+     */
+    public void login(User user) {
+        controller.setUser(user);
+
+        controller.connect();
+        userInterface.showMain();
+        userInterface.setUserTitle(user.getUsername());
+    }
+
+    /**
      * Callback event for when the user logs in to the server
      * This bounds to the boundary side. Login the user with
      * name and the file path to an image.
@@ -188,19 +201,6 @@ final public class GUIController {
         System.out.println(user.getUsername());
         fileIO.save("User.dat", user);
         login(user);
-    }
-
-    /**
-     * Connects the user to the server after the user is created or read from disk
-     *
-     * @param user The user that is created or read from disk
-     */
-    public void login(User user) {
-        controller.setUser(user);
-
-        controller.connect();
-        userInterface.showMain();
-        userInterface.setUserTitle(user.getUsername());
     }
 
     /**
@@ -249,5 +249,13 @@ final public class GUIController {
                 userInterface.addMessage(time, username, message.getImage());
             }
         }
+    }
+
+    /**
+     * On close window callback listener.
+     */
+    private void onWindowClose() {
+        controller.disconnect();
+        if (isCached) fileIO.save("FriendList.dat", controller.getFriendList());
     }
 }

@@ -211,8 +211,8 @@ public class MessageWorker implements Runnable {
     }
 
     /**
-     * Enter a loop that listens for incoming message. It calls the onMessage callback. The {@link
-     * #setOnMessage(IOnMessage)} needs to be set for it to work.
+     * Enter a loop that listens for incoming message. It signal the stored onMessage callback when
+     * there's a message. The {@link #setOnMessage(IOnEventParam)} needs to be set for it to work.
      */
     private void listen() {
         connectionState = ConnectionState.CONNECTED;

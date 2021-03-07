@@ -33,6 +33,10 @@ public class UserListPanel {
     private JButton addRecipientButton;
     private JButton showMessageButton;
 
+    /**
+     * Create user list panel with components for displaying list of users and buttons for
+     * difference actions.
+     */
     public UserListPanel() {
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
