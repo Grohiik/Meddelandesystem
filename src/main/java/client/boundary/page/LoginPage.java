@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * LoginView
+ * LoginPage is the first page the user will see when opening the application.
  *
  * @author  Pratchaya Khansomboon
  * @version 1.0
@@ -24,6 +24,11 @@ public class LoginPage {
 
     private IOnLogin onLogin;
 
+    /**
+     * Create LoginPage that shows input field and two buttons for different action.
+     *
+     * @param clientUI The reference to ClientUI for setting and using different actions.
+     */
     public LoginPage(ClientUI clientUI) {
         this.clientUI = clientUI;
 
@@ -32,7 +37,6 @@ public class LoginPage {
 
         chooseImageButton = new JButton("Choose Image");
         chooseImageButton.addActionListener(e -> clientUI.showFileDialog("Choose image profile"));
-        chooseImageButton.addActionListener(e -> onChooseImage());
         nameTextField = new JTextField(16);
         nameTextField.addActionListener(e -> onConfirm());
         confirmButton = new JButton("Confirm");
@@ -43,14 +47,27 @@ public class LoginPage {
         panel.add(confirmButton);
     }
 
+    /**
+     * Get the parent panel.
+     *
+     * @return JPanel that contains the login page components.
+     */
     public JPanel getPanel() {
         return panel;
     }
 
-    private void onChooseImage() {
-        System.out.println("Choosing an image");
+    /**
+     * Set callback event on user confirmation.
+     *
+     * @param onLogin The callback function with no parameter.
+     */
+    public void setOnConfirm(IOnLogin onLogin) {
+        this.onLogin = onLogin;
     }
 
+    /**
+     * Sends a username and filename with a onLogin CallBack.
+     */
     private void onConfirm() {
         String username = nameTextField.getText();
         var file = clientUI.getSelectedFile();
@@ -58,9 +75,5 @@ public class LoginPage {
 
         String filename = file.getAbsolutePath();
         onLogin.login(username, filename);
-    }
-
-    public void setOnConfirm(IOnLogin onLogin) {
-        this.onLogin = onLogin;
     }
 }

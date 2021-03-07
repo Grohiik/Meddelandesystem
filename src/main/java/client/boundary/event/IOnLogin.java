@@ -1,7 +1,7 @@
 package client.boundary.event;
 
 /**
- * IOnLogin
+ * IOnLogin is an interface for login events that takes in two string parameters.
  *
  * @author  Pratchaya Khansomboon
  * @version 1.0

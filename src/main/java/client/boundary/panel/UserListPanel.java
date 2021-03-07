@@ -11,7 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
- * FriendPanel
+ * FriendPanel is custom panel for rendering the friend list and showing the buttons for doing
+ * different actions.
  *
  * @author  Pratchaya Khansomboon
  * @author  Eric Lundin
@@ -143,6 +144,9 @@ public class UserListPanel {
         });
     }
 
+    /**
+     * @return returns the index of the selected user
+     */
     public int getSelected() {
         return userList.getSelectedIndex();
     }

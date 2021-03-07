@@ -211,7 +211,7 @@ final public class GUIController {
         if (recipients != null) {
             final String names[] = new String[recipients.size()];
             for (int i = 0; i < names.length; i++) names[i] = recipients.get(i).getUsername();
-            userInterface.showRecipients(names);
+            userInterface.setRecipients(names);
         }
 
         final var messages = controller.getMessages();

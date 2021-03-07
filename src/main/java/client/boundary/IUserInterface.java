@@ -28,7 +28,7 @@ public interface IUserInterface {
     void setOnConnectAction(IOnEvent onConnect);
     void setOnDisconnectAction(IOnEvent onDisconnect);
 
-    void showRecipients(String[] names);
+    void setRecipients(String[] names);
     void setTitle(String title);
     void setUserTitle(String name);
 

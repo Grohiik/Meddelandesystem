@@ -214,7 +214,7 @@ final public class ClientController {
      */
     public void setFriendList(List<User> friendList) {
         this.friendList = friendList;
-        if (userMessageMap != null) userMessageMap = new HashMap<>();
+        if (userMessageMap == null) userMessageMap = new HashMap<>();
         for (User user : this.friendList)
             userMessageMap.putIfAbsent(user, new ArrayList<Message>());
     }
@@ -386,6 +386,7 @@ final public class ClientController {
             var message = (Message) msg;
             var sender = message.getSender();
 
+            // For when server sends messages first before list of users on startup.
             if (userMessageMap == null) {
                 userMessageMap = new HashMap<>();
                 userMessageMap.put(user, new ArrayList<>());

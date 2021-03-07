@@ -4,10 +4,9 @@ import client.boundary.ClientUI;
 import client.boundary.component.ListPanel;
 import client.boundary.component.MessagePanel;
 import client.boundary.event.IOnEvent;
-import client.boundary.event.IOnSend;
+import client.boundary.event.IOnEventParam;
 import java.awt.BorderLayout;
 import java.io.File;
-import java.time.format.DateTimeFormatter;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -16,16 +15,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
- * ChatPanel
+ * ChatPanel is a custom panel for rendering the chat and input field for sending messages. It has
+ * event interface you can attach to and have an interface for setting it to different state.
  *
  * @author  Pratchaya Khansomboon
  * @author  Eric Lundin
  * @version 1.0
  */
 public class ChatPanel {
-    private final DateTimeFormatter DATE_FORMAT =
-        DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-
     private JPanel panel;
 
     private JButton fileButton, sendButton;
@@ -35,9 +32,13 @@ public class ChatPanel {
     private JTextArea recipientNamesTF;
 
     private ListPanel<MessagePanel> listPanel;
-
     private ClientUI clientUI;
 
+    /**
+     * Create ChatPanel to display the messages and inputs for sending message.
+     *
+     * @param clientUI Object reference to the client ui for attaching events.
+     */
     public ChatPanel(ClientUI clientUI) {
         this.clientUI = clientUI;
 
@@ -75,10 +76,20 @@ public class ChatPanel {
         panel.add(inputPanel, BorderLayout.PAGE_END);
     }
 
+    /**
+     * Get the parent panel.
+     *
+     * @return JPanel that contains the chat panel components.
+     */
     public JPanel getPanel() {
         return panel;
     }
 
+    /**
+     * Set recipients list.
+     *
+     * @param names List of texts.
+     */
     public void setRecipient(String[] names) {
         if (names.length == 0) {
             recipientNamesTF.setText("");
@@ -92,23 +103,42 @@ public class ChatPanel {
         recipientNamesTF.setText(formattedName);
     }
 
+    /**
+     * Clear all the messages in the chat.
+     */
     public void clearMessages() {
         listPanel.clear();
     }
 
+    /**
+     *
+     * @param messages
+     */
     public void addMessage(MessagePanel messages) {
         listPanel.add(messages);
     }
 
-    public void addSendTextListener(IOnSend<String> listener) {
+    /**
+     *
+     * @param listener
+     */
+    public void addSendTextListener(IOnEventParam<String> listener) {
         sendButton.addActionListener(e -> onSend(listener));
         messageTextField.addActionListener(e -> onSend(listener));
     }
 
-    public void addSendFileListener(IOnSend<String> listener) {
+    /**
+     *
+     * @param listener
+     */
+    public void addSendFileListener(IOnEventParam<String> listener) {
         fileButton.addActionListener(e -> onFileButton(listener));
     }
 
+    /**
+     *
+     * @param onTyping
+     */
     public void setOnTyping(IOnEvent onTyping) {
         messageTextField.addCaretListener(e -> onTyping.signal());
     }
@@ -116,19 +146,22 @@ public class ChatPanel {
     /**
      * File button pressed event
      */
-    private void onFileButton(IOnSend<String> listener) {
+    private void onFileButton(IOnEventParam<String> listener) {
         int isApproved = clientUI.showFileDialog("Choose an image");
         if (isApproved == JFileChooser.APPROVE_OPTION) {
             File imageFile = clientUI.getSelectedFile();
-            listener.send(imageFile.getAbsolutePath());
+            listener.signal(imageFile.getAbsolutePath());
         }
     }
 
     /**
      * Send event from button
      */
-    private void onSend(IOnSend<String> listener) {
-        var text = messageTextField.getText();
-        if (!text.isBlank() && listener.send(text)) messageTextField.setText("");
+    private void onSend(IOnEventParam<String> listener) {
+        final var text = messageTextField.getText();
+        if (!text.isBlank()) {
+            listener.signal(text);
+            messageTextField.setText("");
+        }
     }
 }
