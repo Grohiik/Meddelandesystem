@@ -75,7 +75,7 @@ public class ServerController {
 
     /**
      * TODO keep or not keep ListenerList
-     * ServerSocketListener, with new thread and TCP, uses LinkedList to keep track of objects
+     * ServerSocketListener, with new thread and TCP, uses LinkedList to keep track of objects.
      * Sub class that listens to incoming connections to the server. DONE
      * All connections receive a personal server thread. DONE
      * Transfers accepted incoming connections to MessageListener. DONE
@@ -115,7 +115,7 @@ public class ServerController {
 
     /**
      * Messages are added to a buffer and then this class uses it's HashMap to figure out where to
-     * send it. Also invokes a PropertyChange so that the logger can notice any actions made.
+     * send it. It also invokes a PropertyChange so that the logger can notice any actions made.
      * Has a Buffer to store messages waiting to be sent and a HashMap which stores available
      * clients.
      */
@@ -246,7 +246,7 @@ public class ServerController {
      * There it is added to be sent when recipient comes online.
      */
     private class ClientTransmission extends Thread {
-        ObjectOutputStream objectOutputStream;
+        private ObjectOutputStream objectOutputStream;
         private Buffer<IMessage> receivedMessages = new Buffer<>();
         private Socket socket;
         private User user;
