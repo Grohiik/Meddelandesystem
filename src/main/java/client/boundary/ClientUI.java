@@ -88,7 +88,7 @@ public class ClientUI implements IUserInterface {
     /**
      * Set the event callback for when the add friend button has been pressed.
      *
-     * @param onAddRecipient The function callback with one int parameter.
+     * @param onAddFriend The function callback with one int parameter.
      */
     @Override
     public void setOnAddFriendAction(IOnEventParam<Integer> onAddFriend) {
@@ -201,7 +201,7 @@ public class ClientUI implements IUserInterface {
      * @param names The string array of names.
      */
     @Override
-    public void showRecipients(String[] names) {
+    public void setRecipients(String[] names) {
         mainPage.setRecipient(names);
     }
 
