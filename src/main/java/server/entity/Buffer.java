@@ -2,6 +2,12 @@ package server.entity;
 
 import java.util.LinkedList;
 
+/**
+ * Buffer class used as a buffer for the server
+ * @author Marcus Linné
+ *
+ * @param <T>
+ */
 public class Buffer<T> {
     private LinkedList<T> buffer = new LinkedList<T>();
 

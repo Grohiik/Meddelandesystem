@@ -211,7 +211,9 @@ public class ServerController {
                     ClientTransmission clientTransmission =
                         new ClientTransmission(user, socket, objectOutputStream);
                     messageSender.addClientTransmission(user, clientTransmission);
+
                     sendUserList();
+
                     var allUnsentMessages = unsentMessages.get(user);
                     if (allUnsentMessages != null) {
                         ArrayList<Message> currentUnsentMessages = allUnsentMessages;
@@ -219,7 +221,6 @@ public class ServerController {
                             clientTransmission.receivedMessages.put(currentMessage);
                         }
                     }
-
                 } catch (ClassNotFoundException e) {
                     System.err.println("ERROR, WRONG USER FORMAT");
                     return;

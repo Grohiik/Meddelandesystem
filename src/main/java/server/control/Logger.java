@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Scanner;
+import server.boundary.UserInterface;
 import shared.entity.IMessage;
 import shared.entity.Message;
 import shared.entity.UserListMessage;
@@ -92,24 +92,18 @@ public class Logger implements PropertyChangeListener {
             Date startDate;
             Date endDate;
             Date currentDate;
-            Scanner scanner = new Scanner(System.in);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            ArrayList<String> lastList = new ArrayList<>();
-            ArrayList<String> thisList;
+            ArrayList<String> lastUserList = new ArrayList<>();
+            ArrayList<String> thisUserList;
 
             System.out.println("The server logger is online and running");
 
             while (!interrupted()) {
                 try {
-                    System.out.println("-----------------------------------------");
-                    System.out.print("Enter start date: ");
-                    startDate = format.parse(scanner.nextLine());
-                    System.out.print("Enter end date: ");
-                    endDate = format.parse(scanner.nextLine());
-                    System.out.println("-----------------------------------------");
-                    System.out.println("Showing log between: " + format.format(startDate) + " and "
-                                       + format.format(endDate));
-                    System.out.println("-----------------------------------------");
+                    UserInterface.printDivider();
+                    startDate = format.parse(UserInterface.askForString("Enter start date: "));
+                    endDate = format.parse(UserInterface.askForString("Enter end date: "));
+                    UserInterface.printDates(format.format(startDate), format.format(endDate));
 
                     for (IMessage currentMessage : messageList) {
                         currentDate = currentMessage.getReceiveTime();
@@ -119,29 +113,28 @@ public class Logger implements PropertyChangeListener {
                         }
                         if (currentDate.after(startDate) && currentDate.before(endDate)) {
                             if (currentMessage instanceof UserListMessage) {
-                                thisList = new ArrayList<>(
+                                thisUserList = new ArrayList<>(
                                     Arrays.asList(currentMessage.toString().split(" ")));
 
-                                for (String user : thisList) {
-                                    if (!lastList.contains(user) && !user.equals("")) {
-                                        System.out.println(
+                                for (String user : thisUserList) {
+                                    if (!lastUserList.contains(user) && !user.equals("")) {
+                                        UserInterface.println(
                                             user + " connected at: " + format.format(currentDate));
                                     }
                                 }
 
-                                for (String user : lastList) {
-                                    if (!thisList.contains(user) && !user.equals("")) {
-                                        System.out.println(user + " disconnected at: "
-                                                           + format.format(currentDate));
+                                for (String user : lastUserList) {
+                                    if (!thisUserList.contains(user) && !user.equals("")) {
+                                        UserInterface.println(user + " disconnected at: "
+                                                              + format.format(currentDate));
                                     }
                                 }
 
-                                lastList = thisList;
+                                lastUserList = thisUserList;
                             } else {
-                                System.out.println(currentMessage);
+                                UserInterface.println(currentMessage.toString());
                             }
-                        }
-                        if (currentDate.after(endDate)) {
+                        } else if (currentDate.after(endDate)) {
                             break;
                         }
                     }

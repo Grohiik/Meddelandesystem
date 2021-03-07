@@ -3,7 +3,8 @@ package server;
 import server.control.ServerController;
 
 /**
- * StartServer
+ * StartServer is used to start the server
+ *
  * @author Marcus Linné
  * @version 1.0
  */
