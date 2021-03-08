@@ -389,9 +389,9 @@ final public class ClientController {
             // For when server sends messages first before list of users on startup.
             if (userMessageMap == null) {
                 userMessageMap = new HashMap<>();
-                userMessageMap.put(user, new ArrayList<>());
-                if (connectedUserList == null) connectedUserList = new ArrayList<>();
+                userMessageMap.putIfAbsent(sender, new ArrayList<>());
             }
+            if (connectedUserList == null) connectedUserList = new ArrayList<>();
 
             var senderMessages = userMessageMap.get(sender);
             if (senderMessages == null) {
