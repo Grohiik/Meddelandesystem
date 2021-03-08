@@ -106,6 +106,7 @@ public class ServerController {
                     socket = serverSocket.accept();
                     MessageListener messageListener = new MessageListener(socket, this);
                     connectedClientList.add(messageListener);
+                    messageListener.start();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -169,7 +170,6 @@ public class ServerController {
         public MessageListener(Socket socket, ServerSocketListener serverSocketListener) {
             this.socket = socket;
             this.serverSocketListener = serverSocketListener;
-            start();
         }
 
         @Override
