@@ -1,0 +1,41 @@
+
+title Server sends update with connected users
+actor Server
+control MessageWorker
+control ClientController
+control GUIController
+boundary IUserInterface
+Server ->> MessageWorker:Message(Client[])
+activate MessageWorker
+MessageWorker -> ClientController:onMessage(msg: IMessage):void
+
+activate ClientController
+ClientController ->GUIController:update()
+
+activate GUIController
+GUIController ->ClientController:getRecipients()
+activate ClientController
+ClientController -->GUIController:recipients
+deactivate ClientController
+alt recipients != null
+GUIController ->IUserInterface: setRecipients(names:String[])
+activate IUserInterface
+end
+deactivate IUserInterface
+GUIController ->ClientController:getMessages()
+activate ClientController
+ClientController -->GUIController:message:List<Message>
+deactivate ClientController
+alt message != null
+GUIController ->GUIController:showMessages(messages
+end 
+GUIController ->ClientController:getUsers()
+
+activate ClientController
+ClientController -->GUIController: activeUserList:List<User>
+
+deactivate ClientController
+GUIController ->IUserInterface: setUserList(userNames:String[],images:ImageIcon[])
+activate IUserInterface
+
+

@@ -1,0 +1,97 @@
+title When client connects to server and unsentMessages are sent
+actor User/Client
+activate User/Client
+
+control ServerSocketListener
+
+control MessageListener
+
+entity Clients
+
+entity Client
+
+control MessageSender
+
+control ServerController
+
+control ClientTransmission
+
+entity UnsentMessages
+
+entity Message
+
+User/Client->>ServerSocketListener : Connects
+activate ServerSocketListener
+ServerSocketListener->>MessageListener:start()
+activate MessageListener
+space 
+deactivate ServerSocketListener
+
+opt clients.get(user) == null
+MessageListener->Clients:put(user, new Client(user))
+activate Clients
+space 
+deactivate Clients
+end 
+
+MessageListener->Client:setIsOnline(true)
+activate Client
+space 
+deactivate Client
+
+MessageListener->Clients:put(user, client)
+activate Clients
+space 
+deactivate Clients
+
+MessageListener->MessageSender: addClientTransmission(user, clientTransmisson)
+activate MessageSender
+space 
+deactivate MessageSender
+
+MessageListener->ServerController:sendUserList()
+activate ServerController
+space 
+deactivate ServerController
+
+MessageListener->UnsentMessages:get(user)
+activate UnsentMessages
+UnsentMessages -->MessageListener: ArrayList<Message> 
+deactivate UnsentMessages
+
+space 
+opt allUnsentMessages != null 
+loop for each unsent message
+MessageListener ->ClientTransmission: put(currentMessage)
+activate ClientTransmission
+space 
+deactivate ClientTransmission
+end
+end
+space 
+loop while(!interupted())
+MessageListener->Message:setSentTime(new Date())
+activate Message
+space 
+deactivate Message
+MessageListener->MessageSender:put(message)
+activate MessageSender
+space 
+deactivate MessageSender
+end 
+
+MessageListener->ServerController:sendUserList()
+activate ServerController
+space 
+deactivate ServerController
+
+opt isValidUser
+MessageListener->Clients:get(user)
+activate Clients
+Clients-->MessageListener:Client
+deactivate Clients
+MessageListener->Client:setIsOnline(false)
+activate Client
+space 
+deactivate Client
+end 

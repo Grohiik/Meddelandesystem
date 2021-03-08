@@ -1,0 +1,121 @@
+title On Client Startup
+
+actor Actor
+control StartClient
+control GUIController
+boundary IUserInterface
+control ClientController
+control FileIO
+control MessageWorker
+
+Actor->>StartClient: Start application
+activate Actor
+activate StartClient
+space
+deactivate Actor
+StartClient->GUIController: registerEvents(controller: ClientController, ui: IUserInterface): void
+activate GUIController
+GUIController->IUserInterface: setOnAddFriendAction(onAddFriend: IOnEventParam<Integer>): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnSendTextAction(onSendText: IOnEventParam<String>): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnSendFileAction(onSendFile: IOnEventParam<String>): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnTypingAction(onTyping: IOnEvent): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnShowMessageAction(onShowMessage: IOnEventParam<Integer>): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnShowFriendAction(onShowFriend: IOnEvent): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnShowOnlineAction(onShowOnline: IOnEvent): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnConnectAction(onConnect: IOnEvent): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnDisconnectAction(onDisconnect: IOnEvent): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnCloseWindowAction(onWindowClose: IOnEvent): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnAddRecipientAction(onAddRecipient: IOnEventParam<Integer>): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setOnRemoveRecipientAction(onRemoveRecipient: IOnEventParam<Integer>): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+
+GUIController->ClientController: setOnUpdate(onUpdate: IOnEvent): void
+activate ClientController
+space
+deactivate ClientController
+GUIController->ClientController: setOnConnect(onConnect: IOnEvent): void
+activate ClientController
+space
+deactivate ClientController
+GUIController->ClientController: setOnDisconnect(onDisconnect: IOnEvent): void
+activate ClientController
+space
+deactivate ClientController
+deactivate GUIController
+
+StartClient->GUIController: start(isCached: boolean): void
+activate GUIController
+opt isCached == true
+GUIController->FileIO: read(filename: String, type: T): T
+activate FileIO
+space 
+deactivate FileIO
+end
+alt user == null
+GUIController->IUserInterface: showLogin(onLogin: IOnLogin): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+else 
+GUIController->ClientController: setUser(user: User): void
+activate ClientController
+space
+deactivate ClientController
+GUIController->FileIO: read(filename: String, type: T): T
+activate FileIO
+space
+deactivate FileIO
+opt friendListRaw != null
+GUIController->ClientController: setFriendList(users: List<User>): void
+activate ClientController
+space 
+deactivate ClientController
+end
+GUIController->>ClientController: connect(): void
+activate ClientController
+space 
+deactivate ClientController
+GUIController->>IUserInterface: showMain(): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+GUIController->IUserInterface: setUserTitle(username: String): void
+activate IUserInterface
+space 
+deactivate IUserInterface
+end
