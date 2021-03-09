@@ -254,6 +254,11 @@ final public class ClientController {
         sendMessage(message);
     }
 
+    /**
+     * clears and sets the recipientList
+     * 
+     * @param index the index of the user in activeUserList
+     */
     public void setRecipient(int index) {
         if (recipientList == null) recipientList = new ArrayList<>();
         if (index < 0) return;
