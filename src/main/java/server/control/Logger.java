@@ -29,7 +29,6 @@ public class Logger implements PropertyChangeListener {
     /**
      * Takes a ServerController and subscribes to it's PropertyChangeSupport,
      * and a file to store the traffic in. Creates a new file if it doesn't exist.
-     * TODO improve file creation if possible
      *
      * @param serverController The ServerController to subscribe to.
      * @param loggerFilename The filename of the file to store the traffic in.
