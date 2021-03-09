@@ -1,0 +1,57 @@
+title LoggerUI
+
+actor User
+boundary UserInterface
+control Logger
+
+activate User
+activate Logger
+
+UserInterface<-Logger: printDivider
+activate UserInterface
+space
+deactivate UserInterface
+
+UserInterface<-Logger: askForString("Enter start date: ")
+activate UserInterface
+User->UserInterface: StartDate
+UserInterface-->Logger: String
+deactivate UserInterface
+
+UserInterface<-Logger: askForString("Enter end date: ")
+activate UserInterface
+User->UserInterface: StartDate
+UserInterface-->Logger: String
+deactivate UserInterface
+
+UserInterface<-Logger: printDates(startDate: String, endDate: String)
+activate UserInterface
+space
+deactivate UserInterface
+
+
+loop foreach IMessage in log
+    opt date of message is between startDate and endDate
+        alt Message is a UserListMessage
+            loop foreach user in thisUserList
+                opt user doesn't exist in lastUserList
+                    UserInterface<-Logger: println(user+" connected at: "+dateOfMessage)
+                    activate UserInterface
+                    space
+                    deactivate UserInterface
+                end
+            end
+
+            loop foreach user in lastUserList
+                opt user doesn't exist in thisUserList
+                    UserInterface<-Logger: println(user+" disconnected at: "+dateOfMessage)
+                    activate UserInterface
+                    space
+                    deactivate UserInterface
+                end
+            end
+        else
+            UserInterface<-Logger: println(IMessage.toString())
+        end
+    end
+end

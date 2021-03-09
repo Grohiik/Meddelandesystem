@@ -69,7 +69,7 @@ deactivate ClientTransmission
 end
 end
 space 
-loop while(!interupted())
+loop while not interupted
 MessageListener->Message:setSentTime(new Date())
 activate Message
 space 
@@ -94,4 +94,4 @@ MessageListener->Client:setIsOnline(false)
 activate Client
 space 
 deactivate Client
-end 
+end
