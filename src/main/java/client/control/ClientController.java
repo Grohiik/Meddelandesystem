@@ -255,9 +255,9 @@ final public class ClientController {
     }
 
     /**
-     * clears and sets the recipientList
-     * 
-     * @param index the index of the user in activeUserList
+     * Clears and sets the recipientList
+     *
+     * @param index The index of the user in activeUserList
      */
     public void setRecipient(int index) {
         if (recipientList == null) recipientList = new ArrayList<>();
@@ -272,8 +272,8 @@ final public class ClientController {
      * @param index The index in the connected user list.
      */
     public void addRecipient(int index) {
-        if (recipientList == null) recipientList = new ArrayList<>();
         if (index < 0) return; // Return if the list is not selected.
+        if (recipientList == null) recipientList = new ArrayList<>();
 
         boolean isDuplicate = false;
         int size = recipientList.size();
@@ -298,7 +298,7 @@ final public class ClientController {
      * @param index The index in the connected user list.
      */
     public void removeRecipient(int index) {
-        if (recipientList == null) return;
+        if (recipientList == null || index < 0) return;
 
         int size = recipientList.size();
         int listIndex = -1;
