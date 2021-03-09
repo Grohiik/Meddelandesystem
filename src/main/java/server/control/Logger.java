@@ -24,7 +24,7 @@ import shared.entity.UserListMessage;
 public class Logger implements PropertyChangeListener {
     private final String loggerFileName;
     private ArrayList<IMessage> messageList;
-    LoggerUI loggerUI;
+    private LoggerUI loggerUI;
 
     /**
      * Takes a ServerController and subscribes to it's PropertyChangeSupport,

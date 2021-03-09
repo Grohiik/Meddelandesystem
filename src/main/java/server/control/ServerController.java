@@ -74,11 +74,9 @@ public class ServerController {
     }
 
     /**
-     * TODO check comments
-     * ServerSocketListener, with new thread and TCP, uses LinkedList to keep track of objects.
-     * Sub class that listens to incoming connections to the server. DONE
-     * All connections receive a personal server thread. DONE
-     * Transfers accepted incoming connections to MessageListener. DONE
+     * ServerSocketListener is a sub class that listens to incoming connections.
+     * Each connection receive a individual thread and transfers all incoming connections to the
+     * MessageListener.
      */
     private class ServerSocketListener extends Thread {
         int port;
@@ -155,12 +153,10 @@ public class ServerController {
     }
 
     /**
-     * TODO check comments
-     * Sub class that listens for messages from its client, as each client has a MessageListener.
-     * and makes clients show as online if the Listener receive valid info. Sets receive time of the
-     * message.
-     * Each connected client has a MessageListener. When a User connects it will check if
-     * there are any, non delivered messages to the user and receive those.
+     * Sub class that listens for messages from its client, each client has a MessageListener.
+     * Makes clients show as online if the Listener receive valid info and sets receive time of each
+     * message. When a User connects it will check if there are any non delivered messages
+     * to the user and receive the messages.
      */
     private class MessageListener extends Thread {
         private ServerSocketListener serverSocketListener;
