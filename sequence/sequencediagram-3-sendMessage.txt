@@ -1,0 +1,60 @@
+title What happens on the server when a client sends a message
+actor User/Client
+activate User/Client
+
+control MessageListener
+
+control MessageSender
+
+control ClientTransmission
+
+entity UnsentMessages
+
+entity Message
+control Logger
+
+User/Client->>MessageListener: Sends Message
+activate MessageListener
+deactivate User/Client
+
+MessageListener->Message: SetSentTime(currentTime)
+activate Message
+space 
+deactivate Message
+
+MessageListener ->> MessageSender: messagesToSend.put(message)
+
+activate MessageSender
+MessageSender->Message: getReceiverList
+activate Message
+Message-->MessageSender: receiverList
+deactivate Message
+
+loop for each receiver
+opt clientTransmission != null
+MessageSender->>ClientTransmission: receivedMessages.put(message)
+activate ClientTransmission
+alt client is online
+ClientTransmission->Message: setReceivedTime(currentTime)
+activate Message
+space 
+deactivate Message
+ClientTransmission ->> User/Client: message
+activate User/Client
+space 
+deactivate User/Client
+
+else 
+opt message instanceOf Message
+ClientTransmission->UnsentMessages: put(user, message)
+end 
+end 
+end 
+MessageSender->Logger: log message
+activate Logger
+space 
+deactivate Logger
+end 
+
+
+
