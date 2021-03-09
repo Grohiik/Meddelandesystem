@@ -166,12 +166,13 @@ final public class ClientController {
      * @param index Selected index in the user list
      */
     public void addFriend(int index) {
+        if (index < 0) return;
         if (friendList == null) friendList = new ArrayList<>();
 
         boolean isDuplicate = false;
         int size = friendList.size();
         for (int i = 0; i < size; i++) {
-            if (friendList.get(i) == activeUserList.get(index)) {
+            if (friendList.get(i).equals(activeUserList.get(index))) {
                 isDuplicate = true;
                 break;
             }
@@ -274,14 +275,14 @@ final public class ClientController {
 
         // Linearly search for the the correct object in the recipient list.
         for (int i = 0; i < size; i++) {
-            if (recipientList.get(i) == connectedUserList.get(index)) {
+            if (recipientList.get(i).equals(activeUserList.get(index))) {
                 isDuplicate = true;
                 break;
             }
         }
 
         if (isDuplicate) return;
-        recipientList.add(connectedUserList.get(index));
+        recipientList.add(activeUserList.get(index));
 
         if (onUpdate != null) onUpdate.signal();
     }
@@ -298,7 +299,7 @@ final public class ClientController {
         int listIndex = -1;
         // Linearly search for the the correct object in the recipient list.
         for (int i = 0; i < size; i++) {
-            if (recipientList.get(i) == connectedUserList.get(index)) {
+            if (recipientList.get(i).equals(activeUserList.get(index))) {
                 listIndex = i;
                 break;
             }

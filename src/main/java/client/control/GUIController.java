@@ -73,13 +73,15 @@ final public class GUIController {
             userInterface.showLogin(this::login);
         } else {
             controller.setUser(user);
-            final var friendListRaw = fileIO.read("FriendList.dat", List.class);
-            if (friendListRaw != null) {
+
+            if (isCached) {
+                final var friendListRaw = fileIO.read("FriendList.dat", List.class);
                 List<User> friendList = new ArrayList<>();
 
-                for (var u : friendListRaw) {
-                    if (u instanceof User) friendList.add((User) u);
-                }
+                if (friendListRaw != null)
+                    for (var u : friendListRaw) {
+                        if (u instanceof User) friendList.add((User) u);
+                    }
                 controller.setFriendList(friendList);
             }
             controller.connect();
