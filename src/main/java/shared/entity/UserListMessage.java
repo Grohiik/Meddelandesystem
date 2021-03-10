@@ -16,6 +16,7 @@ public class UserListMessage implements IMessage, Serializable {
 
     /**
      * Constructor creating a list of users.
+     *
      * @param users users in the list of all Users.
      */
     public UserListMessage(User[] users) {
@@ -24,6 +25,7 @@ public class UserListMessage implements IMessage, Serializable {
 
     /**
      * Copy constructor used to copy the UserListMessage.
+     *
      * @param userListMessage the userListMessage to copy.
      */
     public UserListMessage(UserListMessage userListMessage) {

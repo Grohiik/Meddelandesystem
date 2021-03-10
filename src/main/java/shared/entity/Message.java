@@ -1,7 +1,6 @@
 package shared.entity;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.ImageIcon;
@@ -26,10 +25,11 @@ public class Message implements IMessage, Serializable {
 
     /**
      * Constructor for Message.
-     * @param sender sender is which user that has sent the message.
-     * @param receiverList receiverList is which users to receive the message.
-     * @param text text the message contains.
-     * @param image image that the message contains.
+     *
+     * @param sender The sender is which user that has sent the message.
+     * @param receiverList The receiverList is which users to receive the message.
+     * @param text The text the message contains.
+     * @param image The image that the message contains.
      */
     public Message(User sender, User[] receiverList, String text, ImageIcon image) {
         this.sender = sender;
@@ -40,7 +40,8 @@ public class Message implements IMessage, Serializable {
 
     /**
      * Constructor for Message.
-     * @param message transmits everything in the constructor.
+     *
+     * @param message Transmits everything in the constructor.
      */
     public Message(Message message) {
         this.sender = message.sender;

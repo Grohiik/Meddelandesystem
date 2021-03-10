@@ -14,8 +14,11 @@ public class User implements Serializable {
     private ImageIcon image;
 
     /**
-     * @param username username of the user.
-     * @param image    image for the user profile.
+     * Constructor of the User that contains the username
+     * and the profile picture of the user.
+     *
+     * @param username The username of the user.
+     * @param image    The image for the user profile.
      */
     public User(String username, ImageIcon image) {
         this.image = image;
@@ -39,7 +42,7 @@ public class User implements Serializable {
     }
 
     /**
-     * @return returns a hashcode of the username String.
+     * @return Returns a hashcode of the username String.
      */
     @Override
     public int hashCode() {
@@ -47,11 +50,11 @@ public class User implements Serializable {
     }
 
     /**
-     * This method is used to compare usernames of other user objects
+     * This method is used to compare usernames of other user objects.
      *
-     * @param obj the user object to be compared
-     * @return true or false
-     *
+     * @param obj The user object to be compared.
+     * @return {@code true} if the User object is the same or {@code false} if the User object is
+     *         not the same.
      */
     @Override
     public boolean equals(Object obj) {

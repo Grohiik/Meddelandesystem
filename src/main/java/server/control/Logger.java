@@ -61,7 +61,7 @@ public class Logger implements PropertyChangeListener {
      * PropertyChange that gets called when the server receives a new message.
      * Adds the message to the messageList and rewrites object file.
      *
-     * @param evt event with the "new Value" being the message to add
+     * @param evt The event with the "new Value" being the message to add.
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -83,7 +83,7 @@ public class Logger implements PropertyChangeListener {
     /**
      * Runs on a separate thread in a infinite loop.
      * Gets a start date and an end date,
-     * prints every message that was send inside of those dates
+     * prints every message that was send inside of those dates.
      */
     private class LoggerUI extends Thread {
         @Override

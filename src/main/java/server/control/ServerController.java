@@ -27,12 +27,16 @@ public class ServerController {
     private PropertyChangeSupport loggerPropertyChange = new PropertyChangeSupport(this);
     private MessageSender messageSender = new MessageSender();
     private UnsentMessages unsentMessages = new UnsentMessages();
-    private LinkedList<MessageListener>
-        connectedClientList; // Is created when clients tries to connect
+    private LinkedList<MessageListener> connectedClientList;
     private Clients clients;
     private Logger logger;
     private int port;
 
+    /**
+     * ServerController constructor that starts the server.
+     *
+     * @param port The port used by the ServerSocket.
+     */
     public ServerController(int port) {
         startServer(port);
     }
@@ -40,19 +44,21 @@ public class ServerController {
     /**
      * Used to start the server by giving the ServerSocketListener,
      * a port and by starting it.
-     * @param port Port used by the ServerSocket.
+     *
+     * @param port The port used by the ServerSocket.
      */
     public void startServer(int port) {
         this.port = port;
         ServerSocketListener serverSocketListener = new ServerSocketListener(port);
         serverSocketListener.start();
         messageSender.start();
-        logger = new Logger(this, "testingnew");
+        logger = new Logger(this, "Logger.log");
         System.out.println("Server has been started");
     }
 
     /**
      * Adds a logger listener.
+     *
      * @param listener that is used to log.
      */
     public void addLoggerListener(PropertyChangeListener listener) {
@@ -83,7 +89,8 @@ public class ServerController {
 
         /**
          * Constructor for ServerSocketListener.
-         * @param port Port to listen to.
+         *
+         * @param port The port to listen to.
          */
         public ServerSocketListener(int port) {
             this.port = port;
@@ -113,7 +120,7 @@ public class ServerController {
     }
 
     /**
-     * Messages are added to a buffer and then this class uses it's HashMap to figure out where to
+     * Messages are added to a buffer and then this class uses its HashMap to figure out where to
      * send it. It also invokes a PropertyChange so that the logger can notice any actions made.
      * Has a Buffer to store messages waiting to be sent and a HashMap which stores available
      * clients.
@@ -122,6 +129,14 @@ public class ServerController {
         private Buffer<IMessage> messagesToSend = new Buffer<>();
         private HashMap<User, ClientTransmission> clientTransmissions = new HashMap<>();
 
+        /**
+         * Adds a ClientTransmission to the internal hashmap
+         * so that it can send messages via that ClientTransmission.
+         *
+         * @param user The key for the hashmap.
+         * @param clientTransmission The value in the hashmap and the ClientTransmission to send
+         *                           messages via.
+         */
         public void addClientTransmission(User user, ClientTransmission clientTransmission) {
             clientTransmissions.put(user, clientTransmission);
         }
@@ -164,6 +179,12 @@ public class ServerController {
         private ObjectInputStream objectInputStream;
         private User user;
 
+        /**
+         * MessageListener constructor that receive the socket it should listen to messages on.
+         *
+         * @param socket The socket used.
+         * @param serverSocketListener The serverSocketListener it was assigned.
+         */
         public MessageListener(Socket socket, ServerSocketListener serverSocketListener) {
             this.socket = socket;
             this.serverSocketListener = serverSocketListener;
@@ -248,6 +269,13 @@ public class ServerController {
         private Socket socket;
         private User user;
 
+        /**
+         * ClientTransmission constructor used to start the ClientTransmission thread.
+         *
+         * @param user The user the message is to be sent to.
+         * @param socket The socket used.
+         * @param objectOutputStream The objectOutputStream used to write objects (messages).
+         */
         public ClientTransmission(User user, Socket socket, ObjectOutputStream objectOutputStream) {
             this.user = user;
             this.socket = socket;

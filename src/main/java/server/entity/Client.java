@@ -14,7 +14,8 @@ public class Client {
     private User user;
 
     /**
-     * Constructor for Client
+     * Constructor for Client.
+     *
      * @param user user the client is logged in as.
      */
     public Client(User user) {

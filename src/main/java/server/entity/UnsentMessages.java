@@ -2,7 +2,8 @@ package server.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import shared.entity.*;
+import shared.entity.Message;
+import shared.entity.User;
 
 /**
  * UnsentMessages stores messages that failed to be sent to be able to send them later
@@ -15,9 +16,10 @@ public class UnsentMessages {
     private HashMap<User, ArrayList<Message>> unsent = new HashMap<>();
 
     /**
-     * Adds new unsent messages
-     * @param user the user which could not receive the message
-     * @param message the message which could not be sent
+     * Adds new unsent messages.
+     *
+     * @param user The user which could not receive the message.
+     * @param message The message which could not be sent.
      */
     public synchronized void put(User user, Message message) {
         if (unsent.get(user) == null) {
@@ -30,8 +32,10 @@ public class UnsentMessages {
     }
 
     /**
-     * @param user the server sends a user to this method when a user connects to the server
-     * @return returns an ArrayList with Messages for the server to send
+     * The server sends a user to this method when a user connects to the server.
+     *
+     * @param user The user that connects to the server.
+     * @return Returns an ArrayList with Messages for the server to send.
      */
     public synchronized ArrayList<Message> get(User user) {
         if (!unsent.containsKey(user)) {
