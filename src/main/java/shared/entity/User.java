@@ -47,9 +47,11 @@ public class User implements Serializable {
     }
 
     /**
-     * This function is useful for comparing stuff.
-     * @param obj
-     * @return
+     * This method is used to compare usernames of other user objects
+     *
+     * @param obj the user object to be compared
+     * @return true or false
+     *
      */
     @Override
     public boolean equals(Object obj) {
