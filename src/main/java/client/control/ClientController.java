@@ -13,7 +13,7 @@ import shared.entity.UserListMessage;
 
 /**
  * ClientController controls and show the whole graphical interface and its logic.
- * It connects to  the server using {@link MessageWorker}. The incoming message and other events are
+ * It connects to the server using {@link MessageWorker}. The incoming message and other events are
  * received by callbacks.
  *
  * @author  Pratchaya Khansomboon

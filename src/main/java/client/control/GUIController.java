@@ -79,8 +79,8 @@ final public class GUIController {
                 List<User> friendList = new ArrayList<>();
 
                 if (friendListRaw != null)
-                    for (var u : friendListRaw) {
-                        if (u instanceof User) friendList.add((User) u);
+                    for (var userFriend : friendListRaw) {
+                        if (userFriend instanceof User) friendList.add((User) userFriend);
                     }
                 controller.setFriendList(friendList);
             }

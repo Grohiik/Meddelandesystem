@@ -28,7 +28,7 @@ public class ClientUI implements IUserInterface {
     private final JFileChooser fileChooser;
 
     private final JFrame frame;
-    private String windowTitle = "Message Cat";
+    private String windowTitle = "PINM";
 
     // Different pages
     private final MainPage mainPage;
@@ -42,7 +42,7 @@ public class ClientUI implements IUserInterface {
         fileChooser = new JFileChooser();
         setupFileChooser();
 
-        frame = new JFrame("Message Cat");
+        frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // frame.setLocation(0, -800); // FIXME: For dual screen only
