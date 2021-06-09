@@ -12,7 +12,6 @@ Actor->>StartClient: Start application
 activate Actor
 activate StartClient
 space
-deactivate Actor
 StartClient->GUIController: registerEvents(controller: ClientController, ui: IUserInterface): void
 activate GUIController
 GUIController->IUserInterface: setOnAddFriendAction(onAddFriend: IOnEventParam<Integer>): void
