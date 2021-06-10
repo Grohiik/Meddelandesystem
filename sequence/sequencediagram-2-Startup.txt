@@ -1,6 +1,6 @@
 title On Client Startup
 
-actor Actor
+actor User
 control StartClient
 control GUIController
 boundary IUserInterface
