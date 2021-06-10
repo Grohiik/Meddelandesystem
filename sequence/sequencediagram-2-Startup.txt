@@ -105,10 +105,40 @@ activate ClientController
 space 
 deactivate ClientController
 end
+
 GUIController->>ClientController: connect(): void
 activate ClientController
+space
+
+opt messageWorker == null
+ClientController->>MessageWorker: setOnMessage(IOnEventParam<IMessage> onMessage): void
+activate MessageWorker
 space 
+deactivate MessageWorker
+ClientController->>MessageWorker: setOnFailedConnect(IOnEvent onFailedConnect): void
+activate MessageWorker
+space 
+deactivate MessageWorker
+ClientController->>MessageWorker: setOnConnect(IOnEvent onConnect): void
+activate MessageWorker
+space 
+deactivate MessageWorker
+ClientController->>MessageWorker: setOnDisconnect(IOnEvent onDisconnect): void
+activate MessageWorker
+space 
+deactivate MessageWorker
+ClientController->>MessageWorker: setOnFailToSent(IOnEvent onFailToSent): void
+activate MessageWorker
+space 
+deactivate MessageWorker
+end
+
+ClientController->>MessageWorker: connect(): void
+activate MessageWorker
+space 
+deactivate MessageWorker
 deactivate ClientController
+
 GUIController->>IUserInterface: showMain(): void
 activate IUserInterface
 space 
@@ -118,3 +148,4 @@ activate IUserInterface
 space 
 deactivate IUserInterface
 end
+
