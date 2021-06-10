@@ -1,11 +1,13 @@
-
 title Server sends update with connected users
+
 actor Server
 control MessageWorker
 control ClientController
 control GUIController
 boundary IUserInterface
+activate Server
 Server ->> MessageWorker:Message(Client[])
+deactivate Server
 activate MessageWorker
 MessageWorker -> ClientController:onMessage(msg: IMessage):void
 
@@ -37,5 +39,3 @@ ClientController -->GUIController: activeUserList:List<User>
 deactivate ClientController
 GUIController ->IUserInterface: setUserList(userNames:String[],images:ImageIcon[])
 activate IUserInterface
-
-
