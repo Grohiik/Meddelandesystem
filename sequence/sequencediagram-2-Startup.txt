@@ -8,8 +8,8 @@ control ClientController
 control FileIO
 control MessageWorker
 
-Actor->>StartClient: Start application
-activate Actor
+User->>StartClient: Start application
+activate User
 activate StartClient
 space
 StartClient->GUIController: registerEvents(controller: ClientController, ui: IUserInterface): void
@@ -106,28 +106,28 @@ space
 deactivate ClientController
 end
 
-GUIController->>ClientController: connect(): void
+GUIController->ClientController: connect(): void
 activate ClientController
 space
 
 opt messageWorker == null
-ClientController->>MessageWorker: setOnMessage(IOnEventParam<IMessage> onMessage): void
+ClientController->MessageWorker: setOnMessage(IOnEventParam<IMessage> onMessage): void
 activate MessageWorker
 space 
 deactivate MessageWorker
-ClientController->>MessageWorker: setOnFailedConnect(IOnEvent onFailedConnect): void
+ClientController->MessageWorker: setOnFailedConnect(IOnEvent onFailedConnect): void
 activate MessageWorker
 space 
 deactivate MessageWorker
-ClientController->>MessageWorker: setOnConnect(IOnEvent onConnect): void
+ClientController->MessageWorker: setOnConnect(IOnEvent onConnect): void
 activate MessageWorker
 space 
 deactivate MessageWorker
-ClientController->>MessageWorker: setOnDisconnect(IOnEvent onDisconnect): void
+ClientController->MessageWorker: setOnDisconnect(IOnEvent onDisconnect): void
 activate MessageWorker
 space 
 deactivate MessageWorker
-ClientController->>MessageWorker: setOnFailToSent(IOnEvent onFailToSent): void
+ClientController->MessageWorker: setOnFailToSent(IOnEvent onFailToSent): void
 activate MessageWorker
 space 
 deactivate MessageWorker
