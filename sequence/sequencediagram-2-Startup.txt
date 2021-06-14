@@ -80,9 +80,10 @@ deactivate GUIController
 StartClient->GUIController: start(isCached: boolean): void
 activate GUIController
 opt isCached == true
-GUIController->FileIO: read(filename: String, type: List.class): List.class
+GUIController->FileIO: read(filename: String, type: T): T
 activate FileIO
-space 
+space
+GUIController<--FileIO: Saved user object
 deactivate FileIO
 end
 alt user == null
@@ -98,6 +99,7 @@ deactivate ClientController
 GUIController->FileIO: read(filename: String, type: T): T
 activate FileIO
 space
+GUIController<--FileIO: List of saved users
 deactivate FileIO
 opt friendListRaw != null
 GUIController->ClientController: setFriendList(users: List<User>): void
